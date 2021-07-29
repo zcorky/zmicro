@@ -56,9 +56,10 @@ jobs:
         with:
           images: whatwewant/zmicro
           tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=ref,pattern=branch
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{major}}
+            type=semver,pattern=v{{major}}.{{minor}}
 
       - name: Show Docker Tags
         run: |
