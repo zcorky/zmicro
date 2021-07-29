@@ -4,13 +4,13 @@ config_git() {
   USERNAME=$1
   EMAIL=$2
 
-  if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
-    echo "Config Git: USERNAME and EMAIL is required"
-    exit 0
-  fi
-
   git config --global credential.helper store
   git config --global core.editor "vim"
+
+  if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
+    log_warn "Config Git: USERNAME and EMAIL is required"
+    exit 0
+  fi
 
   local origin_name=$(git config --get user.name)
   if [ "$origin_name" = "" ]; then
