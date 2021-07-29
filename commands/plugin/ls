@@ -1,0 +1,22 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro plugin ls"
+  echo ""
+}
+
+core() {
+  if [ "$0" = "-h" ] || [ "$0" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  zmicro plugin list $@
+}
+
+run() {
+  core $@
+}
+
+run $@

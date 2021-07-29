@@ -1,0 +1,39 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro plugin list"
+  echo ""
+}
+
+core() {
+  if [ "$0" = "-h" ] || [ "$0" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local plugin_names=$(ls $ZMICRO_PLUGIN_PATH)
+  local plugin_count=0
+  for plugin_name in $plugin_names; do
+    plugin_count=$((plugin_count + 1))
+  done
+
+  log "plugins: $plugin_count"
+  local index=0
+  for plugin_name in $plugin_names; do
+    local plugin_path=$plugin_dir/$plugin_name
+
+    index=$(number_step index)
+    log "    $(color_success "$index $plugin_name")"
+  done
+
+  if [ $plugin_count -eq 0 ]; then
+    log "    (no avaliable plugins)"
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@
