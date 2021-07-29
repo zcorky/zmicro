@@ -1,23 +1,9 @@
 #!/bin/bash
+export ZMICRO_HOME=$HOME/.zmicro
 
-realpath() {
-  OURPWD=$PWD
-  cd "$(dirname "$1")"
-  LINK=$(readlink "$(basename "$1")")
-  while [ "$LINK" ]; do
-    cd "$(dirname "$LINK")"
-    LINK=$(readlink "$(basename "$1")")
-  done
-  REALPATH="$PWD/$(basename "$1")"
-  cd "$OURPWD"
-  echo "$REALPATH"
-}
+if [ ! -d "$ZMICRO_HOME" ]; then
+  git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
+fi
 
-export -f realpath
-export CURRENT_DIR=$(realpath $(dirname "$0"))
-
-. $CURRENT_DIR/config/config
-
-# . $CURRENT_DIR/bin/commands/init
-
-$CURRENT_DIR/bin/zmicro init
+. $ZMICRO_HOME/config/config
+$ZMICRO_HOME/bin/zmicro init
