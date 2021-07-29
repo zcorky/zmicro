@@ -16,6 +16,11 @@ _pip() {
   # local args=${@:2}
   local args=$2
 
+  python3 -m pip -h >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    pm install -yqq python3-pip
+  fi
+
   case $command in
   install)
     python3 -m pip install -i https://pypi.douban.com/simple/ $args
