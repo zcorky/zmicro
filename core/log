@@ -8,7 +8,7 @@ log_init() {
 
   if [ ! -f $ZMICRO_LOG_PATH ]; then
     sudo mkdir -p $ZMICRO_LOG_PATH
-    sudo chown -R $USER $ZMICRO_LOG_PATH
+    sudo chown -R ${USER:-root} $ZMICRO_LOG_PATH
   fi
 }
 
@@ -17,7 +17,7 @@ log_info() {
 }
 
 log_debug() {
-  echo -e $@ >> $ZMICRO_LOG_DEBUG_PATH
+  echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
 }
 
 log_success() {
@@ -70,11 +70,11 @@ log_command() {
 
   command_path=$(get_command_path_with_fragments $base_command_path $command_fragments)
 
-  echo -e "${GREEN}[$(timestamps)] $command_fragments start ...${ENDCOLOR}" >> $ZMICRO_LOG_COMMON_PATH
+  echo -e "${GREEN}[$(timestamps)] $command_fragments start ...${ENDCOLOR}" >>$ZMICRO_LOG_COMMON_PATH
 
   log_debug [$(timestamps)]$(color_success "[command] final command path: $command_path")
   log_debug ""
-  
+
   # @TODO why should +e
   set +e
 
@@ -85,7 +85,7 @@ log_command() {
   fi
 
   # @TODO if use log command, donot record log, caused bug
-  echo "$command_path" | grep "commands/_internal/log" >> /dev/null
+  echo "$command_path" | grep "commands/_internal/log" >>/dev/null
   if [ "$?" = "0" ]; then
     $command_path $command_args
     exit_code=${PIPESTATUS[0]}
@@ -96,9 +96,9 @@ log_command() {
   fi
 
   if [ "$exit_code" = "0" ]; then
-    log_success "[$(timestamps)] $command_fragments done." >> /dev/null # >> $ZMICRO_LOG_COMMON_PATH
+    log_success "[$(timestamps)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
   else
-    log_error "[$(timestamps)] $command_fragments error." >> $ZMICRO_LOG_COMMON_PATH
+    log_error "[$(timestamps)] $command_fragments error." >>$ZMICRO_LOG_COMMON_PATH
   fi
 
   exit $exit_code
@@ -108,7 +108,7 @@ log_command() {
 log_update() {
   stage=$1 # START | END
   current_version=$(get_current_version)
-  log_timestamps "[${current_version}] ${stage}" >> $ZMICRO_LOG_UPDATE_PATH
+  log_timestamps "[${current_version}] ${stage}" >>$ZMICRO_LOG_UPDATE_PATH
 }
 
 log_version() {
@@ -116,7 +116,7 @@ log_version() {
   CURRENT=$2
 
   if [ -d $ZMICRO_LOG_VERSION_PATH ] || [ "$PREV" != "$CURRENT" ]; then
-    log_timestamps "[$CURRENT] ${PREV} => ${CURRENT}" >> $ZMICRO_LOG_VERSION_PATH
+    log_timestamps "[$CURRENT] ${PREV} => ${CURRENT}" >>$ZMICRO_LOG_VERSION_PATH
   fi
 }
 
