@@ -6,7 +6,7 @@ config_git() {
 
   if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
     echo "Config Git: USERNAME and EMAIL is required"
-    exit 1
+    exit 0
   fi
 
   git config --global credential.helper store
@@ -22,6 +22,5 @@ config_git() {
     git config --global user.email "${EMAIL}"
   fi
 }
-
 
 config_git $@
