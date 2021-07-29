@@ -1,13 +1,10 @@
 name: Publish NPM Package
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     tags:
       - 'v*'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   on-success:
     needs: publish
@@ -42,17 +39,13 @@ jobs:
             状态: 构建失败（https://github.com/${{ github.repository }}/actions/runs/${{ github.run.id }}）
 
   publish:
-    # bootstrap:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Get Current Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
@@ -61,7 +54,6 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          # list of Docker images to use as base name for tags
           images: whatwewant/zmicro
           tags: |
             type=ref,event=branch
