@@ -8,7 +8,11 @@ plugin_register() {
   fi
 
   local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
-  
+
+  if [ ! -d $plugin_path/$plugin/bin ]; then
+    exit 0
+  fi
+
   log_debug "[$(timestamps)][plugin] bins_path: $plugin_path/$plugin/bin"
   local bins=$(ls $plugin_path/bin)
   for bin in $bins; do
@@ -32,7 +36,11 @@ plugin_unregister() {
   fi
 
   local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
-  
+
+  if [ ! -d $plugin_path/$plugin/bin ]; then
+    exit 0
+  fi
+
   log_debug "[$(timestamps)][plugin] bins_path: $plugin_path/$plugin/bin"
   local bins=$(ls $plugin_path/bin)
   for bin in $bins; do
@@ -54,7 +62,7 @@ plugin_register_all() {
   local plugins=$(ls $plugin_path)
 
   log_debug "\n\n[$(timestamps)][plugin]"
-  for  plugin in $plugins; do
+  for plugin in $plugins; do
     log_debug "[$(timestamps)][plugin] find plugin: $plugin"
 
     if [ ! -d "$plugin_path/$plugin/bin" ]; then
@@ -68,7 +76,7 @@ plugin_register_all() {
 
       if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
         log_debug "[$(timestamps)][plugin] register $plugin bin: $bin"
-        
+
         ln -s $plugin_path/$plugin/bin/$bin $ZMICRO_HOME/bin/$bin
       fi
     done
