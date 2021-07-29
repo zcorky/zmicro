@@ -3,6 +3,27 @@
 DEFAILT_NODEJS_VERSION=v16.5.0
 NVM_DIR=$HOME/.nvm
 
+dependency_check() {
+  which make >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    pm install -yqq make
+  fi
+
+  which gcc >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    pm install -yqq gcc
+  fi
+
+  which g++ >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    if [ "$(os_is_centos)" = "true" ]; then
+      pm install -yy gcc-c++
+    elif [ "$(os_is_ubuntu)" = "true" ]; then
+      pm install -yy g++
+    fi
+  fi
+}
+
 install_nvm() {
   echo "Install NVM ..."
 
@@ -60,6 +81,9 @@ install_nodejs() {
   # echo "Use Node $version"
   nvm alias default $version
   nvm use $version
+
+  # Depdendency Check
+  dependency_check
 
   echo "Install Common Packages ..."
   npm i -g \
