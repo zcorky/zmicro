@@ -1,0 +1,11 @@
+#!/bin/bash
+
+config_data_dir() {
+  sudo mkdir -p $ZMICRO_DATA_PATH
+}
+
+config_data() {
+  config_data_dir
+}
+
+config_data

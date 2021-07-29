@@ -1,0 +1,45 @@
+#!/bin/bash
+
+load() {
+  if [ ! -d $ZMICRO_LOG_PATH ] || [ ! -w $ZMICRO_LOG_COMMON_PATH ]; then
+    . $CORE_PATH/log
+    log_init
+  fi
+
+  echo -e "$(date "+%Y-%m-%d %H:%M:%S")[CORE] load $1" >> $ZMICRO_LOG_DEBUG_PATH
+
+  local FN_PATH=$CORE_PATH/$1
+
+  if [ -f $FN_PATH ]; then
+    . $FN_PATH
+  elif [ -d $FN_PATH ]; then
+    . $FN_PATH/export
+  fi
+}
+
+load type
+load os
+load net
+load color
+load path
+load timestamps
+load permission
+load help
+load version
+load log
+load config
+load commander
+load plugin
+load pm
+load service
+
+
+# Cause Bug
+#   1. tput: No value for $TERM and no -T specified
+#   2. tput: terminal attributes: No such device or address
+#   3. terminal is not a tty
+# load inquirer
+
+load run
+
+export -f load

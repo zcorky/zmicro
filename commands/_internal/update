@@ -1,0 +1,31 @@
+#!/bin/bash
+
+update_git() {
+  local origin_version=$(get_current_version)
+  log_update PREV
+
+  cd $ZMICRO_HOME
+  git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2>&1
+  if [ "$?" != "0" ]; then
+    echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
+    exit -1
+  fi
+
+  log_update LATEST
+  local new_version=$(get_current_version)
+
+  if [ "$origin_version" != "$new_version" ]; then
+    log "Update Success. Version: $new_version"
+  else
+    log "No Changes. Version: $new_version"
+  fi
+
+  # log_timestamps "[LATEST_VERSION] ${ZMICRO_VERSION}"
+
+  # Auto Register After Update
+  plugin_register_all $ZMICRO_PLUGIN_PATH
+}
+
+update_git
+
+# pm update # >> $ZMICRO_LOG_UPDATE_PATH 2>&1

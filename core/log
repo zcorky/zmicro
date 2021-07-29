@@ -1,0 +1,136 @@
+#!/bin/bash
+
+log_init() {
+  # echo "[init] config log"
+  if [ ! -d /var/log ]; then
+    sudo mkdir -p /var/log
+  fi
+
+  if [ ! -f $ZMICRO_LOG_PATH ]; then
+    sudo mkdir -p $ZMICRO_LOG_PATH
+    sudo chown -R $USER $ZMICRO_LOG_PATH
+  fi
+}
+
+log_info() {
+  echo -e "${GREEN}ℹ${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+}
+
+log_debug() {
+  echo -e $@ >> $ZMICRO_LOG_DEBUG_PATH
+}
+
+log_success() {
+  echo -e "${GREEN}✔${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+}
+
+log_error() {
+  echo -e "${RED}✖${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
+}
+
+log_warn() {
+  echo -e "${YELLOW}⚠${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+}
+
+log() {
+  # @TODO will remove custum blanks
+  echo -e $@ | tee -a $ZMICRO_LOG_COMMON_PATH
+  # log_info $@
+}
+
+log_timestamps() {
+  echo -e "[$(timestamps)] $@"
+}
+
+log_command() {
+  local command_path_with_seperator=$1
+
+  # Run Command with log
+  local base_command_path=$(echo $command_path_with_seperator | cut -d "#" -f 1)
+  local command_fragments=$(echo $command_path_with_seperator | cut -d "#" -f 2)
+  local command_args=$(echo $command_path_with_seperator | cut -d "#" -f 3-)
+  # Init Script Path
+  local init_path=$base_command_path/_init
+
+  log_debug "[$(timestamps)]$(color_success [command] command path: $base_command_path $command_fragments $command_args)"
+  log_debug "[$(timestamps)][command]"
+
+  # log_debug "origin: $@"
+  log_debug "[$(timestamps)][command] base_command_path: $base_command_path"
+  log_debug "[$(timestamps)][command] command_fragments: $command_fragments"
+  log_debug "[$(timestamps)][command] command_args: $command_args"
+  log_debug "[$(timestamps)][command] init_path: $init_path"
+  log_debug "[$(timestamps)][command]"
+
+  # @TODO
+  if [ "$command_fragments" = "unknown" ]; then
+    echo "[error] found, but get_command_path error"
+    exit 1
+  fi
+
+  command_path=$(get_command_path_with_fragments $base_command_path $command_fragments)
+
+  echo -e "${GREEN}[$(timestamps)] $command_fragments start ...${ENDCOLOR}" >> $ZMICRO_LOG_COMMON_PATH
+
+  log_debug [$(timestamps)]$(color_success "[command] final command path: $command_path")
+  log_debug ""
+  
+  # @TODO why should +e
+  set +e
+
+  # Load Init
+  if [ -f "$init_path" ]; then
+    log_debug "[$(timestamps)][command] load init in $init_path"
+    . $init_path
+  fi
+
+  # @TODO if use log command, donot record log, caused bug
+  echo "$command_path" | grep "commands/_internal/log" >> /dev/null
+  if [ "$?" = "0" ]; then
+    $command_path $command_args
+    exit_code=${PIPESTATUS[0]}
+  else
+    $command_path $command_args # | tee -a $ZMICRO_LOG_COMMON_PATH
+    exit_code=${PIPESTATUS[0]}
+    # echo "exit_code: $exit_code($command)"
+  fi
+
+  if [ "$exit_code" = "0" ]; then
+    log_success "[$(timestamps)] $command_fragments done." >> /dev/null # >> $ZMICRO_LOG_COMMON_PATH
+  else
+    log_error "[$(timestamps)] $command_fragments error." >> $ZMICRO_LOG_COMMON_PATH
+  fi
+
+  exit $exit_code
+  set -e
+}
+
+log_update() {
+  stage=$1 # START | END
+  current_version=$(get_current_version)
+  log_timestamps "[${current_version}] ${stage}" >> $ZMICRO_LOG_UPDATE_PATH
+}
+
+log_version() {
+  PREV=$1
+  CURRENT=$2
+
+  if [ -d $ZMICRO_LOG_VERSION_PATH ] || [ "$PREV" != "$CURRENT" ]; then
+    log_timestamps "[$CURRENT] ${PREV} => ${CURRENT}" >> $ZMICRO_LOG_VERSION_PATH
+  fi
+}
+
+export -f log_init
+
+export -f log
+export -f log_success
+export -f log_debug
+export -f log_error
+export -f log_info
+export -f log_warn
+
+export -f log_timestamps
+
+export -f log_command
+export -f log_update
+export -f log_version

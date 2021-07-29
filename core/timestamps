@@ -1,0 +1,8 @@
+#!/bin/bash
+
+timestamps() {
+  res=$(date "+%Y-%m-%d %H:%M:%S")
+  echo $res
+}
+
+export -f timestamps

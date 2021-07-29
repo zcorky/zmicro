@@ -1,0 +1,213 @@
+#!/bin/bash
+
+HAS_FILE_LOG_SILIENT="false"
+
+# Has
+has_file_path() {
+  path=$1
+
+  if [ "$HAS_FILE_LOG_SILIENT" = "false" ]; then
+    log_debug "[$(timestamps)][command] try path: $path"
+  fi
+
+  if is_file $path; then
+    if [ "$HAS_FILE_LOG_SILIENT" = "false" ]; then
+      log_debug [$(timestamps)]$(color_success "[command] find path: ${path}")
+    fi
+
+    return 0
+  fi
+
+  return 1
+}
+
+has_file_path_quiet() {
+  path=$1
+
+  if is_file $path; then
+    return 0
+  fi
+
+  return 1
+}
+
+#
+has_command_path_internal() {
+  local base_command_path=$1
+  local commands=${@:2}
+
+  # search
+  local command_dir=$base_command_path
+  local command_path=$command_dir
+  local command_run_path=$command_path/_run
+  local command_fragments=""
+
+  # _run
+  if has_file_path $command_run_path; then
+    return 0
+  fi
+
+  local command_args_index=3
+  # var should define local or will override parent
+  local command=""
+  for command in $commands; do
+    command_path=$command_dir/$command
+    command_run_path=$command_path/_run
+    command_args=${@:$command_args_index}
+
+    if [ "$command_fragments" = "" ]; then
+      command_fragments="$command"
+    else
+      command_fragments="$command_fragments $command"
+    fi
+
+    if has_file_path $command_path; then
+      return 0
+    fi
+
+    if has_file_path $command_run_path; then
+      return 0
+    fi
+
+    command_dir=$command_path
+    command_args_index=$((command_args_index + 1))
+  done
+
+  return 1
+}
+
+has_command_path() {
+  local base_command_path=$1
+  local base_plugin_path=$2
+  local command=${@:3}
+
+  # 1. internal
+  local internal_base_path=$base_command_path/_internal
+  if has_command_path_internal $internal_base_path $command; then
+    return 0
+  fi
+
+  # 2. normal
+  #   2.1 _run: take over run when _run exist
+  #   2.2 normal
+  local normal_base_path=$base_command_path
+  if has_command_path_internal $normal_base_path $command; then
+    return 0
+  fi
+
+  # *. not found
+  log_debug [$(timestamps)]$(color_error "[command] 404 not found ($command $args)")
+  return 1
+}
+
+# Has End
+
+get_command_path_internal() {
+  local base_command_path=$1
+  local commands=${@:2}
+
+  # search
+  local command_dir=$base_command_path
+  local command_path=$command_dir
+  local command_run_path=$command_path/_run
+  local command_fragments=""
+  local command_args=$commands
+
+  # _run
+  if has_file_path $command_run_path; then
+    command_fragments="_run"
+    echo "${base_command_path}#${command_fragments}#${command_args}"
+    return 0
+  fi
+
+  local command_args_index=3
+  # var should define local or will override parent
+  local command=""
+  for command in $commands; do
+    command_path=$command_dir/$command
+    command_run_path=$command_path/_run
+    command_args=${@:$command_args_index}
+
+    if [ "$command_fragments" = "" ]; then
+      command_fragments="$command"
+    else
+      command_fragments="$command_fragments $command"
+    fi
+
+    if has_file_path $command_path; then
+      # echo $(get_path $command_dir $command $command_args)
+      echo "${base_command_path}#${command_fragments}#${command_args}"
+      return 0
+    fi
+
+    if has_file_path $command_run_path; then
+      # echo $(get_path $command_run_path $command $command_args)
+      command_fragments="$command_fragments _run"
+      echo "${base_command_path}#${command_fragments}#${command_args}"
+      return 0
+    fi
+
+    command_dir=$command_path
+    command_args_index=$((command_args_index + 1))
+  done
+}
+
+get_command_path() {
+  local base_command_path=$1
+  local base_plugin_path=$2
+  local command=${@:3}
+
+  # @TODO
+  HAS_FILE_LOG_SILIENT="true"
+
+  # 1. internal
+  local internal_base_path=$base_command_path/_internal
+  if has_command_path_internal $internal_base_path $command; then
+    echo $(get_command_path_internal $internal_base_path $command)
+    return 0
+  fi
+
+  # 2. normal
+  #   2.1 _run: take over run when _run exist
+  #   2.2 normal
+  local normal_base_path=$base_command_path
+  if has_command_path_internal $normal_base_path $command; then
+    echo $(get_command_path_internal $normal_base_path $command)
+    return 0
+  fi
+
+  HAS_FILE_LOG_SILIENT="false"
+
+  _path="[get_command_path]"
+  _command="unknown"
+  _args="command: ${command}"
+  echo "$_path $_command $_args"
+  return 0
+}
+
+get_command_path_with_fragments() {
+  local base_command_path=$1
+  local command_fragments=${@:2}
+
+  local command_path=""
+  for command in $command_fragments; do
+    if [ "$command_path" = "" ]; then
+      command_path=$command
+    else
+      command_path="$command_path/$command"
+    fi
+  done
+
+  echo "$base_command_path/${command_path}"
+}
+
+# Has
+export -f has_file_path
+export -f has_file_path_quiet
+export -f has_command_path_internal
+export -f has_command_path
+
+# Get
+export -f get_command_path_internal
+export -f get_command_path
+export -f get_command_path_with_fragments

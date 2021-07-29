@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# version() {
+#   log "$ZMICRO_VERSION"
+# }
+
+# version
+
+get_current_version

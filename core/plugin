@@ -1,0 +1,81 @@
+#!/bin/bash
+
+plugin_register() {
+  local plugin_name=$1
+  if [ "$plugin_name" = "" ]; then
+    log_error "[$(timestamps)][plugin] register: plugin name is required"
+    exit 1
+  fi
+
+  local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
+  
+  log_debug "[$(timestamps)][plugin] bins_path: $plugin_path/$plugin/bin"
+  local bins=$(ls $plugin_path/bin)
+  for bin in $bins; do
+    local bin_path=$ZMICRO_HOME/bin/$bin
+
+    if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
+      log_debug "[$(timestamps)][plugin] register remove: $bin"
+      rm $bin_path
+    fi
+
+    log_debug "[$(timestamps)][plugin] register $plugin bin: $bin"
+    ln -s $plugin_path/$plugin/bin/$bin $bin_path
+  done
+}
+
+plugin_unregister() {
+  local plugin_name=$1
+  if [ "$plugin_name" = "" ]; then
+    log_error "[$(timestamps)][plugin] register: plugin name is required"
+    exit 1
+  fi
+
+  local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
+  
+  log_debug "[$(timestamps)][plugin] bins_path: $plugin_path/$plugin/bin"
+  local bins=$(ls $plugin_path/bin)
+  for bin in $bins; do
+    local bin_path=$ZMICRO_HOME/bin/$bin
+
+    if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
+      log_debug "[$(timestamps)][plugin] register remove: $bin"
+      rm $bin_path
+    fi
+  done
+}
+
+plugin_register_all() {
+  local plugin_path=$1
+  if [ "$plugin_path" = "-" ]; then
+    return
+  fi
+
+  local plugins=$(ls $plugin_path)
+
+  log_debug "\n\n[$(timestamps)][plugin]"
+  for  plugin in $plugins; do
+    log_debug "[$(timestamps)][plugin] find plugin: $plugin"
+
+    if [ ! -d "$plugin_path/$plugin/bin" ]; then
+      continue
+    fi
+
+    log_debug "[$(timestamps)][plugin] bins_path: $plugin_path/$plugin/bin"
+    local bins=$(ls $plugin_path/$plugin/bin)
+    for bin in $bins; do
+      local bin_path=$ZMICRO_HOME/bin/$bin
+
+      if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
+        log_debug "[$(timestamps)][plugin] register $plugin bin: $bin"
+        
+        ln -s $plugin_path/$plugin/bin/$bin $ZMICRO_HOME/bin/$bin
+      fi
+    done
+  done
+}
+
+export -f plugin_register_all
+
+export -f plugin_register
+export -f plugin_unregister

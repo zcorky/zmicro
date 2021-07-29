@@ -1,0 +1,10 @@
+#!/bin/bash
+
+update_git() {
+  cd $ZMICRO_HOME
+  git pull origin master
+}
+
+update_git
+
+pm update

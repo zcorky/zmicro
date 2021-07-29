@@ -1,0 +1,126 @@
+#!/bin/bash
+
+get_service_dirs() {
+  # echo $ZMICRO_SERVICE_PATH | awk -F ':' '{out=""; for(i=1;i<=NF;i++){out=out" "$i}; print out}'
+  string_split : $ZMICRO_SERVICE_PATH
+}
+
+get_service_path() {
+  local service_name=$1
+  local avaliable_service_dirs=$(get_service_dirs)
+
+  for service_dir in $avaliable_service_dirs; do
+    log_debug "[$(timestamps)][service] try service dir: $service_dir"
+    local service_path=$service_dir/$service_name
+    if [ -d $service_path ]; then
+      log_debug "[$(timestamps)]$(color_success "[service] found service($service_name) in $service_dir")"
+      echo $service_path
+      return 0
+    fi
+  done
+}
+
+zmicro_service_list() {
+  local avaliable_service_dirs=$(get_service_dirs)
+  log "List all available services"
+  log ""
+
+  for service_dir in $avaliable_service_dirs; do
+    # local namespace=$(echo $service_dir | awk -F '/' '{print $(NF-0)}')
+    local namespace=$(string_split_last_element '/' $service_dir)
+    if [ ! -d $service_dir ]; then
+      log "  namespace: $namespace ($service_dir)"
+      log "    (no avaliable services)"
+      log ""
+      continue
+    fi
+
+    local service_names=$(ls $service_dir)
+    # local service_count=$(echo $service_names | wc -w)
+    local service_count=0
+    for service_name in $service_names; do
+      local service_path=$service_dir/$service_name
+
+      # Check is a real service
+      if [ -f $service_path/docker-compose.yml ]; then
+        service_count=$((service_count + 1))
+      fi
+    done
+
+    log "  namespace: $namespace (total: $service_count) ($service_dir)"
+    local index=0
+    for service_name in $service_names; do
+      local service_path=$service_dir/$service_name
+
+      # Check is a real service
+      if [ -f $service_path/docker-compose.yml ]; then
+        index=$(number_step index)
+        log "    $(color_success "$index $service_name")"
+      fi
+    done
+
+    if [ $service_count -eq 0 ]; then
+      log "    (no avaliable services)"
+    fi
+
+    log ""
+  done
+}
+
+zmicro_service_run() {
+  local service_name=$1
+  local commands=${@:2}
+
+  log_debug "[$(timestamps)][service] ZMICRO_SERVICE_PATH: $ZMICRO_SERVICE_PATH"
+  log_debug "[$(timestamps)][service] service name: $service_name"
+  log_debug "[$(timestamps)][service] service command: $commands"
+
+  local service_path=$(get_service_path $service_name)
+  if [ "$service_path" = "" ]; then
+    log_error "[$(timestamps)][service] service($service_name) not found"
+    exit 1
+  fi
+
+  log_debug ""
+  cd $service_path
+  docker-compose -f docker-compose.yml $commands
+}
+
+zmicro_service_get_config() {
+  local service_name=$1
+
+  local service_path=$(get_service_path $service_name)
+  if [ "$service_path" = "" ]; then
+    log_error "[$(timestamps)][service] service($service_name) not found"
+    exit 1
+  fi
+
+  local service_config=$service_path/docker-compose.yml
+  if [ ! -f $service_config ]; then
+    log_error "[$(timestamps)][service] service($service_name) config(docker-compose.yml) not found"
+  fi
+
+  echo $service_config
+}
+
+zmicro_service_detect_service_path() {
+  local custom_service_path=$(zmicro config get ZMICRO_SERVICE_PATH)
+  if [ "$custom_service_path" = "" ]; then
+    log_error "Please your service path first."
+    log "Run the following command to config:"
+    log ""
+    log "$ $(color_success "zmicro config service <service_path>")"
+    log ""
+
+    exit 1
+  fi
+}
+
+export -f get_service_dirs
+export -f get_service_path
+
+export -f zmicro_service_run
+export -f zmicro_service_list
+export -f zmicro_service_get_config
+
+export -f zmicro_service_detect_service_path

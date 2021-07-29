@@ -1,0 +1,51 @@
+#!/bin/bash
+
+export RED="\e[31m"
+export GREEN="\e[32m"
+export ENDCOLOR="\e[0m"
+export TODAY=$(date +%Y-%m-%d)
+
+# Core
+# export ZMICRO_VERSION=v0.0.4
+export ZMICRO_NAME=zmicro
+export ZMICRO_HOME=$HOME/.zmicro
+export ZMICRO_RC=$HOME/.zmicrorc
+export ZMICRO_GIT=https://github.com/zcorky/zmicro
+
+# Version
+export ZMICRO_VERSION_PATH=$ZMICRO_HOME/config/version
+# Log
+export ZMICRO_LOG_PATH=/var/log/${ZMICRO_NAME} #/tmp/zmicro
+
+export ZMICRO_LOG_COMMON_PATH=$ZMICRO_LOG_PATH/common.$TODAY.log
+export ZMICRO_LOG_DEBUG_PATH=$ZMICRO_LOG_PATH/debug.log
+export ZMICRO_LOG_ERROR_PATH=$ZMICRO_LOG_PATH/error.log
+
+export ZMICRO_LOG_UPDATE_PATH=$ZMICRO_LOG_PATH/update.log
+export ZMICRO_LOG_VERSION_PATH=$ZMICRO_LOG_PATH/version.log
+export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
+
+# Plugin
+export ZMICRO_PLUGIN_PATH=$ZMICRO_HOME/plugins
+
+# Service (use Compose)
+export ZMICRO_SERVICE_PATH=$ZMICRO_HOME/services
+
+# Data
+export ZMICRO_DATA_PATH=/data
+# @TODO MAC
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_DATA_PATH=/opt/data
+
+export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin #$(realpath $(dirname "$0"))
+export CORE_PATH=$ZMICRO_HOME/core
+export CONFIGS_PATH=$ZMICRO_HOME/config
+export COMMANDS_PATH=$ZMICRO_HOME/commands
+export SERVICES_PATH=$ZMICRO_HOME/services
+
+export DATA_INFLUX_PATH=$ZMICRO_DATA_PATH/influx
+export DATA_POSTGRES_PATH=$ZMICRO_DATA_PATH/postgres
+
+# DEFAULT GIT
+export GIT_USERNAME=$USER
+export GIT_PASSWORD=
+export GIT_EMAIL=$USER@local

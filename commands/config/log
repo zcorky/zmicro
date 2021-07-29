@@ -1,0 +1,10 @@
+#!/bin/bash
+
+config_log() {
+  echo "[init] config log"
+  log_init
+  
+  log_version $ZMICRO_VERSION $ZMICRO_VERSION
+}
+
+config_log

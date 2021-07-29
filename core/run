@@ -1,0 +1,56 @@
+#!/bin/bash
+
+run() {
+  local base_command_path=$1
+  local base_plugin_path=$2
+  local command=$3
+  local sub_command=$4
+
+  plugin_register_all $base_plugin_path
+
+  log_debug ""
+  log_debug "[$(timestamps)][command] base command path: $base_command_path"
+  log_debug "[$(timestamps)][command] run: ${@:3}"
+  log_debug "[$(timestamps)][command]"
+
+  # Use Help Command
+  if [ "$sub_command" = "help" ]; then
+    help $base_command_path $command ${@:4} # $sub_command
+    exit 1
+  fi
+
+  # command_path=$(get_command_path $@)
+  # if [ "$?" != "0" ]; then
+  if ! has_command_path "$@"; then
+    local commands=${@:3}
+    # DEBUG
+    log_debug "[$(timestamps)][command]"
+    log_debug "[$(timestamps)][command] command: $commands"
+
+    # Help
+    if [ "$command" != "" ]; then
+      # zmicro -v
+      if [ "$command" = "-v" ]; then
+        get_current_version
+        exit 0
+      fi
+
+      if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
+        echo -e "No such command: ${RED}$commands${ENDCOLOR}. use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
+        echo ""
+      fi
+    fi
+    
+    help $base_command_path $commands
+    exit 1
+  fi
+
+  # Get Command
+  log_debug "[$(timestamps)][command]"
+  log_debug "[$(timestamps)][command] get command path start ..."
+  command_path=$(get_command_path $@)
+
+  log_command "$command_path"
+}
+
+export -f run

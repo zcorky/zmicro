@@ -1,0 +1,109 @@
+#!/bin/bash
+set -e
+
+load_config() {
+  # @TOREMOVE
+  # Fix Old ZMICRORC
+  local old_home=$(zmicro_config_get HOME)
+  if [ "$old_home" != "" ]; then
+    log_debug "remove old config .zmicrorc"
+    
+    zmicro_config_remove HOME
+    zmicro_config_remove BIN
+    zmicro_config_remove VERSION
+  fi
+
+  CONFIG_PATH=$1
+  if [ "$CONFIG_PATH" = "" ]; then
+    log "load_config: Config Path is required"
+    exit 1
+  fi
+
+  if [ ! -f $CONFIG_PATH ] && [ ! -d $CONFIG_PATH ]; then
+    log "load_config: Config Path(${CONFIG_PATH}) not found"
+    exit 1
+  fi
+
+  if [ -f $CONFIG_PATH ]; then
+    load_config_file $CONFIG_PATH
+  elif [ -d $CONFIG_PATH ]; then
+    load_config_dir $CONFIG_PATH
+  else
+    log "load_config: Invalid Config Path(${CONFIG_PATH})"
+    exit 1
+  fi
+}
+
+load_config_file() {
+  CONFIG_FILE=$1
+  \. $CONFIG_FILE
+}
+
+load_config_dir() {
+  CONFIG_DIR=$1
+  CONFIG_FILES=$(ls $CONFIG_DIR)
+
+  for CONFIG_FILE in $CONFIG_FILES; do
+    # echo "load config: $CONFIG_FILE"
+
+    load_config_file $CONFIG_DIR/$CONFIG_FILE
+  done
+}
+
+zmicro_config_get() {
+  # If not found, return empty string
+  if [ ! -f $ZMICRO_RC ]; then
+    echo ""
+    return
+  fi
+
+  local key=$1
+  local value=$(cat $ZMICRO_RC | grep "${key}=" | awk -F '=' '{print $2}')
+  echo $value
+}
+
+zmicro_config_set() {
+  local key=$1
+  local value=$2
+
+  local line=""
+  # If not found, return empty string
+  if [ -f $ZMICRO_RC ]; then
+    line=$(cat $ZMICRO_RC | grep "${key}=")
+  fi
+
+  # New Key
+  if [ "$line" = "" ]; then
+    echo "${key}=${value}" >> $ZMICRO_RC
+    return
+  fi
+
+  # Old Key
+  local newLine="${key}=${value}"
+  echo $newLine
+  sed -i -e "s%${line}%${newLine}%g" $ZMICRO_RC
+}
+
+zmicro_config_remove() {
+  local key=$1
+  local line=$(cat $ZMICRO_RC | grep "${key}=")
+
+  # New Key
+  if [ "$line" != "" ]; then
+    sed -i -e "s%${line}%%g" $ZMICRO_RC
+  fi
+}
+
+zmicro_config_list() {
+  less $ZMICRO_RC
+}
+
+export -f load_config_file
+export -f load_config_dir
+
+export -f load_config
+
+export -f zmicro_config_list
+export -f zmicro_config_get
+export -f zmicro_config_set
+export -f zmicro_config_remove

@@ -1,0 +1,48 @@
+#!/bin/bash
+
+fetch_git() {
+  cd $ZMICRO_HOME
+  git fetch origin >> $ZMICRO_LOG_UPDATE_PATH 2>&1
+  if [ "$?" != "0" ]; then
+    log "Fetch ZMicro Error"
+    exit 1
+  fi
+}
+
+checkout_git() {
+  cd $ZMICRO_HOME
+  
+  git checkout $@ >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    return 1
+  fi
+
+  git fetch origin $@ >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    return 1
+  fi
+}
+
+use_version() {
+  version=$1
+  if [ "$version" = "" ]; then
+    log_error "Version is required"
+    log "Usage: zmicro use <version>"
+    exit 1
+  fi
+
+  if [ "$version" = "latest" ]; then
+    version=master
+  fi
+
+  fetch_git
+  checkout_git $version
+    if [ "$?" != "0" ]; then
+    log "Cannot Find Version: ${version}"
+    exit 1
+  fi
+
+  log_success "[$(timestamps)] change to version: ${version}"
+}
+
+use_version $@

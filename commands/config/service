@@ -1,0 +1,34 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro config sevice <service_path>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local service_path=$1
+  if [ "$service_path" = "" ]; then
+    log_error "custom service path is required"
+    log_error ""
+    
+    help
+    exit 1
+  fi
+
+  if [ "$service_path" = "." ]; then
+    service_path=$PWD
+  fi
+
+  zmicro config set ZMICRO_SERVICE_PATH "$service_path:\$ZMICRO_SERVICE_PATH"
+}
+
+run() {
+  core $@
+}
+
+run $@

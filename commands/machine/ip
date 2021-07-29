@@ -1,0 +1,78 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro machine ip"
+  echo ""
+}
+
+dependencies_check() {
+  which dig >> /dev/null 2>&1
+
+  if [ "$?" = "0" ]; then
+    return
+  fi
+
+  if [ "$(os_is_centos)" = "true" ]; then
+    pm install -yy bind-utils
+  elif [ "$(os_is_ubuntu)" = "true" ]; then
+    pm install -yy dig
+  else
+    log_error "Unknown system to install dig ..."
+    exit 1
+  fi
+}
+
+core() {
+  if [[ $# -eq 0 ]]; then
+    # Check Internal IP
+    local internalip=$(get_internal_ip)
+    # Check External IP
+    local externalip=$(get_external_ip)
+
+    # echo -e '\E[32m'"Internal IP :" $tecreset $internalip
+    # echo -e '\E[32m'"External IP : $tecreset "$externalip
+    echo -e "$externalip"
+    exit 0
+  fi
+
+  dependencies_check
+
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+    -h | --help)
+      help
+      exit 0
+      ;;
+    -i | --internal)
+      get_internal_ip
+      exit 0
+      ;;
+    -e | --external)
+      get_external_ip
+      exit 0
+      ;;
+    *)
+      echo "ERROR: unknown parameter \"$key\""
+      help
+      exit 1
+      ;;
+    esac
+  done
+}
+
+get_internal_ip() {
+  echo $(hostname -I)
+}
+
+get_external_ip() {
+  echo $(dig +short myip.opendns.com @resolver1.opendns.com)
+}
+
+run() {
+  core $@
+}
+
+run $@

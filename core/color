@@ -1,0 +1,28 @@
+#!/bin/bash
+
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+GRAY="\e[37m"
+ENDCOLOR="\e[0m"
+
+color_success() {
+  echo -e "${GREEN}${@}${ENDCOLOR}"
+}
+
+color_error() {
+  echo -e "${RED}${@}${ENDCOLOR}"
+}
+
+color_warn() {
+  echo -e "${YELLOW}${@}${ENDCOLOR}"
+}
+
+color_disable() {
+  echo -e "${GRAY}${@}${ENDCOLOR}"
+}
+
+export -f color_success
+export -f color_error
+export -f color_warn
+export -f color_disable

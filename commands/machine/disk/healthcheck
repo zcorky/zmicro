@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DISK_THRESHOLD=80
+
+disk_usage=$(zmicro machine disk usage)
+
+if [ $disk_usage -lt $DISK_THRESHOLD ]; then
+  echo -e "true"
+  exit 0
+else
+  echo -e "false"
+  exit 1
+fi

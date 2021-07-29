@@ -1,0 +1,70 @@
+#!/bin/bash
+
+which unzip >> /dev/null 2>&1
+if [ "$?" != "0" ]; then
+  pm install -yqq unzip
+fi
+
+curl -fsSL https://deno.land/x/install/install.sh | sh
+
+[[ -f "$HOME/.zshrc" ]] &&
+  XSHRC="$HOME/.zshrc" ||
+  XSHRC="$HOME/.bashrc"
+
+cat $XSHRC | grep DENO_INSTALL >>/dev/null 2>&1
+if [ "$?" != "0" ]; then
+  cat <<EOF >> $XSHRC
+
+# Deno
+export DENO_INSTALL="\$HOME/.deno"
+export PATH="\$DENO_INSTALL/bin:\$PATH"
+EOF
+fi
+
+# Auto Complete
+
+# @TODO 
+#   .oh-my-zsh/tools/check_for_upgrade.sh: line 32: syntax error near unexpected token `)'
+. $XSHRC >> /dev/null 2>&1
+
+# Oh my zsh
+if [ -d $HOME/.oh-my-zsh ]; then
+  [[ ! -d ~/.oh-my-zsh/custom/plugins/deno ]] && mkdir ~/.oh-my-zsh/custom/plugins/deno
+  
+  deno completions zsh > ~/.oh-my-zsh/custom/plugins/deno/_deno
+
+  origin_plugins_line=$(cat $HOME/.zshrc | grep "^plugins=")
+  origin_plugins=$(echo $origin_plugins_line | awk -F '(\(|\))' '{print $2}')
+
+  if [ "$origin_plugins" = "" ]; then
+    log "You should add deno to $HOME/.zshrc plugins manual"
+    exit 0
+  fi
+
+  echo $origin_plugins | grep deno >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    # already add
+    exit 0
+  fi
+
+  # Update
+  new_plugins="$origin_plugins deno"
+  sed -e "s%${origin_plugins}%${new_plugins}%g" -i $HOME/.zshrc
+  exit 0
+fi
+
+# Raw zsh
+[ ! -d "$HOME/.zsh" ] && mkdir $HOME/.zsh
+deno completions zsh > ~/.zsh/_deno
+
+cat $XSHRC | grep "Deno Complete" >>/dev/null 2>&1
+if [ "$?" != "0" ]; then
+  cat <<EOF >> $XSHRC
+
+# Deno Complete
+fpath=(~/.zsh \$fpath)
+autoload -Uz compinit
+compinit -u
+EOF
+fi
+

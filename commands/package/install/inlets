@@ -1,0 +1,13 @@
+#!/bin/bash
+
+which nvm >> /dev/null 2>&1
+if [ "$?" != "0" ]; then
+  zmicro package install nodejs
+fi
+
+# which inlets >> /dev/null 2>&1
+# if [ "$?" != "0" ]; then
+#   pm_npm i -g inlets
+# fi
+
+pm_npm i -g inlets

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro setup go [options...]"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  zmicro package setup common
+  
+  zmicro package install go
+}
+
+run() {
+  set -e
+  core $@
+  set +e
+}
+
+run $@

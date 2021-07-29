@@ -1,0 +1,26 @@
+#!/bin/bash
+
+fetch_git() {
+  cd $ZMICRO_HOME
+  git fetch origin >> $ZMICRO_LOG_UPDATE_PATH 2>&1
+  if [ "$?" != "0" ]; then
+    log "Fetch ZMicro Error"
+    exit 1
+  fi
+}
+
+list_git() {
+  cd $ZMICRO_HOME
+  
+  git tag -l
+  if [ "$?" != "0" ]; then
+    return 1
+  fi
+}
+
+list_version() {
+  fetch_git
+  list_git
+}
+
+list_version

@@ -1,0 +1,83 @@
+#!/bin/bash
+
+GO_VERSION=16.5
+GO_BIN=/usr/local/go/bin
+GO_BIN_FILE=/tmp/go.tar.gz
+OS=linux
+ARCH=amd64
+
+uname -a | grep "Darwin"
+if [ $? == 0 ]; then
+  OS=darwin
+fi
+
+uname -a | grep "arm"
+if [ $? == 0 ]; then
+  ARCH=arm64
+fi
+
+version=$GO_VERSION
+
+while getopts v: name; do
+  case $name in
+  v)
+    version=$OPTARG
+    ;;
+  *)
+    log "Invalid args"
+    ;;
+  esac
+done
+
+which wget >> /dev/null 2>&1
+if [ "$?" != "0" ]; then
+  pm install wget
+fi
+
+echo "Install Go ..."
+
+echo "Download Go Binary ..."
+# GO_TAR_GZ=https://golang.org/dl/go1.15.7.linux-amd64.tar.gz
+# https://www.runoob.com/go/go-environment.html
+GO_TAR_GZ=https://golang.google.cn/dl/go1.${version}.${OS}-${ARCH}.tar.gz
+# GO_TAR_GZ=https://github.com.cnpmjs.org/golang/go/archive/go1.${GO_VERSION}.tar.gz
+wget -c $GO_TAR_GZ -O $GO_BIN_FILE
+
+echo "Create Bin ..."
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf $GO_BIN_FILE
+
+echo "Config Env ..."
+export PATH=/usr/local/go/bin:$PATH
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+
+echo "Clean ..."
+rm -rf $GO_BIN_FILE
+
+# Write to SHELL
+if [ -f $HOME/.bashrc ]; then
+  cat $HOME/.bashrc | grep GO_BIN >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    cat << EOF >> $HOME/.bashrc
+
+# GO_BIN: ${GO_BIN}
+export GO_BIN=${GO_BIN}
+export PATH=\$GO_BIN:\$PATH
+EOF
+  fi
+fi
+
+if [ -f $HOME/.zshrc ]; then
+  cat $HOME/.zshrc | grep GO_BIN >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    cat << EOF >> $HOME/.zshrc
+
+# GO_BIN: ${GO_BIN}
+export GO_BIN=${GO_BIN}
+export PATH=\$GO_BIN:\$PATH
+EOF
+  fi
+fi
+
+echo "Install Go Done."

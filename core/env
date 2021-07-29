@@ -1,0 +1,15 @@
+#!/bin/bash
+
+ZMICRO_CONFIG_PATH=$ZMICRO_HOME/config
+
+# Load Base Config
+. $ZMICRO_CONFIG_PATH/config
+# Load Doreamon Fns
+. $CORE_PATH/load
+
+# Load Config in ZMICRO_CONFIG_PATH
+load_config $ZMICRO_CONFIG_PATH
+
+# Load User Config
+# @FIX install step doesnot generate ZMICRO_RC
+[[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC

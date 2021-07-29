@@ -1,0 +1,80 @@
+#!/bin/bash
+# Reference:
+#   Usage: http://www.ruanyifeng.com/blog/2020/08/rsync.html
+#   Sudo: https://askubuntu.com/questions/719439/using-rsync-with-sudo-on-the-destination-machine
+# 
+# rsync 默认是增量同步
+
+help() {
+  echo "Sync Data between local and remote"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro sync [options...]"
+  echo ""
+  echo "    -s, --source  Set source, such as local directory(./data) or remote directory(user@example.com:/data)"
+  echo "    -t, --target  Set target, such as local directory(./data) or remote directory(user@example.com:/data)"
+  echo "    --sudo        If you required root user, please make sure NOPASSWD user priviledge"
+  echo "    -h, --help    Get help"
+}
+
+core() {
+  local show_progress=true
+  local required_sudo=false
+  local source=""
+  local target=""
+
+   while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+      -h | --help)
+        help
+        exit 0
+        ;;
+      -s | --source)
+        source=$value
+        shift # past key
+        shift # past value
+        ;;
+      -t | --target)
+        target=$value
+        shift # past key
+        shift # past value
+        ;;
+      --sudo)
+        required_sudo=true
+        shift # past key
+        ;;
+      *)
+        echo "ERROR: unknown parameter \"$key\""
+        help
+        exit 1
+        ;;
+    esac
+  done
+
+  # echo "required_sudo: $required_sudo"
+  # echo "source: $source"
+  # echo "target: $target"
+
+  if [ "$source" = "" ] || [ "$target" = "" ]; then
+    log_error "source and target are required"
+    echo ""
+    help
+    exit 1
+  fi
+
+  local command="rsync -av --progress $source $target"
+  if [ "$required_sudo" = "true" ]; then
+    command=$command" --rsync-path=\"sudo rsync\""
+  fi
+
+  # echo "command: "$command
+  eval $command
+}
+
+run() {
+  core $@
+}
+
+run $@

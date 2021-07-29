@@ -1,0 +1,47 @@
+#!/bin/bash
+
+CURRENT_DIR=$(realpath $(dirname "$0"))
+
+install() {
+  pm install -yy ${@}
+}
+
+update() {
+  pm update -y
+}
+
+which vim >> /dev/null 2>&1
+if [ "$?" != "0" ]; then
+  install vim
+fi
+
+check_github_visitable() {
+  curl -I https://github.com --connect-timeout 3 >> /dev/null 2>&1
+}
+
+which zsh >> /dev/null 2>&1
+if [ "$?" != "0" ]; then
+  update
+  install zsh
+fi
+
+ZSH_SHELL=`which zsh`
+if [ "$SHELL" != "$ZSH_SHELL" ]; then
+  # Need Password ? See: https://askubuntu.com/questions/812420/chsh-always-asking-a-password-and-get-pam-authentication-failure
+  # https://unix.stackexchange.com/questions/39881/running-chsh-does-not-change-shell
+  echo "Change Shell: $SHELL => $ZSH_SHELL"
+  sudo usermod -s $ZSH_SHELL $USER
+fi
+
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  check_github_visitable
+  if [ "$?" = "0" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  else
+    echo "Github timeout, use Gitee instead ..."
+    # sh -c "$(curl -fsSL https://gitee.com/whatwewant/ohmyzsh/raw/master/tools/install.sh)"
+    $CURRENT_DIR/_zsh/install.sh
+  fi
+else
+  echo "ZSH already installed"
+fi

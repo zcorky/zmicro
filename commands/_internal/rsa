@@ -1,0 +1,73 @@
+#!/bin/bash
+# Reference:
+#   Usage: http://www.ruanyifeng.com/blog/2020/08/rsync.html
+#   Sudo: https://askubuntu.com/questions/719439/using-rsync-with-sudo-on-the-destination-machine
+# 
+# rsync 默认是增量同步
+
+help() {
+  echo "Generate RSA Private + Public Key"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro rsa [options...]"
+  echo ""
+  echo "    --private   Generate private pem"
+  echo "    --public    Generate public pem"
+  echo "    --cert      Generate cert"
+  echo "    -h, --help  Get help"
+}
+
+core() {
+  local private_pem_filename="private.pem"
+  local public_pem_filename="public.pem"
+  local cert_filename="cert.csr"
+
+  if [ "$1" = "" ]; then
+    help
+    exit 0
+  fi
+
+
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+      "" | -h | --help)
+        help
+        exit 0
+        ;;
+      --private)
+        openssl genrsa -out $private_pem_filename 2048
+        exit 0
+        ;;
+      --public)
+        if [ ! -f "$PWD/$private_pem_filename" ]; then
+          log_error "you should generate rsa private key first"
+          exit 1
+        fi
+
+        openssl rsa -in $private_pem_filename -pubout -out $public_pem_filename
+        exit 0
+        ;;
+      --cert)
+        if [ ! -f "$PWD/$private_pem_filename" ]; then
+          log_error "you should generate rsa private key first"
+          exit 1
+        fi
+
+        openssl req -new -key $private_pem_filename -out $cert_filename
+        exit 0
+        ;;
+      *)
+        log_error "ERROR: unknown parameter \"$key\", use -h for help"
+        exit 1
+        ;;
+    esac
+  done
+}
+
+run() {
+  core $@
+}
+
+run $@

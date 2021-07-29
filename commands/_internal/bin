@@ -1,0 +1,46 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Usage:"
+  echo "  zmicro bin <command>"
+  echo ""
+  echo "Commands:"
+  echo "    list | ls   List all available commands"
+  echo "    register    Re register all commands"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  case $1 in
+  ls | list)
+    print() {
+      echo "$Z_ARRAY_INDEX $(color_success $1)"
+    }
+
+    array_each print $(ls $ZMICRO_BIN_PATH)
+    ;;
+  register)
+    plugin_register_all $ZMICRO_PLUGIN_PATH
+    log_success "register all commands done"
+    log_info ""
+    zmicro bin list
+    ;;
+  *)
+    log_info "unknown command: $1"
+    help
+    exit 0
+    ;;
+  esac
+}
+
+run() {
+  core $@
+}
+
+run $@

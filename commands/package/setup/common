@@ -1,0 +1,26 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro setup common [options...]"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  zmicro package install zsh
+  zmicro package install vim
+  zmicro package install tmux
+  zmicro package install docker
+}
+
+run() {
+  set -e
+  core $@
+  set +e
+}
+
+run $@

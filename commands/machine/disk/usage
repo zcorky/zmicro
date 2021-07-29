@@ -1,0 +1,59 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro machine disk usage [options...]"
+  echo "    -t, --total   Get total disk, unit: G"
+  echo "    -u, --used    Get used disk, unit: G"
+  echo "    -p, --percent Get used percent"
+}
+
+disk_percent() {
+  local VOLUME=$(zmicro machine disk volume)
+  disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $5}'`
+  echo -e "${disk_usage}"
+}
+
+disk_used() {
+  local VOLUME=$(zmicro machine disk volume)
+  disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $3}'`
+  echo -e "${disk_usage}"
+}
+
+disk_total() {
+  local VOLUME=$(zmicro machine disk volume)
+  disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $2}'`
+  echo -e "${disk_usage}"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local option=$1
+  case $option in
+    "")
+      disk_percent
+      ;;
+    -u | --used)
+      disk_used
+      ;;
+    -t | --total)
+      disk_total
+      ;;
+    -p | --percent)
+      disk_percent
+      ;;
+    *)
+      help
+      ;;
+  esac
+}
+
+run() {
+  core $@
+}
+
+run $@

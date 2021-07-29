@@ -1,0 +1,36 @@
+#!/bin/bash
+COMPOSE_BIN_PATH=/usr/bin/docker-compose
+COMPOSE_VERSION=1.29.1
+
+help() {
+  echo "Usage:"
+  echo "  zmicro package install docker-compose"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  if [ -f $COMPOSE_BIN_PATH ]; then
+    local current_version=$(docker-compose version --short)
+    if [ "$current_version" = "$COMPOSE_VERSION" ]; then
+      log "Docker Compose ${COMPOSE_VERSION} has already been installed"
+      exit 0
+    fi
+  fi
+
+  log "Install Docker Compose ..."
+
+  sudo curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o $COMPOSE_BIN_PATH >> $ZMICRO_LOG_COMMON_PATH 2>&1
+  sudo chmod +x $COMPOSE_BIN_PATH
+  
+  log_success "Success to install Docker Compose CLI ."
+}
+
+run() {
+  core $@
+}
+
+run $@

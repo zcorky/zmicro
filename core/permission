@@ -1,0 +1,41 @@
+#!/bin/bash
+
+has_read_permission() {
+  path=$1
+  if [ -r $path ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+has_write_permission() {
+  path=$1
+  if [ -w $path ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+has_execute_permission() {
+  path=$1
+  if [ -w $path ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+has_permission() {
+  if [ -r $path ] && [ -w $path ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+export -f has_permission
+export -f has_read_permission
+export -f has_write_permission
+export -f has_execute_permission

@@ -1,0 +1,79 @@
+#!/bin/bash
+
+DEFAILT_NODEJS_VERSION=v16.5.0
+NVM_DIR=$HOME/.nvm
+
+install_nvm() {
+  echo "Install NVM ..."
+
+  if [ "$(net_is_in_china)" = "true" ]; then
+    export NVM_SOURCE=https://gitee.com/whatwewant/nvm
+    curl -o- https://gitee.com/whatwewant/nvm/raw/master/install.sh | bash
+  else
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+  fi
+
+  [[ -f "$HOME/.zshrc" ]] &&
+    XSHRC="$HOME/.zshrc" ||
+    XSHRC="$HOME/.bashrc"
+
+  cat $XSHRC | grep NVM_DIR >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    cat <<EOF >> $XSHRC
+  # NVM
+  export NVM_DIR="\$HOME/.nvm"
+  [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"  # This loads nvm
+  [ -s "\$NVM_DIR/bash_completion" ] && \. "\$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+EOF
+  fi
+}
+
+install_nodejs() {
+  local version=$DEFAILT_NODEJS_VERSION
+
+  while getopts v: name; do
+    case $name in
+    v) version=$OPTARG ;;
+    *) log "Invalid args" ;;
+    esac
+  done
+
+  which nvm >>/dev/null 2>&1
+  if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+    install_nvm
+  fi
+
+  echo "Load NVM ..."
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+  if [ "$(net_is_in_china)" = "true" ]; then
+    export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist
+    export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
+  fi
+
+  echo "Install Node $version ..."
+  nvm install $version
+
+  # echo "Use Node $version"
+  nvm alias default $version
+  nvm use $version
+
+  echo "Install Common Packages ..."
+  npm i -g \
+    cnpm \
+    yarn \
+    nrm \
+    @zcorky/projj \
+    @cliz/http-server \
+    @cliz/ip \
+    @cliz/zx \
+    @cliz/cp \
+    @cliz/inlets
+
+    # @TODO node-pty error
+    #
+    # @cliz/web-terminal
+    # @cliz/web-ssh
+}
+
+install_nodejs $@

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+update_version() {
+  PREV=$ZMICRO_VERSION
+
+  . $ZMICRO_VERSION_PATH
+
+  LATEST=$ZMICRO_VERSION
+
+  # echo "Load Version: $ZMICRO_VERSION"
+  # echo "BBB: $PREV => $LATEST"
+  log_version $PREV $LATEST
+
+  echo $LATEST
+}
+
+get_current_version() {
+  . $ZMICRO_VERSION_PATH
+  echo $ZMICRO_VERSION
+}
+
+get_version() {
+  get_current_version
+}
+
+export -f update_version
+export -f get_version
+export -f get_current_version

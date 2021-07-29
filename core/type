@@ -1,0 +1,189 @@
+#!/bin/bash
+
+get_args_length() {
+  local apps=($@)
+  local length=${#apps[@]}
+
+  echo $length
+}
+
+string_split() {
+  local seperator=$1
+  local str=$2
+
+  if [ "$seperator" = "" ] || [ "$str" = "" ]; then
+    log_error "seperator(\$1) and str(\$2) is required"
+    exit 1
+  fi
+
+  if [ "$seperator" = "<>" ]; then
+    seperator=" "
+  fi
+
+  echo $str | awk -F $seperator '{out=""; for(i=1;i<=NF;i++){out=out" "$i}; print out}'
+}
+
+string_split_length() {
+  local seperator=$1
+  local str=$2
+
+  if [ "$seperator" = "" ] || [ "$str" = "" ]; then
+    log_error "seperator(\$1) and str(\$2) is required"
+    exit 1
+  fi
+
+  echo $str | awk -F ${seperator} '{print NF}'
+}
+
+string_split_last_element() {
+  local seperator=$1
+  local str=$2
+
+  if [ "$seperator" = "" ] || [ "$str" = "" ]; then
+    log_error "seperator(\$1) and str(\$2) is required"
+    exit 1
+  fi
+
+  echo $str | awk -F $seperator '{print $(NF-0)}'
+}
+
+string_split_slice() {
+  local seperator=$1
+  local str=$2
+  local start=$3
+  local end=$4
+
+  if [ "$seperator" = "" ] || [ "$str" = "" ] || [ "$start" = "" ]; then
+    log_error "seperator, str, start is required"
+    exit 1
+  fi
+
+  local array=$(string_split $seperator $str)
+  local length=$(get_args_length $array)
+
+  # not set, use default length
+  end=${end:-$length}
+  # -1, use default length
+  if [ $end -eq -1 ]; then
+    end=$((length - 1))
+  fi
+
+  local res=""
+  local index=0
+  for element in $array; do
+    # echo "$index $element $start $end"
+    # >= start && < end
+    if [ $index -ge $start ] && [ $index -lt $end ]; then
+      res="$res $element"
+      # echo "$res"
+      index=$(number_step $index)
+      continue
+    fi
+
+    if [ $index -gt $end ]; then
+      break
+    fi
+
+    index=$(number_step $index)
+  done
+
+  # echo x:$res
+  echo $(array_join $seperator $res)
+}
+
+string_replace() {
+  local base=$1
+  local origin=$2
+  local new=$3
+
+  if [ "$new" = "<>" ]; then
+    new=""
+  fi
+
+  if [ "$base" = "" ] || [ "$origin" = "" ] || [ "$new" = "" ]; then
+    log_error "base, origin, new is required"
+    exit 1
+  fi
+
+  # @TODO
+  echo $base | sed -e "s%${origin}%${new}%g"
+}
+
+number_increase() {
+  local base=$1
+  local _step=$2
+  local step=${_step:-1}
+
+  if [ "$base" = "" ]; then
+    log_error "base is required"
+    exit 1
+  fi
+
+  echo $((base + step))
+}
+
+number_step() {
+  echo $(number_increase $1 $2)
+}
+
+number_add() {
+  local res=0
+
+  for num in $@; do
+    res=$((res + num))
+  done
+
+  echo $res
+}
+
+array_join() {
+  local seperator=$1
+  local args=${@:2}
+
+  if [ "$seperator" = "" ] || [ "$args" = "" ]; then
+    log_error "seperator, args is required"
+    exit 1
+  fi
+
+  if [ "$seperator" = "<>" ]; then
+    seperator=""
+  fi
+
+  local res=""
+  for element in $args; do
+    if [ "$res" = "" ]; then
+      res=$element
+      continue
+    fi
+
+    res="${res}${seperator}${element}"
+  done
+
+  echo $res
+}
+
+array_each() {
+  local fn=$1
+  local args=${@:2}
+
+  # @TODO GLOBAL, make outsize can get
+  Z_ARRAY_INDEX=0
+  for element in $args; do
+    Z_ARRAY_INDEX=$((Z_ARRAY_INDEX + 1))
+    $fn $element
+  done
+}
+
+export -f get_args_length
+
+export -f string_split
+export -f string_split_length
+export -f string_split_last_element
+export -f string_replace
+
+export -f number_increase
+export -f number_step
+export -f number_add
+
+export -f array_join
+export -f array_each

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro config list"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  zmicro_config_list $@
+}
+
+run() {
+  core $@
+}
+
+run $@

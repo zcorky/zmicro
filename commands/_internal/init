@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -e
+
+# export CURRENT_DUR=$(realpath $(dirname "$0"))
+# CONFIG_RC=$CURRENT_DUR/config/rc
+
+config_rc() {
+  # $CONFIG_RC
+  $COMMANDS_PATH/config/rc
+}
+
+clone_git() {
+  # install
+  if [ ! -d $ZMICRO_HOME ]; then
+    git clone $ZMICRO_GIT -b $ZMICRO_VERSION $ZMICRO_HOME
+    # git clone $ZMICRO_GIT -b master $ZMICRO_HOME
+  else
+    echo "Already Installed, if you want to update, run 'zmicro update'"
+  fi
+}
+
+init() {
+  config_rc
+  # config_version
+  # config_dir
+  # config_log
+  # config_git
+
+  $ZMICRO_BIN_PATH/zmicro config version
+  $ZMICRO_BIN_PATH/zmicro config log
+  $ZMICRO_BIN_PATH/zmicro config data
+  # $ZMICRO_BIN_PATH/zmicro config git
+
+  # $ZMICRO_BIN_PATH/zmicro config git $USER $USER"@local"
+  $ZMICRO_BIN_PATH/zmicro config git $GIT_USERNAME $GIT_EMAIL
+
+  clone_git
+
+  # install_dependencies
+}
+
+init

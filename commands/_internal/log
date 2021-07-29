@@ -1,0 +1,51 @@
+#!/bin/bash
+
+log_with_options() {
+  options="deuvwt"
+  while getopts "$options" option; do
+    # echo "option: $option"
+    case $option in
+      d)
+        tail -f $ZMICRO_LOG_DEBUG_PATH
+        exit 0
+        ;;
+      e)
+        tail -f $ZMICRO_LOG_ERROR_PATH
+        exit 0
+        ;;
+      u)
+        # echo "Visit Update Log"
+        tail $ZMICRO_LOG_UPDATE_PATH
+        exit 0
+        ;;
+      n)
+        tail $ZMICRO_LOG_NOTIFY_PATH
+        exit 0
+        ;;
+      v)
+        # echo "Visit Version Log"
+        tail $ZMICRO_LOG_VERSION_PATH
+        exit 0
+        ;;
+      w)
+        tail -n 100 -f $ZMICRO_LOG_COMMON_PATH
+        exit 0
+        ;;
+      t)
+        # echo "Visit Command Log"
+        tail $ZMICRO_LOG_COMMON_PATH
+        exit 0
+        ;;
+      ?)
+        echo "Unknown option ${options} in log command"
+        # cat $ZMICRO_LOG_COMMON_PATH
+        exit -1
+        ;;
+    esac
+  done
+
+  # Fall back
+  tail -n 100 $ZMICRO_LOG_COMMON_PATH
+}
+
+log_with_options $@

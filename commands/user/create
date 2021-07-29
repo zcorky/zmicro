@@ -1,0 +1,53 @@
+#!/bin/bash
+
+create_user() {
+  USERNAME=$1
+
+  if [ "$USERNAME" = "" ]; then
+    echo "Error: Username is required."
+    exit 1
+  fi
+
+  id -u $USERNAME >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "Ignored, causes user (${USERNAME}) already created before."
+    # exit 0
+    return 
+  fi
+
+  sudo useradd \
+    -s /bin/zsh \
+    -m \
+    $USERNAME
+
+  if [ "$?" = "0" ]; then
+    echo "User (${USERNAME}) created successfully."
+    # exit 0
+    return
+  fi
+}
+
+USERNAME=$1
+
+echo "create user: $USERNAME"
+create_user $USERNAME
+
+# command $1
+
+# case $command in
+#   create)
+#     create_user
+#     ;;
+#   # config)
+#   #   $COMMANDS_PATH/config/$args
+#   #   ;;
+#   # install)
+#   #   $COMMANDS_PATH/install/$args
+#   #   ;;
+#   # run)
+#   #   $COMMANDS_PATH/run/$args
+#   #   ;;
+#   *)
+#     echo "unknown command ${command}"
+#     exit 1
+# esac

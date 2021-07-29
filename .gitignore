@@ -1,0 +1,10 @@
+data/
+logs/
+log/
+bin/
+!plugins/*/bin
+*_tmp
+*.swp
+code
+.env
+

@@ -1,0 +1,210 @@
+#!/bin/bash
+
+os_homedir() {
+  echo $HOME
+}
+
+os_username() {
+  echo $USER
+}
+
+os_shell() {
+  echo $SHELL
+}
+
+os_shell_profile() {
+  if [ "$(os_is_zsh)" = "true" ]; then
+    echo "$HOME/.zshrc"
+  elif [ "$(os_is_bash)" = "true" ]; then
+    echo "$HOME/.bashrc"
+  else
+    echo "$HOME/.profile"
+  fi
+}
+
+os_hostname() {
+  echo $HOST
+}
+
+os_uptime() {
+  echo $(uptime -p)
+}
+
+os_arch() {
+  echo $(uname -m)
+}
+
+os_release() {
+  local issue=""
+
+  # Red Hat
+  # cat /proc/version | grep "Red Hat" >> /dev/null 2&>1
+  # if [ "$?" != "0" ]; then
+  #   echo $(cat /proc/version | grep -o "Red Hat [^-]*")
+  #   return
+  # fi
+
+  which lsb_release >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    issue=$(lsb_release -d)
+  else
+    issue=$(cat /etc/issue)
+  fi
+
+  local array=$issue
+  local res=""
+
+  for element in $array; do
+    # echo "element: $element"
+    if [ "$element" = "\n" ]; then
+      continue
+    fi
+
+    if [ "$element" = "\l" ]; then
+      continue
+    fi
+
+    if [ "$element" = "Description:" ]; then
+      continue
+    fi
+
+    # core
+    if [ "$res" = "" ]; then
+      res=$element
+    else
+      res="$res $element"
+    fi
+  done
+
+  echo $res
+}
+
+os_kernel() {
+  echo $(uname -s)
+}
+
+os_pwd() {
+  echo $PWD
+}
+
+os_tmp() {
+  echo /tmp
+}
+
+#
+os_is_bash() {
+  set +e
+  echo $(os_shell) | grep -o bash >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    echo "false"
+    return
+  fi
+
+  echo "true"
+  set -e
+}
+
+os_is_zsh() {
+  set +e
+  echo $(os_shell) | grep -o zsh >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    echo "false"
+    return
+  fi
+
+  echo "true"
+  set -e
+}
+
+os_is_macos() {
+  local kernel=$(os_kernel)
+
+  if [ "$kernel" = "Darwin" ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+os_is_linux() {
+  local kernel=$(os_kernel)
+
+  if [ "$kernel" = "Linux" ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+os_is_centos() {
+  which yum >> /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+os_is_ubuntu() {
+  which apt >> /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+os_is_alpine() {
+  which apk >> /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+os_is_archlinux() {
+  which pacman >> /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+os_is_federa() {
+  which dnf >> /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+os_top() {
+  htop -t
+}
+
+export -f os_homedir
+export -f os_username
+export -f os_shell
+export -f os_shell_profile
+export -f os_hostname
+export -f os_uptime
+export -f os_kernel
+
+export -f os_pwd
+export -f os_tmp
+
+export -f os_is_bash
+export -f os_is_zsh
+export -f os_is_linux
+export -f os_is_macos
+
+export -f os_is_centos
+export -f os_is_ubuntu
+export -f os_is_alpine
+export -f os_is_archlinux
+export -f os_is_federa
+
+export -f os_top

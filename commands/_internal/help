@@ -1,0 +1,23 @@
+help() {
+  echo "
+Usage:  zmicro [options] COMMAND
+
+List of Main Commands:
+
+  config        Config rc | data | log | git
+  help          Show a helpful usage message
+  history       Show the transation history
+  install       Install an plugin
+  list          List all available versions
+  log           Show transaction / debug logs
+  package       Install | update | remove a package
+  plugin        Run a plugin
+  service       Run a service
+  screenfetch   Show screenfetch
+  update        Update version
+  use           Use version
+  version       Show version info
+"
+}
+
+help

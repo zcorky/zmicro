@@ -1,0 +1,18 @@
+#!/bin/bash
+
+NODEJS_VERSION=v14.16.1
+NVM_DIR=$HOME/.nvm
+
+update_nodejs() {
+  echo "Load NVM ..."
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+  echo "Update Node ${NODEJS_VERSION} ..."
+  
+  nvm install $NODEJS_VERSION
+  nvm use $NODEJS_VERSION
+
+  npm i -g cnpm yarn nrm @zcorky/projj @cliz/http-server @cliz/ip @cliz/zx
+}
+
+update_nodejs

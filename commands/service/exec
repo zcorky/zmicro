@@ -1,0 +1,51 @@
+#!/bin/bash
+
+load inquirer
+
+help() {
+  echo "Usage:"
+  echo "  zmicro service up <service_name> [options...]"
+}
+
+core() {
+  if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local default_command=sh
+
+  local service_name=$1
+  local _command=${@:2}
+  local command=${_command:-$default_command}
+
+  log_debug "[service][exec] command: $command"
+
+  local services=$(zmicro service ps $service_name --services)
+  local count=$(echo $services | wc -w)
+  log_debug "[service][exec] select services: $services, count: $count"
+
+  # No service found, maybe not start
+  if [ $count -eq 0 ]; then
+    log_error "you should start service first"
+    exit 1
+  fi
+
+  # Found only one service
+  if [ $count -eq 1 ]; then
+    zmicro_service_run $service_name exec $services $command
+    exit 0
+  fi
+
+  local services_for_select=($services)
+  inquirer_select "Select an service ?" services_for_select select_service
+  log_debug "[service][exec] select service: $select_service"
+
+  zmicro_service_run $service_name exec $select_service $command
+}
+
+run() {
+  core $@
+}
+
+run $@

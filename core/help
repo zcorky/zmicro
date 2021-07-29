@@ -1,0 +1,68 @@
+#!/bin/bash
+
+help() {
+  local base_commands_path=$1
+  local commands=${@:2}
+
+  local command_prefix=zmicro
+  # @TODO
+  local plugin_name=$(echo $base_command_path | grep -oe "plugins/([^\/]+)/commands" | cut -d "/" -f 2)
+  local is_mac_os=$(os_is_macos)
+  if [ "$is_mac_os" != "true" ]; then
+    plugin_name=$(echo $base_command_path | grep -oP "plugins/([^\/]+)/commands" | cut -d "/" -f 2)
+  fi
+
+  if [ "$plugin_name" != "" ]; then
+    command_prefix="zmicro plugin run $plugin_name"
+  fi
+
+  local help_commands_path=""
+  if [ "$plugin_name" = "" ] && ([ "$commands" = "" ] || [ "$commands" = "help" ]); then
+    help_commands_path=$ZMICRO_HOME/commands/_internal
+  else
+    help_commands_path=$base_commands_path
+
+    if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
+      for command in $commands; do
+        help_commands_path="$help_commands_path/$command"
+      done
+    fi
+  fi
+
+  if [ ! -d $help_commands_path ]; then
+    log_debug "Cannot found command path: $help_commands_path"
+    return
+  fi
+
+  # specify _help
+  if [ -f $help_commands_path/_help ]; then
+    $help_commands_path/_help
+    return
+  fi
+
+  # specify help
+  if [ -f $help_commands_path/help ]; then
+    $help_commands_path/help
+    return
+  fi
+
+  echo "Usage:"
+  echo ""
+  echo "  ${command_prefix} ${commands:-?} [args...]"
+  echo ""
+  # echo $(ls $COMMANDS_PATH)
+
+  local help_commands=$(ls $help_commands_path)
+  local help_command=""
+  for help_command in $help_commands; do
+    if [[ $help_command = _* ]]; then
+      continue
+    fi
+
+    echo "         $help_command"
+  done
+
+  echo ""
+}
+
+export -f help

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro machine vscode [options...]"
+  echo "    kill - Kill all vscode server progresses"
+}
+
+vscode_kill() {
+  if [ "$(os_is_centos)" = "true" ]; then
+    ps -Af | grep vscode-server | awk '{print $2}' | xargs kill
+  elif [ "$(os_is_ubuntu)" = "true" ]; then
+    ps -aux | grep vscode-server | awk '{print $2}' | xargs kill
+  else
+    log_error "Unknown system ..."
+    exit 1
+  fi
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  case $1 in
+    kill)
+      vscode_kill
+      ;;
+    *)
+      help
+      ;;
+  esac
+}
+
+run() {
+  core $@
+}
+
+run $@

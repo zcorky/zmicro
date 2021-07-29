@@ -1,0 +1,30 @@
+#!/bin/bash
+
+net_is_github_visitable() {
+  curl -I https://github.com --connect-timeout 1 >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    echo "false"
+  else
+    echo "true"
+  fi
+}
+
+net_is_google_visitable() {
+  curl -I https://google.com --connect-timeout 1 >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    echo "false"
+  else
+    echo "true"
+  fi
+}
+
+net_is_in_china() {
+  if [ "$(net_is_google_visitable)" === "false"]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+export -f net_is_in_china
+export -f net_is_github_visitable
