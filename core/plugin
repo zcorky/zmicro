@@ -38,7 +38,8 @@ plugin_unregister() {
   local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
 
   if [ ! -d $plugin_path/$plugin/bin ]; then
-    exit 0
+    # exit 0
+    return
   fi
 
   log_debug "[$(timestamps)][plugin] bins_path: $plugin_path/$plugin/bin"
