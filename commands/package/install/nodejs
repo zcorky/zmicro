@@ -60,7 +60,8 @@ install_nodejs() {
   done
 
   which nvm >>/dev/null 2>&1
-  if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+  # if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+  if [ "$?" != "0" ]; then
     install_nvm
   fi
 
