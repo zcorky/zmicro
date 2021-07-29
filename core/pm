@@ -35,7 +35,7 @@ pm() {
 # node npm
 pm_npm() {
   # @TODO
-  if [ "$(net_is_in_china)" = "true" ]; then
+  if [ "$(net_is_google_visitable)" = "false" ]; then
     export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
   fi
 
@@ -44,8 +44,8 @@ pm_npm() {
 
 pm_nvm() {
   # @TODO
-  if [ "$(net_is_in_china)" = "true" ]; then
-    export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist 
+  if [ "$(net_is_google_visitable)" = "false" ]; then
+    export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist
   fi
 
   nvm $@
