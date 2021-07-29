@@ -61,7 +61,8 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
 
       - name: Show Docker Tags
-        run: echo "Docker Tags: ${{ steps.meta.outputs.tags }}"
+        run: |
+          echo "Docker Tags: ${{ steps.meta.outputs.tags }}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
