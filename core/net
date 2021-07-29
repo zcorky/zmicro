@@ -19,7 +19,7 @@ net_is_google_visitable() {
 }
 
 net_is_in_china() {
-  if [ "$(net_is_google_visitable)" === "false"]; then
+  if [ "$(net_is_google_visitable)" = "false"]; then
     echo "true"
   else
     echo "false"
