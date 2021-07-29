@@ -7,3 +7,11 @@ fi
 
 . $ZMICRO_HOME/config/config
 $ZMICRO_HOME/bin/zmicro init
+
+echo ""
+echo "First install, you should source profile:"
+echo "  bash: source \$HOME/.bashrc"
+echo "  zsh: source \$HOME/.zshrc"
+echo "Then run update:"
+echo "  zmicro update"
+echo ""
