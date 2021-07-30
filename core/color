@@ -1,10 +1,10 @@
 #!/bin/bash
 
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-GRAY="\e[37m"
-ENDCOLOR="\e[0m"
+export RED="\e[31m"
+export GREEN="\e[32m"
+export YELLOW="\e[33m"
+export GRAY="\e[37m"
+export ENDCOLOR="\e[0m"
 
 if [ "$(os_is_macos)" = "true" ]; then
   RED="\033[31m"
@@ -13,7 +13,6 @@ if [ "$(os_is_macos)" = "true" ]; then
   GRAY="\033[37m"
   ENDCOLOR="\033[0m"
 fi
-
 
 color_success() {
   echo -e "${GREEN}${@}${ENDCOLOR}"

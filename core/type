@@ -168,10 +168,16 @@ array_each() {
 
   # @TODO GLOBAL, make outsize can get
   Z_ARRAY_INDEX=0
+  local index=0
   for element in $args; do
-    Z_ARRAY_INDEX=$((Z_ARRAY_INDEX + 1))
-    $fn $element
+    index=$((index + 1))
+    Z_ARRAY_INDEX=$index
+    $fn $index $element
   done
+}
+
+array_length() {
+  echo ${#@}
 }
 
 export -f get_args_length
@@ -187,3 +193,4 @@ export -f number_add
 
 export -f array_join
 export -f array_each
+export -f array_length

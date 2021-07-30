@@ -2,9 +2,8 @@ data/
 logs/
 log/
 bin/
-!plugins/*/bin
+plugins/
 *_tmp
 *.swp
 code
 .env
-

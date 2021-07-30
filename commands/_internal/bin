@@ -20,7 +20,7 @@ core() {
   case $1 in
   ls | list)
     print() {
-      echo "$Z_ARRAY_INDEX $(color_success $1)"
+      echo "$1 $(color_success ${@:2})"
     }
 
     array_each print $(ls $ZMICRO_BIN_PATH)

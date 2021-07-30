@@ -6,12 +6,40 @@ help() {
   echo ""
 }
 
-core() {
-  if [[ $# -eq 0 ]]; then
-    help
+update_one() {
+  local plugin_name=$1
+  local plugin_old_version=$(plugin_get_version $plugin_name)
+
+  local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
+  if [ ! -d $plugin_path ]; then
+    log "[$(timestamps)][plugin] not found"
     exit 0
   fi
 
+  log_info "[$(timestamps)][plugin] updating $plugin_name ..."
+
+  # Update @TODO
+  cd $plugin_path
+  git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>&1
+  if [ "$?" != "0" ]; then
+    log_error "[$(timestamps)][plugin: $plugin_name] update error $plugin_name ..."
+    exit 1
+  fi
+  # cd - >>/dev/null 2>&1
+
+  # register
+  plugin_register $plugin_name
+
+  local plugin_new_version=$(plugin_get_version $plugin_name)
+
+  if [ "$plugin_old_version" != "$plugin_new_version" ]; then
+    log_success "[$(timestamps)][plugin: $plugin_name] update success $plugin_name ($plugin_old_version => $(color_success $plugin_new_version))"
+  else
+    log_success "[$(timestamps)][plugin: $plugin_name] version not change ($plugin_old_version)"
+  fi
+}
+
+core() {
   while [[ $# -gt 0 ]]; do
     local key=$1
     local value=$2
@@ -30,29 +58,13 @@ core() {
     esac
   done
 
-  local plugin_name=$1
-  
-  local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
-  if [ ! -d $plugin_path ]; then
-    log "[$(timestamps)][plugin] not found"
-    exit 0
-  fi
+  fn() {
+    local name=$2
 
-  log_debug "[$(timestamps)][plugin] update $plugin_name"
+    update_one $name
+  }
 
-  # Update @TODO
-  cd $plugin_path
-  git pull origin master >> $ZMICRO_LOG_COMMON_PATH 2>&1
-  if [ "$?" != "0" ]; then
-    log_error "[$(timestamps)][plugin] update error $plugin_name ..."
-    exit 1
-  fi
-  cd - >> /dev/null 2>&1
-
-  # register
-  plugin_register $plugin_name
-
-  log_success "[$(timestamps)][plugin] update success $plugin_name"
+  plugin_each fn
 }
 
 run() {
