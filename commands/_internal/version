@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# version() {
-#   log "$ZMICRO_VERSION"
-# }
+version() {
+  local version=$(get_current_version)
+  echo $(color_green $version)
+}
 
-# version
-
-get_current_version
+version
