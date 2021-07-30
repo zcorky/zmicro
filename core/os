@@ -137,7 +137,7 @@ os_is_linux() {
 }
 
 os_is_centos() {
-  which yum >> /dev/null 2>&1
+  which yum >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
   else
@@ -146,7 +146,7 @@ os_is_centos() {
 }
 
 os_is_ubuntu() {
-  which apt >> /dev/null 2>&1
+  which apt >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
   else
@@ -155,7 +155,7 @@ os_is_ubuntu() {
 }
 
 os_is_alpine() {
-  which apk >> /dev/null 2>&1
+  which apk >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
   else
@@ -164,7 +164,7 @@ os_is_alpine() {
 }
 
 os_is_archlinux() {
-  which pacman >> /dev/null 2>&1
+  which pacman >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
   else
@@ -173,7 +173,7 @@ os_is_archlinux() {
 }
 
 os_is_federa() {
-  which dnf >> /dev/null 2>&1
+  which dnf >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
   else
@@ -183,6 +183,16 @@ os_is_federa() {
 
 os_top() {
   htop -t
+}
+
+os_is_command_exist() {
+  local command=$1
+  command -v $command >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
 }
 
 export -f os_homedir
@@ -208,3 +218,4 @@ export -f os_is_archlinux
 export -f os_is_federa
 
 export -f os_top
+export -f os_is_command_exist
