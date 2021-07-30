@@ -13,7 +13,7 @@ log_init() {
 }
 
 log_info() {
-  echo -e "${GREEN}ℹ${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e "$(color_green ℹ) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log_debug() {
@@ -21,15 +21,15 @@ log_debug() {
 }
 
 log_success() {
-  echo -e "${GREEN}✔${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+  echo "$(color_green ✔) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log_error() {
-  echo -e "${RED}✖${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
+  echo "$(color_red ✖) ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
 }
 
 log_warn() {
-  echo -e "${YELLOW}⚠${ENDCOLOR} ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e "$(color_yellow ⚠) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log() {

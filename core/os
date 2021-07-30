@@ -195,6 +195,15 @@ os_is_command_exist() {
   fi
 }
 
+os_is_support_color() {
+  # if [ "$(echo $PS1)" != "" ]; then
+  if [ "$TERM" = "xterm-256color" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 export -f os_homedir
 export -f os_username
 export -f os_shell
@@ -219,3 +228,4 @@ export -f os_is_federa
 
 export -f os_top
 export -f os_is_command_exist
+export -f os_is_support_color

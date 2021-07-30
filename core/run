@@ -36,11 +36,11 @@ run() {
       fi
 
       if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
-        echo -e "No such command: ${RED}$commands${ENDCOLOR}. use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
+        echo -e "No such command: $(color_red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
         echo ""
       fi
     fi
-    
+
     help $base_command_path $commands
     exit 1
   fi

@@ -15,27 +15,66 @@ if [ "$(os_is_macos)" = "true" ]; then
 fi
 
 color_success() {
+  if [ "$(os_is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
+
   echo -e "${GREEN}${@}${ENDCOLOR}"
 }
 
 color_error() {
+  if [ "$(os_is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
+
   echo -e "${RED}${@}${ENDCOLOR}"
 }
 
 color_warn() {
+  if [ "$(os_is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
+
   echo -e "${YELLOW}${@}${ENDCOLOR}"
 }
 
 color_disable() {
+  if [ "$(os_is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
+
   echo -e "${GRAY}${@}${ENDCOLOR}"
 }
 
 color_green() {
+  if [ "$(os_is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
+
   echo -e "${GREEN}${@}${ENDCOLOR}"
 }
 
 color_red() {
+  if [ "$(os_is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
+
   echo -e "${RED}${@}${ENDCOLOR}"
+}
+
+color_yellow() {
+  if [ "$(os_is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
+
+  echo -e "${YELLOW}${@}${ENDCOLOR}"
 }
 
 export -f color_success
@@ -45,3 +84,4 @@ export -f color_disable
 
 export -f color_green
 export -f color_red
+export -f color_yellow

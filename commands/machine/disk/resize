@@ -16,7 +16,7 @@ VOLUME1=/dev/nvme0n1
 VOLUME2=/dev/xvda
 VOLUME3=/dev/vda
 
-df -Th | grep $VOLUME1 >> /dev/null 2>&1
+df -Th | grep $VOLUME1 >>/dev/null 2>&1
 if [ "$?" = "0" ] && [ "$VOLUME" = "" ]; then
   VOLUME=$VOLUME1
   PARTITION=${VOLUME}p1
@@ -41,7 +41,7 @@ if [ "$VOLUME" = "" ]; then
   exit 1
 fi
 
-# WARN: unknown label 
+# WARN: unknown label
 #   failed [sfd_dump:1] sfdisk --unit=S --dump /dev/xvda1
 #   sfdisk: /dev/xvda1: does not contain a recognized partition table
 #   FAILED: failed to dump sfdisk info for /dev/xvda1
@@ -52,9 +52,9 @@ sudo growpart $VOLUME 1
 
 # XFS
 # which xfs_growfs >> /dev/null 2>&1
-cat /etc/fstab  | grep xfs >> /dev/null 2>&1
+cat /etc/fstab | grep xfs >>/dev/null 2>&1
 if [ "$?" = "0" ]; then
-  sudo xfs_growfs -d / >> /dev/null
+  sudo xfs_growfs -d / >>/dev/null
   echo -e "\n4.(XFS) Resize Disk Successfully"
   df -h
   exit 0
@@ -62,9 +62,9 @@ fi
 
 # EXT4
 # which resize2fs >> /dev/null 2>&1
-cat /etc/fstab  | grep ext4 >> /dev/null 2>&1
+cat /etc/fstab | grep ext4 >>/dev/null 2>&1
 if [ "$?" = "0" ]; then
-  sudo resize2fs $PARTITION >> /dev/null
+  sudo resize2fs $PARTITION >>/dev/null
   echo -e "\n4.(EXT4) Resize Disk Successfully"
   df -h
   exit 0
@@ -72,4 +72,4 @@ fi
 
 cat /etc/fstab
 echo ""
-echo -e "${RED}Error: Unknown File System${ENDCOLOR}"
+log_error "Error: Unknown File System"
