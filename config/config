@@ -1,8 +1,5 @@
 #!/bin/bash
 
-export RED="\e[31m"
-export GREEN="\e[32m"
-export ENDCOLOR="\e[0m"
 export TODAY=$(date +%Y-%m-%d)
 
 # Core
