@@ -30,7 +30,18 @@ color_disable() {
   echo -e "${GRAY}${@}${ENDCOLOR}"
 }
 
+color_green() {
+  echo -e "${GREEN}${@}${ENDCOLOR}"
+}
+
+color_red() {
+  echo -e "${RED}${@}${ENDCOLOR}"
+}
+
 export -f color_success
 export -f color_error
 export -f color_warn
 export -f color_disable
+
+export -f color_green
+export -f color_red
