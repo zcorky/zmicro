@@ -204,6 +204,66 @@ os_is_support_color() {
   fi
 }
 
+os_cpu_usage() {
+  top -bn1 | grep load | awk '{printf "%.2f", $(NF-2)}'
+}
+
+os_memory_usage() {
+  # unit: MB
+  # used total percent
+
+  local type=$1
+  local all=$(free -m | awk 'NR==2{printf "%s/%sMB (%.2f%%)", $3,$2,$3*100/$2 }')
+
+  case $type in
+  used)
+    echo $all | awk -F '/' '{print $1}'
+    ;;
+  total)
+    echo $all | awk -F '[/M]' '{print $2}'
+    ;;
+  percent)
+    echo $all | awk -F '[(%]' '{print $2}'
+    ;;
+  *)
+    echo $all
+    ;;
+  esac
+}
+
+os_disk_usage() {
+  # unit: GB
+  # used total percent
+
+  local type=$1
+  local all=$(df -h | awk '$NF=="/"{printf "%d/%dGB (%s)", $3,$2,$5}')
+
+  case $type in
+  used)
+    echo $all | awk -F '/' '{print $1}'
+    ;;
+  total)
+    echo $all | awk -F '[/G]' '{print $2}'
+    ;;
+  percent)
+    echo $all | awk -F '[(%]' '{print $2}'
+    ;;
+  *)
+    echo $all
+    ;;
+  esac
+}
+
+os_system_usage() {
+  echo "cpu: $(os_cpu_usage)
+memory: $(os_memory_usage)
+disk: $(os_disk_usage)"
+}
+
+os_network_ip() {
+  dig +short myip.opendns.com @resolver1.opendns.com
+}
+
 export -f os_homedir
 export -f os_username
 export -f os_shell
@@ -229,3 +289,10 @@ export -f os_is_federa
 export -f os_top
 export -f os_is_command_exist
 export -f os_is_support_color
+
+export -f os_cpu_usage
+export -f os_memory_usage
+export -f os_disk_usage
+export -f os_system_usage
+
+export -f os_network_ip
