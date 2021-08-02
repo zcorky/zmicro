@@ -8,23 +8,23 @@ help() {
   echo "    -p, --percent Get used percent"
 }
 
-disk_percent() {
-  local VOLUME=$(zmicro machine disk volume)
-  disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $5}'`
-  echo -e "${disk_usage}"
-}
+# disk_percent() {
+#   local VOLUME=$(zmicro machine disk volume)
+#   disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $5}'`
+#   echo -e "${disk_usage}"
+# }
 
-disk_used() {
-  local VOLUME=$(zmicro machine disk volume)
-  disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $3}'`
-  echo -e "${disk_usage}"
-}
+# disk_used() {
+#   local VOLUME=$(zmicro machine disk volume)
+#   disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $3}'`
+#   echo -e "${disk_usage}"
+# }
 
-disk_total() {
-  local VOLUME=$(zmicro machine disk volume)
-  disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $2}'`
-  echo -e "${disk_usage}"
-}
+# disk_total() {
+#   local VOLUME=$(zmicro machine disk volume)
+#   disk_usage=`df -h | grep $VOLUME | awk -F '[ %]+' '{print $2}'`
+#   echo -e "${disk_usage}"
+# }
 
 core() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -35,16 +35,16 @@ core() {
   local option=$1
   case $option in
     "")
-      disk_percent
+      os_disk_usage percent
       ;;
     -u | --used)
-      disk_used
+      os_disk_usage used
       ;;
     -t | --total)
-      disk_total
+      os_disk_usage total
       ;;
     -p | --percent)
-      disk_percent
+      os_disk_usage percent
       ;;
     *)
       help
