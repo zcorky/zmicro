@@ -12,11 +12,20 @@ os_shell() {
   echo $SHELL
 }
 
+os_bash_profile() {
+  echo "$HOME/.bashrc"
+}
+
+os_zsh_profile() {
+  echo "$HOME/.zshrc"
+}
+
+
 os_shell_profile() {
   if [ "$(os_is_zsh)" = "true" ]; then
-    echo "$HOME/.zshrc"
+    os_zsh_profile
   elif [ "$(os_is_bash)" = "true" ]; then
-    echo "$HOME/.bashrc"
+    os_bash_profile
   else
     echo "$HOME/.profile"
   fi
