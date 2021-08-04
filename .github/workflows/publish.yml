@@ -1,4 +1,4 @@
-name: Publish NPM Package
+name: Publish Docker Package
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
         uses: whatwewant/action-robot-feishu@v0.0.13
         with:
           url: ${{ secrets.DOCKER_VERSION_FEISHU_BOT_WEBHOOK_URL }}
-          title: '✅ NPM 发布：${{ github.repository }}'
+          title: '✅ Docker 发布：${{ github.repository }}'
           text: |
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
@@ -31,7 +31,7 @@ jobs:
         uses: whatwewant/action-robot-feishu@v0.0.13
         with:
           url: ${{ secrets.DOCKER_VERSION_FEISHU_BOT_WEBHOOK_URL }}
-          title: '❌ NPM 发布：${{ github.repository }}'
+          title: '❌ Docker 发布：${{ github.repository }}'
           text: |
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
