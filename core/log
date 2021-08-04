@@ -6,7 +6,7 @@ log_init() {
     sudo mkdir -p /var/log
   fi
 
-  if [ ! -f $ZMICRO_LOG_PATH ]; then
+  if [ ! -d $ZMICRO_LOG_PATH ]; then
     sudo mkdir -p $ZMICRO_LOG_PATH
     sudo chown -R ${USER:-root} $ZMICRO_LOG_PATH
   fi
