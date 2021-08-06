@@ -16,6 +16,10 @@ plugin_commands_path=$plugin_base_path/commands
 # echo "plugin_name: $plugin_name"
 # echo "plugin_command: $plugin_command"
 
-# before run, load config
+# before run
+#   1. load config
 load_config $plugin_config_path
+#   2. load user config
+load_user_config
+
 run $plugin_commands_path "-" $plugin_command

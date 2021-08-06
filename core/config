@@ -50,6 +50,10 @@ load_config_dir() {
   done
 }
 
+load_user_config() {
+  [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
+}
+
 zmicro_config_get() {
   # If not found, return empty string
   if [ ! -f $ZMICRO_RC ]; then
@@ -102,6 +106,8 @@ export -f load_config_file
 export -f load_config_dir
 
 export -f load_config
+
+export -f load_user_config
 
 export -f zmicro_config_list
 export -f zmicro_config_get
