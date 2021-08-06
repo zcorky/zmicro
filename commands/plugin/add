@@ -35,6 +35,11 @@ core() {
   local plugin_version=${3:-master}
   local plugin_path=$(plugin_path $plugin_name)
 
+  if [ "$plugin_name" = "" ] || [ "$plugin_url" = "" ]; then
+    log_error "[$(timestamps)][plugin] plugin name and url is required"
+    exit 1
+  fi
+
   log_info "[$(timestamps)][plugin] add $(color_green $plugin_name)($plugin_url) version: $plugin_version"
 
   if [ "$(plugin_exist $plugin_name)" = "true" ]; then
