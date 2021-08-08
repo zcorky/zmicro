@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Refernence: https://askubuntu.com/questions/599808/cannot-set-lc-ctype-to-default-locale-no-such-file-or-directory
+
+help() {
+  echo "Usage:"
+  echo "  zmicro config locale"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local ENV_PATH=/etc/environment
+  if [ -f $ENV_PATH ]; then
+    cat $ENV_PATH | grep "ZMICRO LOCALE" >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "# ZMICRO LOCALE" | sudo tee -a $ENV_PATH
+      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH
+      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH
+      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH
+    fi
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@
