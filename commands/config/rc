@@ -5,9 +5,9 @@ config_rc() {
   export PATH=$ZMICRO_BIN_PATH:$PATH
 
   if [ -f $HOME/.bashrc ]; then
-    cat $HOME/.bashrc | grep ZMICRO_BIN_PATH >> /dev/null 2>&1
+    cat $HOME/.bashrc | grep ZMICRO_BIN_PATH >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
-      cat << EOF >> $HOME/.bashrc
+      cat <<EOF >>$HOME/.bashrc
 
 # ZMICRO
 export ZMICRO_HOME=${ZMICRO_HOME}
@@ -18,9 +18,9 @@ EOF
   fi
 
   if [ -f $HOME/.zshrc ]; then
-    cat $HOME/.zshrc | grep ZMICRO_BIN_PATH >> /dev/null 2>&1
+    cat $HOME/.zshrc | grep ZMICRO_BIN_PATH >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
-      cat << EOF >> $HOME/.zshrc
+      cat <<EOF >>$HOME/.zshrc
       
 # ZMICRO
 export ZMICRO_HOME=${ZMICRO_HOME}

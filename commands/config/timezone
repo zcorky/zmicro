@@ -1,0 +1,41 @@
+#!/bin/bash
+
+DEFAULT_TIMEZONE=Asia/Shanghai
+
+help() {
+  echo "Usage:"
+  echo "  zmicro config timezone [TIMEZONE]"
+  echo ""
+  echo "    Default timezone: Asia/Shanghai"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local _timezone=$1
+  local timezone=${_timezone:-$DEFAULT_TIMEZONE}
+  log_debug "timezone: $timezone"
+
+  # Show current timezone
+  # timedatectl status
+
+  # List all available timezones
+  # timedatectl list-timezones
+
+  # Set timezone
+  sudo timedatectl set-timezone $timezone
+  if [ "$?" != "0" ]; then
+    log_error "Failed to set timezone: $timezone"
+  else
+    log_success "Current timezone: $timezone"
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@
