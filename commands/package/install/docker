@@ -10,7 +10,7 @@ TMP_INSTALL_SCRIPT=/tmp/get-docker.sh
 #
 is_docker_installed() {
   if [ ! -f $COMPOSE_BIN_PATH ]; then
-    log "Docker Compose not found"
+    log_debug "[is_docker_installed] Docker Compose not found"
     return 1
   fi
 
@@ -79,6 +79,11 @@ clean() {
 }
 
 install_docker() {
+  if [ "$(os_is_docker)" = "true" ]; then
+    log_warn "You are in docker env, use bind /var/run/docker.sock instead of."
+    return 
+  fi
+
   log "Install Docker ..."
 
   try_to_remove_podman

@@ -13,6 +13,8 @@ core() {
     exit 0
   fi
 
+  # @TODO /etc/environment does not be loaded by zsh
+  #   so, load it to shell profile
   local ENV_PATH=/etc/environment
   if [ -f $ENV_PATH ]; then
     cat $ENV_PATH | grep "ZMICRO LOCALE" >>/dev/null 2>&1
@@ -21,6 +23,29 @@ core() {
       echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH
       echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH
       echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH
+    fi
+  fi
+
+  # @TODO
+  local BASHRC_PATH=$HOME/.bashrc
+  if [ -f $BASHRC_PATH ]; then
+    cat $BASHRC_PATH | grep "ZMICRO LOCALE" >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "# ZMICRO LOCALE" | sudo tee -a $BASHRC_PATH
+      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH
+      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH
+      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH
+    fi
+  fi
+
+  local ZSHRC_PATH=$HOME/.zshrc
+  if [ -f $ZSHRC_PATH ]; then
+    cat $ZSHRC_PATH | grep "ZMICRO LOCALE" >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "# ZMICRO LOCALE" | sudo tee -a $ZSHRC_PATH
+      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH
+      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH
+      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH
     fi
   fi
 }

@@ -76,11 +76,17 @@ plugin_register_all() {
     local bins=$(ls $plugin_path/$plugin/bin)
     for bin in $bins; do
       local bin_path=$ZMICRO_HOME/bin/$bin
+      local plugin_bin_path=$plugin_path/$plugin/bin/$bin
 
       if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
         log_debug "[$(timestamps)][plugin] register $plugin bin: $bin"
 
-        ln -s $plugin_path/$plugin/bin/$bin $ZMICRO_HOME/bin/$bin
+        set +e
+        ln -s $plugin_bin_path $bin_path
+        if [ "$?" != "0" ]; then
+          log_warn "[$(timestamps)][plugin] failed to register $plugin bin: $bin"
+        fi
+        set -e
       fi
     done
   done

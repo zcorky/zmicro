@@ -10,6 +10,14 @@ config_rc() {
   $COMMANDS_PATH/config/rc
 }
 
+config_locale() {
+  $COMMANDS_PATH/config/locale
+}
+
+config_timezone() {
+  $COMMANDS_PATH/config/timezone
+}
+
 clone_git() {
   # install
   if [ ! -d $ZMICRO_HOME ]; then
@@ -22,6 +30,8 @@ clone_git() {
 
 init() {
   config_rc
+  config_locale
+  config_timezone
   # config_version
   # config_dir
   # config_log

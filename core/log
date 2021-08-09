@@ -7,8 +7,14 @@ log_init() {
   fi
 
   if [ ! -d $ZMICRO_LOG_PATH ]; then
+    # @TODO load core os utils
+    . $CORE_PATH/os
+
+    local current_user=$(os_username)
+    log_debug "[log_init] current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
+
     sudo mkdir -p $ZMICRO_LOG_PATH
-    sudo chown -R ${USER:-root} $ZMICRO_LOG_PATH
+    sudo chown -R $current_user $ZMICRO_LOG_PATH
   fi
 }
 

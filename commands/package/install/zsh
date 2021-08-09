@@ -30,10 +30,13 @@ if [ "$SHELL" != "$ZSH_SHELL" ]; then
   # Need Password ? See: https://askubuntu.com/questions/812420/chsh-always-asking-a-password-and-get-pam-authentication-failure
   # https://unix.stackexchange.com/questions/39881/running-chsh-does-not-change-shell
   echo "Change Shell: $SHELL => $ZSH_SHELL"
-  sudo usermod -s $ZSH_SHELL $USER
+  sudo usermod -s $ZSH_SHELL $(os_username)
 fi
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  export CHSH=no
+  export RUNZSH=no
+
   check_github_visitable
   if [ "$?" = "0" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

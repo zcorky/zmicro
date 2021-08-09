@@ -5,7 +5,19 @@ os_homedir() {
 }
 
 os_username() {
-  echo $USER
+  if [ "$USER" != "" ]; then
+    echo $USER
+    return
+  fi
+
+  local user=$(id -u -n)
+  if [ "$user" != "" ]; then
+    echo $user
+    return
+  fi
+
+  log_error "Cannot get user by os_username"
+  exit 1
 }
 
 os_shell() {
@@ -19,7 +31,6 @@ os_bash_profile() {
 os_zsh_profile() {
   echo "$HOME/.zshrc"
 }
-
 
 os_shell_profile() {
   if [ "$(os_is_zsh)" = "true" ]; then
@@ -190,6 +201,21 @@ os_is_federa() {
   fi
 }
 
+os_is_docker() {
+  if [ -f "/.dockerenv" ]; then
+    echo "true"
+    return
+  fi
+
+  cat /proc/self/cgroup | grep docker >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+    return
+  fi
+  
+  echo "false"
+}
+
 os_top() {
   htop -t
 }
@@ -294,6 +320,8 @@ export -f os_is_ubuntu
 export -f os_is_alpine
 export -f os_is_archlinux
 export -f os_is_federa
+
+export -f os_is_docker
 
 export -f os_top
 export -f os_is_command_exist

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro setup common [options...]"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  zmicro package setup common
+  
+  zmicro package install nodejs
+  zmicro package install go
+  zmicro package install deno
+  zmicro package install rust
+  zmicro package install python
+}
+
+run() {
+  set -e
+  core $@
+  set +e
+}
+
+run $@

@@ -16,6 +16,14 @@ realpath() {
   echo "$REALPATH"
 }
 
+is_run_init() {
+  if [ "$1" = "init" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 CURRENT_DIR=$(realpath $(dirname "$0"))
 CONFIGS_DIR=$CURRENT_DIR/../config
 
@@ -30,8 +38,8 @@ load_config $CONFIGS_DIR
 [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
 
 # INIT with ZMICRO_HOME
-if [ ! -d $ZMICRO_HOME ]; then
-  $COMMANDS_PATH/init | tee -a $ZMICRO_LOG_COMMON_PATH
+if [ "$(is_run_init $1)" = "true" ]; then
+  $COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
 fi
 
 # Run Commands

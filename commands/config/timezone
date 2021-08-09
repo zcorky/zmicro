@@ -26,11 +26,17 @@ core() {
   # timedatectl list-timezones
 
   # Set timezone
-  sudo timedatectl set-timezone $timezone
-  if [ "$?" != "0" ]; then
-    log_error "Failed to set timezone: $timezone"
+  if [ "$(os_is_docker)" = "true" ]; then
+    # @TODO
+    # date >> /dev/null 2>&1
+    log_warn "@TODO set timezone in docker"
   else
-    log_success "Current timezone: $timezone"
+    sudo timedatectl set-timezone $timezone
+    if [ "$?" != "0" ]; then
+      log_error "Failed to set timezone: $timezone"
+    else
+      log_success "Current timezone: $timezone"
+    fi
   fi
 }
 
