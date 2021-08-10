@@ -12,8 +12,9 @@ core() {
   fi
 
   zmicro package setup common
-  
-  zmicro package install nodejs
+
+  # node v16 cannot run in Mac M1, v14 is ok
+  zmicro package install nodejs -v v14
   zmicro package install go
   zmicro package install deno
   zmicro package install rust
