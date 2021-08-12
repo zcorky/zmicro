@@ -38,7 +38,7 @@ init() {
   # config_git
 
   $ZMICRO_BIN_PATH/zmicro config version
-  $ZMICRO_BIN_PATH/zmicro config log
+  $ZMICRO_BIN_PATH/zmicro config logs
   $ZMICRO_BIN_PATH/zmicro config data
   # $ZMICRO_BIN_PATH/zmicro config git
   $ZMICRO_BIN_PATH/zmicro config timezone

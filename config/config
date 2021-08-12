@@ -31,9 +31,12 @@ export ZMICRO_PLUGIN_REPO_PREFIX="$ZMICRO_PLUGIN_GITHUB/plugin-"
 export ZMICRO_SERVICE_PATH=$ZMICRO_HOME/services
 
 # Data
-export ZMICRO_DATA_PATH=/data
+export ZMICRO_APP_DATA_PATH=/data
+# Logs
+export ZMICRO_APP_LOGS_PATH=/logs
+
 # @TODO MAC
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_DATA_PATH=/opt/data
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
 
 export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin #$(realpath $(dirname "$0"))
 export CORE_PATH=$ZMICRO_HOME/core
@@ -41,8 +44,8 @@ export CONFIGS_PATH=$ZMICRO_HOME/config
 export COMMANDS_PATH=$ZMICRO_HOME/commands
 export SERVICES_PATH=$ZMICRO_HOME/services
 
-export DATA_INFLUX_PATH=$ZMICRO_DATA_PATH/influx
-export DATA_POSTGRES_PATH=$ZMICRO_DATA_PATH/postgres
+export DATA_INFLUX_PATH=$ZMICRO_APP_DATA_PATH/influx
+export DATA_POSTGRES_PATH=$ZMICRO_APP_DATA_PATH/postgres
 
 # DEFAULT GIT
 export GIT_USERNAME=$USER

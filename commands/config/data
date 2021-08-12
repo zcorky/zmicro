@@ -1,7 +1,8 @@
 #!/bin/bash
 
 config_data_dir() {
-  sudo mkdir -p $ZMICRO_DATA_PATH
+  sudo mkdir -p $ZMICRO_APP_DATA_PATH
+  sudo chown -R $(os_username) $ZMICRO_APP_DATA_PATH
 }
 
 config_data() {

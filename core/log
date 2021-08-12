@@ -1,6 +1,14 @@
 #!/bin/bash
 
 log_init() {
+  . $CORE_PATH/os
+  local current_user=$(os_username)
+
+  if [ "$current_user" = "" ]; then
+    log_error "log_init can not get current user."
+    exit 1
+  fi
+
   # echo "[init] config log"
   if [ ! -d /var/log ]; then
     sudo mkdir -p /var/log
@@ -8,14 +16,20 @@ log_init() {
 
   if [ ! -d $ZMICRO_LOG_PATH ]; then
     # @TODO load core os utils
-    . $CORE_PATH/os
-
-    local current_user=$(os_username)
-    log_debug "[log_init] current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
+    log_debug "[log_init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
 
     sudo mkdir -p $ZMICRO_LOG_PATH
     sudo chown -R $current_user $ZMICRO_LOG_PATH
   fi
+
+  if [ ! -d $ZMICRO_APP_LOGS_PATH ]; then
+    log_debug "[log_init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
+
+    sudo mkdir -p $ZMICRO_APP_LOGS_PATH
+    sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
+  fi
+
+  log_success "logs config done"
 }
 
 log_info() {
@@ -23,7 +37,7 @@ log_info() {
 }
 
 log_debug() {
-  echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
+  echo -e $@ >> $ZMICRO_LOG_DEBUG_PATH
 }
 
 log_success() {

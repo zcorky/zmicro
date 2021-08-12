@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Refernence: https://askubuntu.com/questions/599808/cannot-set-lc-ctype-to-default-locale-no-such-file-or-directory
+
+help() {
+  echo "Usage:"
+  echo "  zmicro config logs"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  # echo "[init] config logs"
+  log_init
+  
+  log_version $ZMICRO_VERSION $ZMICRO_VERSION
+}
+
+run() {
+  core $@
+}
+
+run $@
