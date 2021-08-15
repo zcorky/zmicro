@@ -207,12 +207,12 @@ os_is_docker() {
     return
   fi
 
-  cat /proc/self/cgroup | grep docker >> /dev/null 2>&1
+  cat /proc/self/cgroup | grep docker >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     echo "true"
     return
   fi
-  
+
   echo "false"
 }
 
@@ -299,6 +299,26 @@ os_network_ip() {
   dig +short myip.opendns.com @resolver1.opendns.com
 }
 
+os_machine_id() {
+  if [ "$(os_is_linux)" = "true" ]; then
+    local machine_id0=/var/lib/dbus/machine-id
+    local machine_id1=/etc/machine-id
+    if [ -f $machine_id0 ]; then
+      cat $machine_id0
+    elif [ -f $machine_id1 ]; then
+      cat $machine_id1
+    else
+      log_error "Cannot get machine id in linux"
+      exit 1
+    fi
+  elif [ "$(os_is_macos)" = "true" ]; then
+    echo $(ioreg -rd1 -c IOPlatformExpertDevice | grep "IOPlatformUUID" | awk -F '"' '{print $4}')
+  else
+    log_error "Cannot get machine id by unknown system"
+    exit 1
+  fi
+}
+
 export -f os_homedir
 export -f os_username
 export -f os_shell
@@ -333,3 +353,5 @@ export -f os_disk_usage
 export -f os_system_usage
 
 export -f os_network_ip
+
+export -f os_machine_id
