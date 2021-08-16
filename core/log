@@ -2,6 +2,8 @@
 
 log_init() {
   . $CORE_PATH/os
+  . $CORE_PATH/color
+
   local current_user=$(os_username)
 
   if [ "$current_user" = "" ]; then
