@@ -33,9 +33,9 @@ update_one() {
   local plugin_new_version=$(plugin_get_version $plugin_name)
 
   if [ "$plugin_old_version" != "$plugin_new_version" ]; then
-    log_success "[$(timestamps)][plugin: $plugin_name] update success $plugin_name ($plugin_old_version => $(color_success $plugin_new_version))"
+    log_success "[$(timestamps)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color_success $plugin_new_version))"
   else
-    log_success "[$(timestamps)][plugin: $plugin_name] version not change ($plugin_old_version)"
+    log_success "[$(timestamps)][plugin] $plugin_name version not change ($plugin_old_version)"
   fi
 }
 
@@ -57,6 +57,12 @@ core() {
       ;;
     esac
   done
+
+  local name=$1
+  if [ "$name" != "" ]; then
+    update_one $name
+    exit 0
+  fi
 
   fn() {
     local name=$2
