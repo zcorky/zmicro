@@ -25,17 +25,19 @@ is_run_init() {
 }
 
 CURRENT_DIR=$(realpath $(dirname "$0"))
-CONFIGS_DIR=$CURRENT_DIR/../config
+# CONFIGS_DIR=$CURRENT_DIR/../config
 
-# Load Base Config
-. $CONFIGS_DIR/config
-# Load Doreamon Fns
-. $CORE_PATH/load
+# # Load Base Config
+# . $CONFIGS_DIR/config
+# # Load Doreamon Fns
+# . $CORE_PATH/load
 
-# Load Config in CONFIGS_DIR
-load_config $CONFIGS_DIR
-# Load User Config
-[[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
+# # Load Config in CONFIGS_DIR
+# load_config $CONFIGS_DIR
+# # Load User Config
+# [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
+
+. $ZMICRO_HOME/core/env
 
 # INIT with ZMICRO_HOME
 if [ "$(is_run_init $1)" = "true" ]; then
