@@ -30,8 +30,13 @@ clone_git() {
 
 init() {
   config_rc
-  config_locale
-  config_timezone
+
+  # Do for MacOS
+  if [ "$(os_is_macos)" != "true" ]; then
+    config_locale
+    config_timezone
+  fi
+
   # config_version
   # config_dir
   # config_log
@@ -44,7 +49,7 @@ init() {
   $ZMICRO_BIN_PATH/zmicro config timezone
 
   # $ZMICRO_BIN_PATH/zmicro config git $USER $USER"@local"
-  $ZMICRO_BIN_PATH/zmicro config git $GIT_USERNAME $GIT_EMAIL
+  $ZMICRO_BIN_PATH/zmicro config git # $GIT_USERNAME $GIT_EMAIL
 
   clone_git
 

@@ -13,3 +13,9 @@ load_config $ZMICRO_CONFIG_PATH
 # Load User Config
 # @FIX install step doesnot generate ZMICRO_RC
 [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
+
+# Do for mac os
+if [ "$(os_is_macos)" = "true" ]; then
+  export ZMICRO_APP_LOGS_PATH=$HOME/.local/zmicro/logs
+  export ZMICRO_APP_DATA_PATH=$HOME/.local/zmicro/data
+fi

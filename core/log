@@ -17,18 +17,18 @@ log_init() {
   fi
 
   if [ ! -d $ZMICRO_LOG_PATH ]; then
-    # @TODO load core os utils
-    log_debug "[log_init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
-
     sudo mkdir -p $ZMICRO_LOG_PATH
     sudo chown -R $current_user $ZMICRO_LOG_PATH
+    
+    # @TODO load core os utils
+    log_debug "[log_init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
 
   if [ ! -d $ZMICRO_APP_LOGS_PATH ]; then
-    log_debug "[log_init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
-
     sudo mkdir -p $ZMICRO_APP_LOGS_PATH
     sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
+
+    log_debug "[log_init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
 
   log_success "logs config done"

@@ -7,19 +7,24 @@ config_git() {
   git config --global credential.helper store
   git config --global core.editor "vim"
 
-  if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
-    log_warn "Config Git: USERNAME and EMAIL is required"
-    exit 0
-  fi
+  # if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
+  #   log_warn "Config Git: USERNAME and EMAIL is required"
+  #   exit 0
+  # fi
 
-  local origin_name=$(git config --get user.name)
-  if [ "$origin_name" = "" ]; then
+  # local origin_name=$(git config --get user.name)
+  if [ "$USERNAME" != "" ]; then
     git config --global user.name "${USERNAME}"
+  else
+    # Default
+    git config --global user.name "${DEFAULT_GIT_USERNAME}"
   fi
 
-  local origin_email=$(git config --get user.name)
-  if [ "$origin_email" = "" ]; then
+  # local origin_email=$(git config --get user.name)
+  if [ "$EMAIL" != "" ]; then
     git config --global user.email "${EMAIL}"
+  else
+    git config --global user.email "${DEFAULT_GIT_EMAIL}"
   fi
 }
 
