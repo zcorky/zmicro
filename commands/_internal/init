@@ -2,22 +2,6 @@
 
 set -e
 
-# export CURRENT_DUR=$(realpath $(dirname "$0"))
-# CONFIG_RC=$CURRENT_DUR/config/rc
-
-config_rc() {
-  # $CONFIG_RC
-  $COMMANDS_PATH/config/rc
-}
-
-config_locale() {
-  $COMMANDS_PATH/config/locale
-}
-
-config_timezone() {
-  $COMMANDS_PATH/config/timezone
-}
-
 clone_git() {
   # install
   if [ ! -d $ZMICRO_HOME ]; then
@@ -29,27 +13,23 @@ clone_git() {
 }
 
 init() {
-  config_rc
+  PATH=$ZMICRO_BIN_PATH:$PATH
+  zmicro config rc
 
-  # Do for MacOS
+  zmicro config version
+  zmicro config logs
+  zmicro config data
+  # zmicro config git
+  # zmicro config timezone
+
+    # Do for MacOS
   if [ "$(os_is_macos)" != "true" ]; then
-    config_locale
-    config_timezone
+    zmicro config locale
+    zmicro config timezone
   fi
 
-  # config_version
-  # config_dir
-  # config_log
-  # config_git
-
-  $ZMICRO_BIN_PATH/zmicro config version
-  $ZMICRO_BIN_PATH/zmicro config logs
-  $ZMICRO_BIN_PATH/zmicro config data
-  # $ZMICRO_BIN_PATH/zmicro config git
-  $ZMICRO_BIN_PATH/zmicro config timezone
-
   # $ZMICRO_BIN_PATH/zmicro config git $USER $USER"@local"
-  $ZMICRO_BIN_PATH/zmicro config git # $GIT_USERNAME $GIT_EMAIL
+  zmicro config git # $GIT_USERNAME $GIT_EMAIL
 
   clone_git
 
