@@ -1,0 +1,37 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Usage:"
+  echo "  zmicro exec <shell_command> <shell_command_args...>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local shell_command=$1
+  local shell_command_args=${@:2}
+
+  # @TODO
+  set +e
+
+  type $fn >>/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    eval "$shell_command $shell_command_args"
+  else
+    log_error "$fn method is not not found"
+  fi
+
+  # @TODO
+  set -e
+}
+
+run() {
+  core $@
+}
+
+run $@
