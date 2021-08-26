@@ -37,7 +37,11 @@ CURRENT_DIR=$(realpath $(dirname "$0"))
 # # Load User Config
 # [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
 
-. $ZMICRO_HOME/core/env
+if [ "$ZMICRO_HOME" != "" ]; then
+  . $ZMICRO_HOME/core/env
+else
+  . $HOME/.zmicro/core/env
+fi
 
 # INIT with ZMICRO_HOME
 if [ "$(is_run_init $1)" = "true" ]; then
