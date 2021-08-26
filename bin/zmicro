@@ -38,7 +38,7 @@ CURRENT_DIR=$(realpath $(dirname "$0"))
 # [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
 
 # @TODO
-if [ "$ZMICRO_HOME" != "" ]; then
+if [ "$ZMICRO_HOME" = "" ]; then
   export ZMICRO_NAME=zmicro
   export ZMICRO_HOME=$HOME/.zmicro
   export ZMICRO_RC=$HOME/.zmicrorc
