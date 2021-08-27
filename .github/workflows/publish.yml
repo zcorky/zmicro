@@ -55,7 +55,8 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           # Custom Image: https://github.com/docker/metadata-action#inputs
-          images: whatwewant/zmicro,ghcr.io/whatwewant/zmicro
+          # images: whatwewant/zmicro,ghcr.io/whatwewant/zmicro
+          images: whatwewant/zmicro
           tags: |
             type=ref,event=branch
             type=semver,pattern=v{{version}}
