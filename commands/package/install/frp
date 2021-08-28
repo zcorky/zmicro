@@ -2,6 +2,12 @@
 
 FRP_VERSION=v0.37.1
 
+help() {
+  echo "Usage:"
+  echo "  zmicro package install frp <args...>"
+  echo ""
+}
+
 install() {
   local tmp_file=/tmp/frp.tar.gz
   local url=https://github.com/fatedier/frp/releases/download/${FRP_VERSION}/frp_${FRP_VERSION:1}_linux_amd64.tar.gz
@@ -12,4 +18,18 @@ install() {
   sudo mv frp_*_linux_amd64/{frps,frpc} /usr/bin
 }
 
-install
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  install
+  log_success "install frp success."
+}
+
+run() {
+  core $@
+}
+
+run $@

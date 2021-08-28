@@ -1,9 +1,33 @@
 #!/bin/bash
 
-if [ -f "/usr/bin/frps" ]; then
-  sudo rm /usr/bin/frps
-fi
+help() {
+  echo "Usage:"
+  echo "  zmicro package remove frp <args...>"
+  echo ""
+}
 
-if [ -f "/usr/bin/frpc" ]; then
-  sudo rm /usr/bin/frpc
-fi
+remove() {
+  if [ -f "/usr/bin/frps" ]; then
+    sudo rm /usr/bin/frps
+  fi
+
+  if [ -f "/usr/bin/frpc" ]; then
+    sudo rm /usr/bin/frpc
+  fi
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  remove
+  log_success "remove frp success."
+}
+
+run() {
+  core $@
+}
+
+run $@
