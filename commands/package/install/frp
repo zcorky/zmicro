@@ -2,10 +2,14 @@
 
 FRP_VERSION=v0.37.1
 
-local tmp_file=/tmp/frp.tar.gz
-local url=https://github.com/fatedier/frp/releases/download/${FRP_VERSION}/frp_${FRP_VERSION:1}_linux_amd64.tar.gz
-curl -fSL $url -o $tmp_file
-cd /tmp
-tar -zxvf $tmp_file
-rm $tmp_file
-sudo mv frp_*_linux_amd64/{frps,frpc} /usr/bin
+install() {
+  local tmp_file=/tmp/frp.tar.gz
+  local url=https://github.com/fatedier/frp/releases/download/${FRP_VERSION}/frp_${FRP_VERSION:1}_linux_amd64.tar.gz
+  curl -fSL $url -o $tmp_file
+  cd /tmp
+  tar -zxvf $tmp_file >>/dev/null 2>&1
+  rm $tmp_file
+  sudo mv frp_*_linux_amd64/{frps,frpc} /usr/bin
+}
+
+install
