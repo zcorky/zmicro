@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -f "/usr/bin/frps" ]; then
+  sudo rm /usr/bin/frps
+fi
+
+if [ -f "/usr/bin/frpc" ]; then
+  sudo rm /usr/bin/frpc
+fi
