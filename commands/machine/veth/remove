@@ -1,0 +1,51 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/commands/machine/veth/config
+
+remove_eth() {
+  local veth_name=$1
+  local veth_name_inner=${veth_name}-0
+  local veth_name_outer=${veth_name}-1
+
+  sudo ip link show ${veth_name_outer} >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    log_error "veth ${veth_name} not found."
+    exit 0
+  fi
+
+  sudo ip netns exec $NETWORK_NAMESPACE ip link del ${veth_name_inner}
+  log_success "veth ${veth_name} removed."
+}
+
+help() {
+  echo "Usage:"
+  echo "  zmicro machine veth create <ip>"
+  echo ""
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local network_ip=$1
+  if [ "$network_ip" = "" ]; then
+    log_error "ip is required"
+    exit 1
+  fi
+
+  # local network_name="zmicro_$(string_replace $network_ip . _)"
+
+  local last=$(string_split_last_element . $network_ip)
+  local last_second=$(string_split_last_second_element . $network_ip)
+  local network_name="zmicro_${last_second}${last}"
+
+  remove_eth $network_name $network_ip
+}
+
+run() {
+  core $@
+}
+
+run $@

@@ -1,0 +1,92 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/commands/machine/veth/config
+
+create_namespace() {
+  # 1. Create Namespace
+  sudo ip netns ls | grep $NETWORK_NAMESPACE >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    sudo ip netns add $NETWORK_NAMESPACE
+  fi
+
+  # 2. 设置网关
+  # sudo ip netns exec ${NETWORK_NAMESPACE} ip route add default via $NETWORK_GATEWAY
+}
+
+remove_namespace() {
+  sudo ip netns del $NETWORK_NAMESPACE
+}
+
+create_bridge() {
+  sudo ip link add ${NETWORK_BRIDGE} type bridge
+  sudo ip addr add ${NETWORK_GATEWAY}/24 dev ${NETWORK_BRIDGE}
+  sudo ip link set dev ${NETWORK_BRIDGE} up
+
+  # 允许流量转发
+  sudo iptables -L FORWARD -v | grep ${NETWORK_BRIDGE} >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    sudo iptables -A FORWARD -o ${NETWORK_BRIDGE} -j ACCEPT
+    sudo iptables -A FORWARD -i ${NETWORK_BRIDGE} -j ACCEPT
+
+    # @TODO
+    sudo iptables -t nat -A POSTROUTING -s ${NETWORK_MASK} -j MASQUERADE
+  fi
+}
+
+remove_bridge() {
+  sudo ip link del $NETWORK_BRIDGE
+
+  sudo iptables -L FORWARD -v | grep ${NETWORK_BRIDGE} >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sudo iptables -D FORWARD -o ${NETWORK_BRIDGE} -j ACCEPT
+    sudo iptables -D FORWARD -i ${NETWORK_BRIDGE} -j ACCEPT
+
+    # @TODO
+    sudo iptables -t nat -D POSTROUTING -s ${NETWORK_MASK} -j MASQUERADE
+  fi
+}
+
+create_veth() {
+  local veth_name=$1
+  local veth_ip=$2
+  local veth_name_0=${veth_name}-0
+  local veth_name_1=${veth_name}-1
+  # 2. Create Veth
+  sudo ip link add ${veth_name_0} type veth peer name ${veth_name_1}
+  # 3. Join Namespace
+  sudo ip link set ${veth_name_0} netns $NETWORK_NAMESPACE
+
+  # 4. Assign IP
+  sudo ip netns exec $NETWORK_NAMESPACE ip addr add ${veth_ip}/24 dev ${veth_name_0}
+  sudo ip netns exec $NETWORK_NAMESPACE ip link set dev ${veth_name_0} up
+
+  #
+  sudo ip link set ${veth_name_1} master ${NETWORK_BRIDGE}
+  sudo ip link set dev ${veth_name_1} up
+
+  # 添加默认网关
+  sudo ip netns exec $NETWORK_NAMESPACE ip route list | grep "default via" >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    sudo ip netns exec ${NETWORK_NAMESPACE} ip route add default via $NETWORK_GATEWAY
+  fi
+}
+
+remove_eth() {
+  sudo ip netns exec $NETWORK_NAMESPACE ip link del $1-0
+}
+
+create() {
+  create_bridge
+  create_namespace
+  #
+  create_veth zmicro_veth10 192.168.15.10
+  create_veth zmicro_veth11 192.168.15.11
+}
+
+remove() {
+  remove_eth zmicro_veth10
+  remove_eth zmicro_veth11
+
+  remove_namespace
+  remove_bridge
+}

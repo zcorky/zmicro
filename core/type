@@ -47,6 +47,18 @@ string_split_last_element() {
   echo $str | awk -F $seperator '{print $(NF-0)}'
 }
 
+string_split_last_second_element() {
+  local seperator=$1
+  local str=$2
+
+  if [ "$seperator" = "" ] || [ "$str" = "" ]; then
+    log_error "seperator(\$1) and str(\$2) is required"
+    exit 1
+  fi
+
+  echo $str | awk -F $seperator '{print $(NF-1)}'
+}
+
 string_split_slice() {
   local seperator=$1
   local str=$2
@@ -96,13 +108,21 @@ string_replace() {
   local origin=$2
   local new=$3
 
-  if [ "$new" = "<>" ]; then
+  if [ "$new" = "<>" ] || [ "$new" = "" ]; then
     new=""
   fi
 
-  if [ "$base" = "" ] || [ "$origin" = "" ] || [ "$new" = "" ]; then
+  if [ "$base" = "" ] || [ "$origin" = "" ]; then
     log_error "base, origin, new is required"
     exit 1
+  fi
+
+  if [ "$origin" = "." ]; then
+    origin="\."
+  fi
+
+  if [ "$new" = "." ]; then
+    new="\."
   fi
 
   # @TODO
@@ -185,6 +205,7 @@ export -f get_args_length
 export -f string_split
 export -f string_split_length
 export -f string_split_last_element
+export -f string_split_last_second_element
 export -f string_replace
 
 export -f number_increase
