@@ -1,12 +1,12 @@
 #!/bin/bash
 
 load() {
-  if [ ! -d $ZMICRO_LOG_PATH ] || [ ! -w $ZMICRO_LOG_COMMON_PATH ]; then
+  if [ ! -d $ZMICRO_LOG_PATH ]; then
     . $CORE_PATH/log
     log_init
   fi
 
-  echo -e "$(date "+%Y-%m-%d %H:%M:%S")[CORE] load $1" >> $ZMICRO_LOG_DEBUG_PATH
+  echo -e "$(date "+%Y-%m-%d %H:%M:%S")[CORE] load $1" >>$ZMICRO_LOG_DEBUG_PATH
 
   local FN_PATH=$CORE_PATH/$1
 
@@ -32,7 +32,6 @@ load commander
 load plugin
 load pm
 load service
-
 
 # Cause Bug
 #   1. tput: No value for $TERM and no -T specified
