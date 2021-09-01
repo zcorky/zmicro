@@ -23,7 +23,31 @@ is_device() {
   echo "false"
 }
 
+is_mounted() {
+  if [ "$MOUNT_PATH" = "" ]; then
+    log_error "error: config MOUNT_PATH not load"
+    exit 1
+  fi
+
+  sudo mount | grep $MOUNT_PATH >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 remove() {
+  if [ "$(is_mounted)" = "true" ]; then
+    log_error "error: lvm mounted, you cannot remove device in mounted status"
+    log_error "  Data is important, so your should stop processes in $MOUNT_PATH,"
+    log_error "   then unmount device: /dev/$VG_NAME/$LV_NAME"
+    log_error "  "
+    log_error "  How to unmount:"
+    log_error "    $ sudo unmount /dev/$VG_NAME/$LV_NAME"
+    exit 1
+  fi
+
   local device=$1
   # /dev/sda => sda
   local deviceName=$(echo $device | sed -e "s%/dev/%%g")
@@ -45,7 +69,20 @@ remove() {
     exit 0
   fi
 
+  # 1.remove from volumn group(vg)
+  sudo vgreduce $VG_NAME $device
+  if [ "$?" != "0" ]; then
+    log_error "error: failed to remove lvm physical device from volume group"
+    exit 1
+  fi
+
+  # 2.remove from physical volume(pv)
   sudo pvremove $device
+  if [ "$?" != "0" ]; then
+    log_error "error: failed to remove lvm physical device from physical volume"
+    exit 1
+  fi
+
   log_success "remove lvm device success: ${device}"
 }
 

@@ -53,9 +53,16 @@ add() {
     sudo vgextend $VG_NAME $device
   fi
 
-  # 3.create a logical volume
-  local size=$(sudo lsblk | grep sda | awk '{print $4}')
-  sudo lvcreate -n $LV_NAME -L $size $VG_NAME
+  # 3.create or extend a logical volume
+  sudo lvs | grep $LV_NAME >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    # create
+    local size=$(sudo lsblk | grep ${deviceName} | awk '{print $4}')
+    sudo lvcreate -n $LV_NAME -L $size $VG_NAME
+  else
+    # extend
+    sudo lvextend -l +100%FREE /dev/$VG_NAME/$LV_NAME
+  fi
 
   # 4.format ext4
   if [ "$is_first_create" = "true" ]; then

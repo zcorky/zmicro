@@ -13,7 +13,11 @@ is_lvm_created() {
 }
 
 list() {
-  sudo pvs
+  # sudo pvs
+  # pvscan: phical volume scan
+  # vgscan: volume group scan
+  # lvscan: logic volume scan
+  sudo pvscan
 }
 
 help() {
