@@ -39,12 +39,14 @@ is_mounted() {
 
 remove() {
   if [ "$(is_mounted)" = "true" ]; then
-    log_error "error: lvm mounted, you cannot remove device in mounted status"
+    log_error "error: lvm is being mounted, you cannot remove device in mounted status"
     log_error "  Data is important, so your should stop processes in $MOUNT_PATH,"
     log_error "   then unmount device: /dev/$VG_NAME/$LV_NAME"
     log_error "  "
     log_error "  How to unmount:"
     log_error "    $ sudo unmount /dev/$VG_NAME/$LV_NAME"
+    log_error " "
+    log_error "  Then try to remove device again"
     exit 1
   fi
 
