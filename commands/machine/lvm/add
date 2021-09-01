@@ -12,6 +12,17 @@ is_lvm_created() {
   echo "true"
 }
 
+is_device() {
+  local device=$1
+  echo $device | grep "^/dev/" >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+    return
+  fi
+
+  echo "false"
+}
+
 add() {
   local device=$1
   # /dev/sda => sda
@@ -22,7 +33,7 @@ add() {
     exit 1
   fi
 
-  if [ "$deviceName" = "" ]; then
+  if [ "$(is_device $device)" = "false" ]; then
     log_error "device should start with /dev/*, but found: ${device}"
     exit 1
   fi
