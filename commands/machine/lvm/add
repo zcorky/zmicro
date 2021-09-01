@@ -1,0 +1,95 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/commands/machine/lvm/config
+
+is_lvm_created() {
+  sudo vgs | grep $VG_NAME >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    echo "false"
+    return
+  fi
+
+  echo "true"
+}
+
+add() {
+  local device=$1
+  # /dev/sda => sda
+  local deviceName=$(echo $device | sed -e "s%/dev/%%g")
+
+  if [ "$VG_NAME" = "" ] || [ "$LV_NAME" = "" ] || [ "$MOUNT_PATH" = "" ]; then
+    log_error "lvm config not load"
+    exit 1
+  fi
+
+  if [ "$deviceName" = "" ]; then
+    log_error "device should start with /dev/*, but found: ${device}"
+    exit 1
+  fi
+
+  # 1.initial physical volume
+  sudo pvs | grep $device >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    sudo pvcreate $device
+  fi
+
+  # 2.create a volume group
+  local is_first_create="false"
+  if [ "$(is_lvm_created)" = "false" ]; then
+    sudo vgcreate $VG_NAME $device
+    is_first_create="true"
+  else
+    sudo vgextend $VG_NAME $device
+  fi
+
+  # 3.create a logical volume
+  local size=$(sudo lsblk | grep sda | awk '{print $4}')
+  sudo lvcreate -n $LV_NAME -L $size $VG_NAME
+
+  # 4.format ext4
+  if [ "$is_first_create" = "true" ]; then
+    sudo mkfs.ext4 /dev/$VG_NAME/$LV_NAME
+  fi
+
+  # 5.mount path
+  sudo mount | grep $MOUNT_PATH >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    sudo mount /dev/$VG_NAME/$LV_NAME $MOUNT_PATH
+  fi
+
+  # 6.refresh device size
+  sudo resize2fs /dev/vgdevice/lvdevice >> /dev/null 2>&1
+
+  log_success "add lvm device success: ${device}(size: ${size})"
+}
+
+help() {
+  echo "Usage:"
+  echo "  zmicro machine lvm add <device>"
+  echo ""
+  echo "Example:"
+  echo "  add /dev/sda:"
+  echo "    zmicro machine lvm add /dev/sda"
+  echo ""
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local device=$1
+  if [ "$device" = "" ]; then
+    log_error "device is required"
+    exit 1
+  fi
+
+  add $device
+}
+
+run() {
+  core $@
+}
+
+run $@

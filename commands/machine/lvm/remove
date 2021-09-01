@@ -1,0 +1,70 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/commands/machine/lvm/config
+
+is_lvm_created() {
+  sudo vgs | grep $VG_NAME >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    echo "false"
+    return
+  fi
+
+  echo "true"
+}
+
+remove() {
+  local device=$1
+  # /dev/sda => sda
+  local deviceName=$(echo $device | sed -e "s%/dev/%%g")
+
+  if [ "$VG_NAME" = "" ] || [ "$LV_NAME" = "" ] || [ "$MOUNT_PATH" = "" ]; then
+    log_error "lvm config not load"
+    exit 1
+  fi
+
+  if [ "$deviceName" = "" ]; then
+    log_error "device should start with /dev/*, but found: ${device}"
+    exit 1
+  fi
+
+  # 1.initial physical volume
+  sudo pvs | grep $device >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    log_success "lvm device not found, maybe removed before"
+    exit 0
+  fi
+
+  sudo pvremove $device
+  log_success "remove lvm device success: ${device}"
+}
+
+help() {
+  echo "Usage:"
+  echo "  zmicro machine lvm remove <device>"
+  echo ""
+  echo "Example:"
+  echo "  remove /dev/sda:"
+  echo "    zmicro machine lvm remove /dev/sda"
+  echo ""
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local device=$1
+  if [ "$device" = "" ]; then
+    log_error "device is required"
+    exit 1
+  fi
+
+  remove $device
+}
+
+run() {
+  core $@
+}
+
+run $@

@@ -1,0 +1,3 @@
+VG_NAME=vgdevice
+LV_NAME=lvdevice
+MOUNT_PATH=/data/lvm
