@@ -1,0 +1,65 @@
+#!/bin/bash
+
+MEMORY_WARN_PERCENT=80
+MEMORY_KILL_PERCENT=90
+
+help() {
+  echo "Usage:"
+  echo "  zmicro machine mem monitor"
+  echo ""
+}
+
+core() {
+  local command="date"
+  local warn_percent=$MEMORY_WARN_PERCENT
+  local kill_percent=$MEMORY_KILL_PERCENT
+
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+      -h | --help)
+        help
+        exit 0
+        ;;
+      -e | --exec)
+        command=$value
+        shift # past key
+        shift # past value
+        ;;
+      -k | --kill-percent)
+        kill_percent=$value
+        shift # past key
+        shift # past value
+        ;;
+      -w | --warn-percent)
+        warn_percent=$value
+        shift # past key
+        shift # past value
+        ;;
+      *)
+        echo "ERROR: unknown parameter \"$key\""
+        help
+        exit 1
+        ;;
+    esac
+  done
+
+  while true; do
+    local usage=$(zmicro machine mem usage)
+    if [ $usage -gt $kill_percent ]; then
+      log_warn "memory(${usage}%) reached kill percent($kill_percent%), run: ${command}"
+      eval $command
+    elif [ $usage -gt $warn_percent ]; then
+      log_warn "memory used: ${usage}%"
+    fi
+
+    sleep 1
+  done
+}
+
+run() {
+  core $@
+}
+
+run $@
