@@ -3,7 +3,8 @@
 help() {
   echo "Usage:"
   echo "  zmicro machine vscode [options...]"
-  echo "    kill - Kill all vscode server progresses"
+  echo "    kill      Kill all vscode server progresses"
+  echo "    protect   Protect vscode"
 }
 
 vscode_monitor() {

@@ -38,12 +38,19 @@ CURRENT_DIR=$(realpath $(dirname "$0"))
 # [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
 
 # @TODO
-if [ "$ZMICRO_HOME" = "" ]; then
-  export ZMICRO_NAME=zmicro
-  export ZMICRO_HOME=$HOME/.zmicro
-  export ZMICRO_RC=$HOME/.zmicrorc
-  export ZMICRO_GIT=https://github.com/zcorky/zmicro
-fi
+# if [ "$ZMICRO_HOME" = "" ]; then
+#   export ZMICRO_NAME=zmicro
+#   # export ZMICRO_HOME=$HOME/.zmicro
+#   # export ZMICRO_RC=$HOME/.zmicrorc
+#   export ZMICRO_HOME=$CURRENT_DIR/../../.zmicro
+#   export ZMICRO_RC=$CURRENT_DIR/../../.zmicrorc
+#   export ZMICRO_GIT=https://github.com/zcorky/zmicro
+# fi
+
+export ZMICRO_NAME=zmicro
+export ZMICRO_HOME=$CURRENT_DIR/../../.zmicro
+export ZMICRO_RC=$CURRENT_DIR/../../.zmicrorc
+export ZMICRO_GIT=https://github.com/zcorky/zmicro
 
 . $ZMICRO_HOME/core/env
 
@@ -81,5 +88,9 @@ fi
 #     run $COMMANDS_PATH $ZMICRO_PLUGIN_PATH $@
 #     ;;
 # esac
+
+# @TODO
+COMMANDS_PATH=$CURRENT_DIR/../commands
+ZMICRO_PLUGIN_PATH=$CURRENT_DIR/../plugins
 
 run $COMMANDS_PATH $ZMICRO_PLUGIN_PATH $@

@@ -32,6 +32,7 @@ load commander
 load plugin
 load pm
 load service
+load daemon
 
 # Cause Bug
 #   1. tput: No value for $TERM and no -T specified
