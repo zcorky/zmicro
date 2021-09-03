@@ -6,6 +6,10 @@ help() {
   echo "    kill - Kill all vscode server progresses"
 }
 
+vscode_monitor() {
+  zmicro machine mem monitor --exec "zmicro machine vscode kill" -t 90
+}
+
 vscode_kill() {
   if [ "$(os_is_centos)" = "true" ]; then
     ps -Af | grep vscode-server | awk '{print $2}' | xargs kill
@@ -26,6 +30,9 @@ core() {
   case $1 in
     kill)
       vscode_kill
+      ;;
+    monitor)
+      vscode_monitor
       ;;
     *)
       help
