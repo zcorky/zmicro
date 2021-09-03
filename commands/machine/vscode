@@ -21,6 +21,10 @@ vscode_kill() {
   fi
 }
 
+vscode_protect() {
+  vscode_monitor
+}
+
 core() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     help
@@ -33,6 +37,9 @@ core() {
       ;;
     monitor)
       vscode_monitor
+      ;;
+    protect)
+      vscode_protect
       ;;
     *)
       help
