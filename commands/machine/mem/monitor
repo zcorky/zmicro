@@ -1,18 +1,19 @@
 #!/bin/bash
 
-MEMORY_WARN_PERCENT=80
-MEMORY_KILL_PERCENT=90
+DEFAULT_THRESHOLD_PERCENT=90
 
 help() {
   echo "Usage:"
   echo "  zmicro machine mem monitor"
   echo ""
+  echo "Options:"
+  echo "  -e, --exec <COMMAND>  Run command in threshold percent"
+  echo "  -t, --threshold       Threshold, unit: percent (0 - 100), default: 90"
 }
 
 core() {
-  local command="date"
-  local warn_percent=$MEMORY_WARN_PERCENT
-  local kill_percent=$MEMORY_KILL_PERCENT
+  local command=""
+  local threshold_percent=$DEFAULT_THRESHOLD_PERCENT
 
   while [[ $# -gt 0 ]]; do
     local key=$1
@@ -27,13 +28,8 @@ core() {
         shift # past key
         shift # past value
         ;;
-      -k | --kill-percent)
-        kill_percent=$value
-        shift # past key
-        shift # past value
-        ;;
-      -w | --warn-percent)
-        warn_percent=$value
+      -t | --threshold)
+        threshold_percent=$value
         shift # past key
         shift # past value
         ;;
@@ -47,11 +43,11 @@ core() {
 
   while true; do
     local usage=$(zmicro machine mem usage)
-    if [ $usage -gt $kill_percent ]; then
-      log_warn "memory(${usage}%) reached kill percent($kill_percent%), run: ${command}"
+    if [ $usage -gt $threshold_percent ]; then
+      log_info "memory usage(${usage}%) reached threshold percent($kill_percent%), run: ${command}"
       eval $command
-    elif [ $usage -gt $warn_percent ]; then
-      log_warn "memory used: ${usage}%"
+    else
+      echo "memory usage: $usage%"
     fi
 
     sleep 1
