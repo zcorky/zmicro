@@ -10,10 +10,10 @@ get_service_path() {
   local avaliable_service_dirs=$(get_service_dirs)
 
   for service_dir in $avaliable_service_dirs; do
-    log_debug "[$(timestamps)][service] try service dir: $service_dir"
+    log_debug "[$(timestamp)][service] try service dir: $service_dir"
     local service_path=$service_dir/$service_name
     if [ -d $service_path ]; then
-      log_debug "[$(timestamps)]$(color_success "[service] found service($service_name) in $service_dir")"
+      log_debug "[$(timestamp)]$(color_success "[service] found service($service_name) in $service_dir")"
       echo $service_path
       return 0
     fi
@@ -71,13 +71,13 @@ zmicro_service_run() {
   local service_name=$1
   local commands=${@:2}
 
-  log_debug "[$(timestamps)][service] ZMICRO_SERVICE_PATH: $ZMICRO_SERVICE_PATH"
-  log_debug "[$(timestamps)][service] service name: $service_name"
-  log_debug "[$(timestamps)][service] service command: $commands"
+  log_debug "[$(timestamp)][service] ZMICRO_SERVICE_PATH: $ZMICRO_SERVICE_PATH"
+  log_debug "[$(timestamp)][service] service name: $service_name"
+  log_debug "[$(timestamp)][service] service command: $commands"
 
   local service_path=$(get_service_path $service_name)
   if [ "$service_path" = "" ]; then
-    log_error "[$(timestamps)][service] service($service_name) not found"
+    log_error "[$(timestamp)][service] service($service_name) not found"
     exit 1
   fi
 
@@ -91,13 +91,13 @@ zmicro_service_get_config() {
 
   local service_path=$(get_service_path $service_name)
   if [ "$service_path" = "" ]; then
-    log_error "[$(timestamps)][service] service($service_name) not found"
+    log_error "[$(timestamp)][service] service($service_name) not found"
     exit 1
   fi
 
   local service_config=$service_path/docker-compose.yml
   if [ ! -f $service_config ]; then
-    log_error "[$(timestamps)][service] service($service_name) config(docker-compose.yml) not found"
+    log_error "[$(timestamp)][service] service($service_name) config(docker-compose.yml) not found"
   fi
 
   echo $service_config

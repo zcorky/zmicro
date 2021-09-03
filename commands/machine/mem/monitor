@@ -61,10 +61,10 @@ core() {
   while true; do
     local usage=$(zmicro machine mem usage)
     if [ $usage -gt $threshold_percent ]; then
-      log_info "[$(timestamps)] memory usage(${usage}%) reached threshold percent($kill_percent%), run: ${command}"
+      log_info "[$(timestamp)] memory usage(${usage}%) reached threshold percent($kill_percent%), run: ${command}"
       eval $command
     else
-      echo "[$(timestamps)] memory usage: $usage%"
+      echo "[$(timestamp)] memory usage: $usage%"
     fi
 
     sleep 1

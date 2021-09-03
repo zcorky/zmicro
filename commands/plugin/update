@@ -12,17 +12,17 @@ update_one() {
 
   local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
   if [ ! -d $plugin_path ]; then
-    log "[$(timestamps)][plugin] not found"
+    log "[$(timestamp)][plugin] not found"
     exit 0
   fi
 
-  log_info "[$(timestamps)][plugin] updating $plugin_name ..."
+  log_info "[$(timestamp)][plugin] updating $plugin_name ..."
 
   # Update @TODO
   cd $plugin_path
   git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>&1
   if [ "$?" != "0" ]; then
-    log_error "[$(timestamps)][plugin: $plugin_name] update error $plugin_name ..."
+    log_error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
     exit 1
   fi
   # cd - >>/dev/null 2>&1
@@ -33,9 +33,9 @@ update_one() {
   local plugin_new_version=$(plugin_get_version $plugin_name)
 
   if [ "$plugin_old_version" != "$plugin_new_version" ]; then
-    log_success "[$(timestamps)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color_success $plugin_new_version))"
+    log_success "[$(timestamp)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color_success $plugin_new_version))"
   else
-    log_success "[$(timestamps)][plugin] $plugin_name version not change ($plugin_old_version)"
+    log_success "[$(timestamp)][plugin] $plugin_name version not change ($plugin_old_version)"
   fi
 }
 

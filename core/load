@@ -22,7 +22,7 @@ load os
 load net
 load color
 load path
-load timestamps
+load timestamp
 load permission
 load help
 load version

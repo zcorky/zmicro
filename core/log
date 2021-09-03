@@ -60,8 +60,8 @@ log() {
   # log_info $@
 }
 
-log_timestamps() {
-  echo -e "[$(timestamps)] $@"
+log_timestamp() {
+  echo -e "[$(timestamp)] $@"
 }
 
 log_command() {
@@ -74,15 +74,15 @@ log_command() {
   # Init Script Path
   local init_path=$base_command_path/_init
 
-  log_debug "[$(timestamps)]$(color_success [command] command path: $base_command_path $command_fragments $command_args)"
-  log_debug "[$(timestamps)][command]"
+  log_debug "[$(timestamp)]$(color_success [command] command path: $base_command_path $command_fragments $command_args)"
+  log_debug "[$(timestamp)][command]"
 
   # log_debug "origin: $@"
-  log_debug "[$(timestamps)][command] base_command_path: $base_command_path"
-  log_debug "[$(timestamps)][command] command_fragments: $command_fragments"
-  log_debug "[$(timestamps)][command] command_args: $command_args"
-  log_debug "[$(timestamps)][command] init_path: $init_path"
-  log_debug "[$(timestamps)][command]"
+  log_debug "[$(timestamp)][command] base_command_path: $base_command_path"
+  log_debug "[$(timestamp)][command] command_fragments: $command_fragments"
+  log_debug "[$(timestamp)][command] command_args: $command_args"
+  log_debug "[$(timestamp)][command] init_path: $init_path"
+  log_debug "[$(timestamp)][command]"
 
   # @TODO
   if [ "$command_fragments" = "unknown" ]; then
@@ -92,9 +92,9 @@ log_command() {
 
   command_path=$(get_command_path_with_fragments $base_command_path $command_fragments)
 
-  echo -e "${GREEN}[$(timestamps)] $command_fragments start ...${ENDCOLOR}" >>$ZMICRO_LOG_COMMON_PATH
+  echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" >>$ZMICRO_LOG_COMMON_PATH
 
-  log_debug [$(timestamps)]$(color_success "[command] final command path: $command_path")
+  log_debug [$(timestamp)]$(color_success "[command] final command path: $command_path")
   log_debug ""
 
   # @TODO why should +e
@@ -102,7 +102,7 @@ log_command() {
 
   # Load Init
   if [ -f "$init_path" ]; then
-    log_debug "[$(timestamps)][command] load init in $init_path"
+    log_debug "[$(timestamp)][command] load init in $init_path"
     . $init_path
   fi
 
@@ -118,9 +118,9 @@ log_command() {
   fi
 
   if [ "$exit_code" = "0" ]; then
-    log_success "[$(timestamps)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
+    log_success "[$(timestamp)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
   else
-    log_error "[$(timestamps)] $command_fragments error." >>$ZMICRO_LOG_COMMON_PATH
+    log_error "[$(timestamp)] $command_fragments error." >>$ZMICRO_LOG_COMMON_PATH
   fi
 
   exit $exit_code
@@ -130,7 +130,7 @@ log_command() {
 log_update() {
   stage=$1 # START | END
   current_version=$(get_current_version)
-  log_timestamps "[${current_version}] ${stage}" >>$ZMICRO_LOG_UPDATE_PATH
+  log_timestamp "[${current_version}] ${stage}" >>$ZMICRO_LOG_UPDATE_PATH
 }
 
 log_version() {
@@ -138,7 +138,7 @@ log_version() {
   CURRENT=$2
 
   if [ -d $ZMICRO_LOG_VERSION_PATH ] || [ "$PREV" != "$CURRENT" ]; then
-    log_timestamps "[$CURRENT] ${PREV} => ${CURRENT}" >>$ZMICRO_LOG_VERSION_PATH
+    log_timestamp "[$CURRENT] ${PREV} => ${CURRENT}" >>$ZMICRO_LOG_VERSION_PATH
   fi
 }
 
@@ -151,7 +151,7 @@ export -f log_error
 export -f log_info
 export -f log_warn
 
-export -f log_timestamps
+export -f log_timestamp
 
 export -f log_command
 export -f log_update

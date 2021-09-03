@@ -20,7 +20,7 @@ update_git() {
     log "No Changes. Version: $new_version"
   fi
 
-  # log_timestamps "[LATEST_VERSION] ${ZMICRO_VERSION}"
+  # log_timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
 
   # Auto Register After Update
   plugin_register_all $ZMICRO_PLUGIN_PATH

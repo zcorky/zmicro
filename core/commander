@@ -7,12 +7,12 @@ has_file_path() {
   path=$1
 
   if [ "$HAS_FILE_LOG_SILIENT" = "false" ]; then
-    log_debug "[$(timestamps)][command] try path: $path"
+    log_debug "[$(timestamp)][command] try path: $path"
   fi
 
   if is_file $path; then
     if [ "$HAS_FILE_LOG_SILIENT" = "false" ]; then
-      log_debug [$(timestamps)]$(color_success "[command] find path: ${path}")
+      log_debug [$(timestamp)]$(color_success "[command] find path: ${path}")
     fi
 
     return 0
@@ -96,7 +96,7 @@ has_command_path() {
   fi
 
   # *. not found
-  log_debug [$(timestamps)]$(color_error "[command] 404 not found ($command $args)")
+  log_debug [$(timestamp)]$(color_error "[command] 404 not found ($command $args)")
   return 1
 }
 

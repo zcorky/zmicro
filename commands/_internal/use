@@ -42,7 +42,7 @@ use_version() {
     exit 1
   fi
 
-  log_success "[$(timestamps)] change to version: ${version}"
+  log_success "[$(timestamp)] change to version: ${version}"
 }
 
 use_version $@

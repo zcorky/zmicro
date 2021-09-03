@@ -20,7 +20,7 @@ core() {
 
   local service_path=$(get_service_path $service_name)
   if [ "$service_path" = "" ]; then
-    log_error "[$(timestamps)][service][env] service($service_name) not found"
+    log_error "[$(timestamp)][service][env] service($service_name) not found"
     exit 1
   fi
 

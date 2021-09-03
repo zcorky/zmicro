@@ -9,9 +9,9 @@ run() {
   plugin_register_all $base_plugin_path
 
   log_debug ""
-  log_debug "[$(timestamps)][command] base command path: $base_command_path"
-  log_debug "[$(timestamps)][command] run: ${@:3}"
-  log_debug "[$(timestamps)][command]"
+  log_debug "[$(timestamp)][command] base command path: $base_command_path"
+  log_debug "[$(timestamp)][command] run: ${@:3}"
+  log_debug "[$(timestamp)][command]"
 
   # Use Help Command
   if [ "$sub_command" = "help" ]; then
@@ -24,8 +24,8 @@ run() {
   if ! has_command_path "$@"; then
     local commands=${@:3}
     # DEBUG
-    log_debug "[$(timestamps)][command]"
-    log_debug "[$(timestamps)][command] command: $commands"
+    log_debug "[$(timestamp)][command]"
+    log_debug "[$(timestamp)][command] command: $commands"
 
     # Help
     if [ "$command" != "" ]; then
@@ -46,8 +46,8 @@ run() {
   fi
 
   # Get Command
-  log_debug "[$(timestamps)][command]"
-  log_debug "[$(timestamps)][command] get command path start ..."
+  log_debug "[$(timestamp)][command]"
+  log_debug "[$(timestamp)][command] get command path start ..."
   command_path=$(get_command_path $@)
 
   log_command "$command_path"

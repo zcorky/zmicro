@@ -38,16 +38,16 @@ core() {
     exit 1
   fi
   
-  log_debug "[$(timestamps)][service] add $service_dir"
+  log_debug "[$(timestamp)][service] add $service_dir"
   
   if [ ! -d $service_dir ]; then
-    log_error "[$(timestamps)][service] service_dir is not a directory"
+    log_error "[$(timestamp)][service] service_dir is not a directory"
     exit 1
   fi
 
   zmicro config service $service_dir
 
-  log_success "[$(timestamps)][service] add success $service_dir"
+  log_success "[$(timestamp)][service] add success $service_dir"
 }
 
 run() {

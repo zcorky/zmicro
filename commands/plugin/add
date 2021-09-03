@@ -36,27 +36,27 @@ core() {
   local plugin_path=$(plugin_path $plugin_name)
 
   if [ "$plugin_name" = "" ] || [ "$plugin_url" = "" ]; then
-    log_error "[$(timestamps)][plugin] plugin name and url is required"
+    log_error "[$(timestamp)][plugin] plugin name and url is required"
     exit 1
   fi
 
-  log_info "[$(timestamps)][plugin] add $(color_green $plugin_name)($plugin_url) version: $plugin_version"
+  log_info "[$(timestamp)][plugin] add $(color_green $plugin_name)($plugin_url) version: $plugin_version"
 
   if [ "$(plugin_exist $plugin_name)" = "true" ]; then
-    log_error "[$(timestamps)][plugin] already added, just update or remove"
+    log_error "[$(timestamp)][plugin] already added, just update or remove"
     exit 0
   fi
 
-  log_debug "[$(timestamps)][plugin] add $plugin_name($plugin_version) url($plugin_url) ..."
+  log_debug "[$(timestamp)][plugin] add $plugin_name($plugin_version) url($plugin_url) ..."
   git clone $plugin_url -b $plugin_version $plugin_path >>$ZMICRO_LOG_COMMON_PATH 2>&1
   if [ "$?" != "0" ]; then
-    log_error "[$(timestamps)][plugin] install error $plugin_name($plugin_version) ..."
+    log_error "[$(timestamp)][plugin] install error $plugin_name($plugin_version) ..."
     exit 1
   fi
 
   plugin_register $plugin_name
 
-  log_success "[$(timestamps)][plugin] install success $plugin_name($plugin_version)"
+  log_success "[$(timestamp)][plugin] install success $plugin_name($plugin_version)"
 }
 
 run() {
