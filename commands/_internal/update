@@ -1,6 +1,8 @@
 #!/bin/bash
 
-update_git() {
+. $ZMICRO_HOME/core/env
+
+update_zmicro() {
   local origin_version=$(get_current_version)
   log_update PREV
 
@@ -26,6 +28,60 @@ update_git() {
   plugin_register_all $ZMICRO_PLUGIN_PATH
 }
 
-update_git
+help() {
+  echo "update zmicro"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro update [...options]"
+  echo "    -p, --plugin <plugin_name | all> Update all or one plugin"
+}
 
-# pm update # >> $ZMICRO_LOG_UPDATE_PATH 2>&1
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+      -h | --help)
+        help
+        exit 0
+        ;;
+      -p | --plugin)
+        if [ -z "$value" ]; then
+          log_error "plugin name is required"
+          exit 1
+        fi
+
+        set_var plugin_name $value
+        shift
+        shift
+        ;;
+      *)
+        if [ "$(string_match $key ^-)" = "true" ]; then
+          echo "ERROR: unknown parameter \"$key\""
+          help
+          exit 1
+        fi
+
+        shift
+        ;;
+    esac
+  done
+
+  if [ "$plugin_name" ]; then
+    zmicro plugin update $plugin_name
+  else
+    update_zmicro
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@
+

@@ -3,7 +3,7 @@
 update_version() {
   PREV=$ZMICRO_VERSION
 
-  . $ZMICRO_VERSION_PATH
+  load_mod_config
 
   LATEST=$ZMICRO_VERSION
 
@@ -15,7 +15,8 @@ update_version() {
 }
 
 get_current_version() {
-  . $ZMICRO_VERSION_PATH
+  load_mod_config
+  
   echo $ZMICRO_VERSION
 }
 

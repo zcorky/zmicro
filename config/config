@@ -10,7 +10,7 @@ export ZMICRO_RC=$HOME/.zmicrorc
 export ZMICRO_GIT=https://github.com/zcorky/zmicro
 
 # Version
-export ZMICRO_VERSION_PATH=$ZMICRO_HOME/config/version
+export ZMICRO_MOD=$ZMICRO_HOME/mod
 # Log
 export ZMICRO_LOG_PATH=/var/log/${ZMICRO_NAME} #/tmp/zmicro
 

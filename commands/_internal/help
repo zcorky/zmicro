@@ -13,7 +13,6 @@ List of Main Commands:
   package       Install | update | remove a package
   plugin        Run a plugin
   service       Run a service
-  screenfetch   Show screenfetch
   update        Update version
   use           Use version
   version       Show version info

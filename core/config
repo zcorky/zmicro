@@ -24,6 +24,8 @@ load_config() {
     exit 1
   fi
 
+  load_mod_config
+
   if [ -f $CONFIG_PATH ]; then
     load_config_file $CONFIG_PATH
   elif [ -d $CONFIG_PATH ]; then
@@ -48,6 +50,14 @@ load_config_dir() {
 
     load_config_file $CONFIG_DIR/$CONFIG_FILE
   done
+}
+
+load_mod_config() {
+  load_config_file $ZMICRO_MOD
+  
+  # @TODO
+  export ZMICRO_VERSION=$VERSION
+  export ZMICRO_DESCRIPTION=$DESCRIPTION
 }
 
 load_user_config() {
@@ -108,6 +118,7 @@ export -f load_config_dir
 
 export -f load_config
 
+export -f load_mod_config
 export -f load_user_config
 
 export -f zmicro_config_list
