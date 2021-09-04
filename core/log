@@ -31,7 +31,7 @@ log_init() {
     log_debug "[log_init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
 
-  log_success "logs config done"
+  log_debug "logs config done"
 }
 
 log_info() {
