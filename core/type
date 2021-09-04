@@ -202,7 +202,7 @@ array_each() {
   # @TODO GLOBAL, make outsize can get
   Z_ARRAY_INDEX=0
   local index=0
-  for element in $args; do
+  for element in ${args[@]}; do
     index=$((index + 1))
     Z_ARRAY_INDEX=$index
     $fn $index $element

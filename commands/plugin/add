@@ -48,12 +48,17 @@ core() {
   fi
 
   log_debug "[$(timestamp)][plugin] add $plugin_name($plugin_version) url($plugin_url) ..."
-  git clone $plugin_url -b $plugin_version $plugin_path >>$ZMICRO_LOG_COMMON_PATH 2>&1
+  git clone $plugin_url -b $plugin_version $plugin_path >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH
   if [ "$?" != "0" ]; then
     log_error "[$(timestamp)][plugin] install error $plugin_name($plugin_version) ..."
+    tail -n 50 $ZMICRO_LOG_ERROR_PATH
     exit 1
   fi
+  
+  # install depdendencies
+  require_plugin_mod $plugin_name
 
+  # register bin
   plugin_register $plugin_name
 
   log_success "[$(timestamp)][plugin] install success $plugin_name($plugin_version)"

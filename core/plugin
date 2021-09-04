@@ -94,7 +94,17 @@ plugin_register_all() {
 
 plugin_path() {
   local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log_error "[plugin_path] plugin name is required"
+    exit 1
+  fi
+
   echo $ZMICRO_PLUGINS_PATH/$plugin_name
+}
+
+plugin_mod_path() {
+  local plugin_name=$1
+  echo $(plugin_path $plugin_name)/mod
 }
 
 plugin_bin_path() {
@@ -177,6 +187,7 @@ export -f plugin_list_bins
 export -f plugin_each
 
 export -f plugin_path
+export -f plugin_mod_path
 export -f plugin_bin_path
 export -f plugin_exist
 export -f plugin_bin_exist

@@ -24,7 +24,7 @@ load_config() {
     exit 1
   fi
 
-  load_mod_config
+  load_core_mod
 
   if [ -f $CONFIG_PATH ]; then
     load_config_file $CONFIG_PATH
@@ -53,11 +53,24 @@ load_config_dir() {
 }
 
 load_mod_config() {
-  load_config_file $ZMICRO_MOD
-  
-  # @TODO
+  if [ -z $VERSION ]; then
+    log_error "VERSION is required"
+    exit 1
+  fi
+
   export ZMICRO_VERSION=$VERSION
   export ZMICRO_DESCRIPTION=$DESCRIPTION
+
+  # if [ -n $DEPENDENCIES ]; then
+  #   echo "load mod config found depdencies: $DEPENDENCIES"
+  #   array_each require $DEPENDENCIES
+  # fi
+}
+
+load_core_mod() {
+  load_config_file $ZMICRO_MOD
+  
+  load_mod_config
 }
 
 load_user_config() {
@@ -119,6 +132,7 @@ export -f load_config_dir
 export -f load_config
 
 export -f load_mod_config
+export -f load_core_mod
 export -f load_user_config
 
 export -f zmicro_config_list

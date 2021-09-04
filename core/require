@@ -1,0 +1,87 @@
+#!/bin/bash
+
+require() {
+  local plugin_name=$1
+
+  if [ "$(zmicro plugin has $plugin_name)" = "false" ]; then
+    log_info "[require] installing: ${plugin_name} ..."
+    
+    # @TODO
+    zmicro plugin install $plugin_name
+    if [ "$?" = "0" ]; then
+      log_success "[require] install success: ${plugin_name}"
+    else
+      log_error "[require] install failed: ${plugin_name}"
+    fi
+  else
+    log_success "[require] installed before: ${plugin_name}"
+  fi
+
+  sleep 1
+}
+
+require_parse() {
+  # echo "xxx: $@"
+  # compose@v0.0.1
+  local text=$2
+
+  local plugin_name=$(echo $text | awk -F '@' '{print $1}')
+  local plugin_version=$(echo $text | awk -F '@' '{print $2}')
+  local plugin_repo=$(echo $text | awk -F '@' '{print $3}')
+
+  log_info "[require] install plugin $plugin_name ($plugin_version) ..."
+  require $plugin_name $plugin_version $plugin_repo
+}
+
+require_mod() {
+  # @TODO overide core DEPENDENCIES
+  if [ -n ${DEPENDENCIES} ]; then
+    # echo "overide DEPENDENCIES"
+    DEPENDENCIES=()
+  fi
+
+  local mod_path=$1
+  load_config_file $mod_path
+
+  if [ -n $DEPENDENCIES ]; then
+    local dependeny_count=$(array_length ${DEPENDENCIES[@]})
+    if [ "$dependeny_count" = "0" ]; then
+      return
+    fi
+
+    log_info "[require] found depdencies: ${dependeny_count} ($mod_path)..."
+
+    array_each require_parse ${DEPENDENCIES[@]}
+
+    # echo $DEPENDENCIES
+    # for one in ${DEPENDENCIES[@]}; do
+    #   echo "x: "$one
+    # done
+
+    # @TODO clean
+    # export DEPENDENCIES=""
+  fi
+}
+
+require_core_mod() {
+  require_mod $ZMICRO_MOD
+}
+
+require_plugin_mod() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log_error "[require_plugin_mod] plugin name is required"
+    exit 1
+  fi
+
+  # echo "plugin_name: $(plugin_mod_path $plugin_name)"
+  # echo "${DEPENDENCIES[@]}"
+  require_mod $(plugin_mod_path $plugin_name)
+}
+
+export -f require
+export -f require_mod
+export -f require_parse
+
+export -f require_core_mod
+export -f require_plugin_mod

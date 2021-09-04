@@ -17,6 +17,7 @@ load() {
   fi
 }
 
+load require
 load type
 load os
 load net

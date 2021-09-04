@@ -33,7 +33,8 @@ init() {
 
   clone_git
 
-  # install_dependencies
+  # install dependency plugins ...
+  require_core_mod
 }
 
 init
