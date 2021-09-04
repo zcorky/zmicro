@@ -2,26 +2,43 @@
 export ZMICRO_HOME=/usr/local/lib/zmicro
 export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
 
+export OLD_ZMICRO_HOME=$HOME/.zmicro
+export OLD_ZMICRO_HOME_BAK=/usr/local/lib/zmicro.bak
+
+# @TO_REMOVE
+if [ ! -d "/usr/local/lib" ]; then
+  sudo mkdir -p /usr/local/lib
+fi
+
+# Backup
+if [ -d $OLD_ZMICRO_HOME ]; then
+  sudo mv $OLD_ZMICRO_HOME $OLD_ZMICRO_HOME_BAK
+fi
+
+# Create
 if [ ! -d $ZMICRO_HOME ]; then
   sudo git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
 fi
 
+# Permission
 if [ ! -w $ZMICRO_HOME ]; then
   sudo chown -r $USER $ZMICRO_HOME
 fi
 
+# Bin
 if [ ! -f $ZMICRO_LOCAL_BIN ]; then
   sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
 fi
 
-. $ZMICRO_HOME/config/config
+# . $ZMICRO_HOME/config/config
 
+# Init
 zmicro init
 
-echo ""
-echo "First install, you should source profile:"
-echo "  bash: source \$HOME/.bashrc"
-echo "  zsh: source \$HOME/.zshrc"
-echo "Then run update:"
-echo "  zmicro update"
-echo ""
+# echo ""
+# echo "First install, you should source profile:"
+# echo "  bash: source \$HOME/.bashrc"
+# echo "  zsh: source \$HOME/.zshrc"
+# echo "Then run update:"
+# echo "  zmicro update"
+# echo ""
