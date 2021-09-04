@@ -1,21 +1,29 @@
 #!/bin/bash
 
-# command_path=$ZMICRO_PLUGIN_PATH/$1
-# run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGIN_PATH $@
+# command_path=$ZMICRO_PLUGINS_PATH/$1
+# run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGINS_PATH $@
 
 # echo "in plugin: $@"
 
 plugin_name=$1
 plugin_command=${@:2}
 
-plugin_base_path=$ZMICRO_PLUGIN_PATH/$plugin_name
+if [ -z "$plugin_name" ]; then
+  log_error "plugin name is required"
+  exit 1
+fi
+
+if [ -z $ZMICRO_PLUGINS_PATH ]; then
+  ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
+fi
+
+plugin_base_path=$ZMICRO_PLUGINS_PATH/$plugin_name
 plugin_config_path=$plugin_base_path/config
 plugin_commands_path=$plugin_base_path/commands
 
 # echo "plugin_commands_path: $plugin_commands_path"
 # echo "plugin_name: $plugin_name"
 # echo "plugin_command: $plugin_command"
-
 # before run
 #   1. load config
 load_config $plugin_config_path

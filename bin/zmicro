@@ -21,4 +21,4 @@ if [ "$(is_run_init $1)" = "true" ]; then
   $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
 fi
 
-run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGIN_PATH $@
+run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGINS_PATH $@

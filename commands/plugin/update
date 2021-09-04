@@ -10,7 +10,7 @@ update_one() {
   local plugin_name=$1
   local plugin_old_version=$(plugin_get_version $plugin_name)
 
-  local plugin_path=$ZMICRO_PLUGIN_PATH/$plugin_name
+  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
   if [ ! -d $plugin_path ]; then
     log "[$(timestamp)][plugin] not found"
     exit 0

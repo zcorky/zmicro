@@ -26,8 +26,8 @@ core() {
     array_each print $(ls $ZMICRO_BIN_PATH)
     ;;
   register)
-    # echo "register ZMICRO_PLUGIN_PATH: $ZMICRO_PLUGIN_PATH"
-    plugin_register_all $ZMICRO_PLUGIN_PATH
+    # echo "register ZMICRO_PLUGINS_PATH: $ZMICRO_PLUGINS_PATH"
+    plugin_register_all $ZMICRO_PLUGINS_PATH
     log_success "register all commands done"
     log_info ""
     zmicro bin list

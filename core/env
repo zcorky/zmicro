@@ -1,19 +1,5 @@
 #!/bin/bash
 
-# realpath() {
-#   OURPWD=$PWD
-#   cd "$(dirname "$1")"
-#   LINK=$(readlink "$(basename "$1")")
-#   while [ "$LINK" ]; do
-#     cd "$(dirname "$LINK")"
-#     LINK=$(readlink "$(basename "$1")")
-#   done
-#   REALPATH="$PWD/$(basename "$1")"
-#   cd "$OURPWD"
-#   echo "$REALPATH"
-# }
-
-# CURRENT_DIR=$(realpath $(dirname "$0"))
 TMP_ZMICRO_CONFIG_PATH=$ZMICRO_HOME/config
 TMP_ZMICRO_ZMICRO_CORE_PATH=$ZMICRO_HOME/core
 TMP_ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
@@ -23,7 +9,7 @@ TMP_ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
 
 # @TODO override ZMICRO_CORE_PATH
 export ZMICRO_CORE_PATH=$TMP_ZMICRO_ZMICRO_CORE_PATH
-export ZMICRO_PLUGIN_PATH=$TMP_ZMICRO_PLUGINS_PATH
+export ZMICRO_PLUGINS_PATH=$TMP_ZMICRO_PLUGINS_PATH
 
 # Load Doreamon Fns
 # . $ZMICRO_CORE_PATH/load
