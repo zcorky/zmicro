@@ -16,9 +16,9 @@ export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
 
 . $ZMICRO_CORE_PATH/env
 
-# INIT with ZMICRO_HOME
-if [ "$(is_run_init $1)" = "true" ]; then
-  $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
-fi
+# # INIT with ZMICRO_HOME
+# if [ "$(is_run_init $1)" = "true" ]; then
+#   $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
+# fi
 
 run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGINS_PATH $@
