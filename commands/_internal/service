@@ -1,0 +1,35 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Usage:"
+  echo "  zmicro service <action> <service_name>"
+}
+
+dependency_check() {
+  if [ "$(plugin_exist compose)" = "false" ]; then
+    log_info "plugin compose is required, installing ..."
+
+    zmicro plugin install compose
+  # else
+  #   zmicro plugin update compose
+  fi
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  dependency_check
+
+  zmicro plugin run compose $@
+}
+
+run() {
+  core $@
+}
+
+run $@
