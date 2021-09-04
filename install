@@ -22,7 +22,7 @@ fi
 
 # Permission
 if [ ! -w $ZMICRO_HOME ]; then
-  sudo chown -r $USER $ZMICRO_HOME
+  sudo chown -R $USER $ZMICRO_HOME
 fi
 
 # Bin
