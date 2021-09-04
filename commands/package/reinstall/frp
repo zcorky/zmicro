@@ -1,5 +1,0 @@
-#!/bin/bash
-
-zmicro package remove frp
-
-zmicro package install frp

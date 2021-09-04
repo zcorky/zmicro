@@ -1,9 +1,0 @@
-#!/bin/bash
-
-RUST_TMP_SCRIPT=/tmp/rustup.sh
-
-if [ ! -f "$RUST_TMP_SCRIPT" ]; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >$RUST_TMP_SCRIPT
-fi
-
-sh $RUST_TMP_SCRIPT -y

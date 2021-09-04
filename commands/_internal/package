@@ -2,7 +2,7 @@
 
 . $ZMICRO_HOME/core/env
 
-PLUGIN=compose
+PLUGIN=package
 
 help() {
   echo "Usage:"

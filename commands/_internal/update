@@ -33,7 +33,8 @@ help() {
   echo ""
   echo "Usage:"
   echo "  zmicro update [...options]"
-  echo "    -p, --plugin <plugin_name | all> Update all or one plugin"
+  echo "    -p, --plugin <plugin_name | all>    Update all or one plugin"
+  echo "    -a, --all   Update core and all plugins"
 }
 
 core() {
@@ -60,6 +61,10 @@ core() {
         shift
         shift
         ;;
+      -a | --all)
+        set_var update_all true
+        shift
+        ;;
       *)
         if [ "$(string_match $key ^-)" = "true" ]; then
           echo "ERROR: unknown parameter \"$key\""
@@ -73,7 +78,14 @@ core() {
   done
 
   if [ "$plugin_name" ]; then
-    zmicro plugin update $plugin_name
+    if [ "$plugin_name" = "all" ]; then
+      zmicro plugin update
+    else
+      zmicro plugin update $plugin_name
+    fi
+  elif [ "$update_all" = "true" ]; then
+    update_zmicro
+    zmicro plugin update
   else
     update_zmicro
   fi

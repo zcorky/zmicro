@@ -1,5 +1,0 @@
-#!/bin/bash
-
-zmicro package remove docker
-
-zmicro package install docker
