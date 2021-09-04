@@ -39,13 +39,13 @@ create_user $USERNAME
 #     create_user
 #     ;;
 #   # config)
-#   #   $COMMANDS_PATH/config/$args
+#   #   $ZMICRO_COMMANDS_PATH/config/$args
 #   #   ;;
 #   # install)
-#   #   $COMMANDS_PATH/install/$args
+#   #   $ZMICRO_COMMANDS_PATH/install/$args
 #   #   ;;
 #   # run)
-#   #   $COMMANDS_PATH/run/$args
+#   #   $ZMICRO_COMMANDS_PATH/run/$args
 #   #   ;;
 #   *)
 #     echo "unknown command ${command}"

@@ -3,19 +3,6 @@
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell/76171
 # http://www.ruanyifeng.com/blog/2017/11/bash-set.html
 
-realpath() {
-  OURPWD=$PWD
-  cd "$(dirname "$1")"
-  LINK=$(readlink "$(basename "$1")")
-  while [ "$LINK" ]; do
-    cd "$(dirname "$LINK")"
-    LINK=$(readlink "$(basename "$1")")
-  done
-  REALPATH="$PWD/$(basename "$1")"
-  cd "$OURPWD"
-  echo "$REALPATH"
-}
-
 is_run_init() {
   if [ "$1" = "init" ]; then
     echo "true"
@@ -24,73 +11,14 @@ is_run_init() {
   fi
 }
 
-CURRENT_DIR=$(realpath $(dirname "$0"))
-# CONFIGS_DIR=$CURRENT_DIR/../config
+export ZMICRO_HOME=/usr/local/lib/zmicro
+export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
 
-# # Load Base Config
-# . $CONFIGS_DIR/config
-# # Load Doreamon Fns
-# . $CORE_PATH/load
-
-# # Load Config in CONFIGS_DIR
-# load_config $CONFIGS_DIR
-# # Load User Config
-# [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
-
-# @TODO
-# if [ "$ZMICRO_HOME" = "" ]; then
-#   export ZMICRO_NAME=zmicro
-#   # export ZMICRO_HOME=$HOME/.zmicro
-#   # export ZMICRO_RC=$HOME/.zmicrorc
-#   export ZMICRO_HOME=$CURRENT_DIR/../../.zmicro
-#   export ZMICRO_RC=$CURRENT_DIR/../../.zmicrorc
-#   export ZMICRO_GIT=https://github.com/zcorky/zmicro
-# fi
-
-export ZMICRO_NAME=zmicro
-export ZMICRO_HOME=$CURRENT_DIR/../../.zmicro
-export ZMICRO_RC=$CURRENT_DIR/../../.zmicrorc
-export ZMICRO_GIT=https://github.com/zcorky/zmicro
-
-. $ZMICRO_HOME/core/env
+. $ZMICRO_CORE_PATH/env
 
 # INIT with ZMICRO_HOME
 if [ "$(is_run_init $1)" = "true" ]; then
-  $COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
+  $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
 fi
 
-# Run Commands
-# command=$1
-# case $command in
-#   init)
-#     $COMMANDS_PATH/init | tee -a $ZMICRO_LOG_COMMON_PATH
-#     ;;
-#   run)
-#     $COMMANDS_PATH/run $@ | tee -a $ZMICRO_LOG_COMMON_PATH
-#     ;;
-#   help)
-#     $COMMANDS_PATH/help ${@:2} | tee -a $ZMICRO_LOG_COMMON_PATH
-#     ;;
-#   *)
-#     run $@
-#     ;;
-# esac
-
-# command=$1
-# case $command in
-#   plugin)
-#     plugin_name=$2
-#     plugin_command=${@:3}
-
-#     run $ZMICRO_PLUGIN_PATH/$plugin_name/commands "-" $plugin_command
-#     ;;
-#   *)
-#     run $COMMANDS_PATH $ZMICRO_PLUGIN_PATH $@
-#     ;;
-# esac
-
-# @TODO
-COMMANDS_PATH=$CURRENT_DIR/../commands
-ZMICRO_PLUGIN_PATH=$CURRENT_DIR/../plugins
-
-run $COMMANDS_PATH $ZMICRO_PLUGIN_PATH $@
+run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGIN_PATH $@

@@ -7,7 +7,7 @@ CONFIGS_DIR=$ZMICRO_HOME/config
 # Load Base Config
 . $CONFIGS_DIR/config
 # Load Doreamon Fns
-. $CORE_PATH/load
+. $ZMICRO_CORE_PATH/load
 
 help() {
   echo "Usage:"

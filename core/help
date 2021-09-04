@@ -50,7 +50,7 @@ help() {
   echo ""
   echo "  ${command_prefix} ${commands:-?} [args...]"
   echo ""
-  # echo $(ls $COMMANDS_PATH)
+  # echo $(ls $ZMICRO_COMMANDS_PATH)
 
   local help_commands=$(ls $help_commands_path)
   local help_command=""

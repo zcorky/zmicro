@@ -1,8 +1,8 @@
 #!/bin/bash
 
 log_init() {
-  . $CORE_PATH/os
-  . $CORE_PATH/color
+  . $ZMICRO_CORE_PATH/os
+  . $ZMICRO_CORE_PATH/color
 
   local current_user=$(os_username)
 

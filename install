@@ -1,12 +1,18 @@
 #!/bin/bash
-export ZMICRO_HOME=$HOME/.zmicro
+export ZMICRO_HOME=/usr/local/lib/zmicro
+export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
 
 if [ ! -d "$ZMICRO_HOME" ]; then
-  git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
+  sudo git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
+fi
+
+if [ ! -f $ZMICRO_LOCAL_BIN ]; then
+  sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
 fi
 
 . $ZMICRO_HOME/config/config
-$ZMICRO_HOME/bin/zmicro init
+
+zmicro init
 
 echo ""
 echo "First install, you should source profile:"
