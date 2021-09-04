@@ -38,16 +38,21 @@
 config_clear() {
   local profile=$1
 
-  # # ZMICRO_BIN_PATH: /home/binquant/.zmicro/bin
-  # export ZMICRO_HOME=/home/binquant/.zmicro
-  # export ZMICRO_BIN_PATH=/home/binquant/.zmicro/bin
+  if [ -z "$(os_username)" ]; then
+    log_error "cannot get username"
+    exit 1
+  fi
+
+  # # ZMICRO_BIN_PATH: /home/$(os_username)/.zmicro/bin
+  # export ZMICRO_HOME=/home/$(os_username)/.zmicro
+  # export ZMICRO_BIN_PATH=/home/$(os_username)/.zmicro/bin
   # export PATH=$ZMICRO_BIN_PATH:$PATH
 
   cat $profile | grep ZMICRO_BIN_PATH >> /dev/null 2>&1
   if [ "$?" = "0" ]; then
-    sed -i "/^# ZMICRO_BIN_PATH: \/home\/binquant\/.zmicro\/bin$/d" $profile
-    sed -i "/^export ZMICRO_HOME=\/home\/binquant\/.zmicro$/d" $profile
-    sed -i "/^export ZMICRO_BIN_PATH=\/home\/binquant\/.zmicro\/bin$/d" $profile
+    sed -i "/^# ZMICRO_BIN_PATH: \/home\/$(os_username)\/.zmicro\/bin$/d" $profile
+    sed -i "/^export ZMICRO_HOME=\/home\/$(os_username)\/.zmicro$/d" $profile
+    sed -i "/^export ZMICRO_BIN_PATH=\/home\/$(os_username)\/.zmicro\/bin$/d" $profile
     sed -i "/^export PATH=\$ZMICRO_BIN_PATH:\$PATH$/d" $profile
   fi
 }
