@@ -24,7 +24,7 @@ core() {
     exit 1
   fi
 
-  zmicro_config_set $key $value
+  zmicro_config_set $key $value >> /dev/null 2>&1
 }
 
 run() {

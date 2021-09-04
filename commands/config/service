@@ -2,16 +2,51 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro config sevice <service_path>"
+  echo "  zmicro config sevice <service_path> [...options]"
+  echo ""
+  echo "    -d, --delete    Delete service path"
+  echo "    -o, --override  Override service path"
 }
 
 core() {
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    help
-    exit 0
-  fi
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+      -h | --help)
+        help
+        exit 0
+        ;;
+      -d | --delete)
+        set_var delete true
+        shift
+        ;;
+      -o | --override)
+        set_var override true 
+        shift
+        ;;
+      --tmp-start)
+        set_var tmp_start true 
+        shift
+        ;;
+      --tmp-end)
+        set_var tmp_end true 
+        shift
+        ;;
+      *)
+        if [ "$(string_match $key ^-)" = "true" ]; then
+          echo "ERROR: unknown parameter \"$key\""
+          help
+          exit 1
+        fi
 
-  local service_path=$1
+        eval service_path=$key
+        shift
+        ;;
+    esac
+  done
+
+  # local service_path=$1
   if [ "$service_path" = "" ]; then
     log_error "custom service path is required"
     log_error ""
@@ -23,8 +58,43 @@ core() {
   if [ "$service_path" = "." ]; then
     service_path=$PWD
   fi
+  
+  local new_zmicro_service_path=""
+  if [ "$delete" = "true" ]; then
+    # delete
+    new_zmicro_service_path=$(string_replace $ZMICRO_SERVICE_PATH ${service_path}:)
+  elif [ "$override" = "true" ]; then
+    # override
+    new_zmicro_service_path=$service_path
+  elif [ "$tmp_start" = "true" ]; then
+    # backup
+    if [ "$(zmicro config get ZMICRO_SERVICE_PATH_BAK)" != "" ]; then
+      log_warn "found ZMICRO_SERVICE_PATH_BAK, not clean last"
+      exit 0
+    fi
 
-  zmicro config set ZMICRO_SERVICE_PATH "$service_path:\$ZMICRO_SERVICE_PATH"
+    new_zmicro_service_path=$service_path
+    zmicro config set ZMICRO_SERVICE_PATH_BAK $ZMICRO_SERVICE_PATH
+  elif [ "$tmp_end" = "true" ]; then
+    # recover
+    if [ "$(zmicro config get ZMICRO_SERVICE_PATH_BAK)" = "" ]; then
+      log_error "zmicro config service recover backup failed, not found ZMICRO_SERVICE_PATH_BAK"
+      exit 1
+    fi
+
+    zmicro config set ZMICRO_SERVICE_PATH $(zmicro config get ZMICRO_SERVICE_PATH_BAK)
+    zmicro config remove ZMICRO_SERVICE_PATH_BAK
+    exit 0
+  else
+    # add
+    new_zmicro_service_path="$service_path:$ZMICRO_SERVICE_PATH"
+  fi
+
+  if [ -n "$new_zmicro_service_path" ]; then
+    log_debug "config service new path: $new_zmicro_service_path"
+
+    zmicro config set ZMICRO_SERVICE_PATH $new_zmicro_service_path
+  fi
 }
 
 run() {

@@ -11,8 +11,7 @@ core() {
     exit 0
   fi
 
-  ZMICRO_SERVICE_PATH=$HOME/methods/swarm
-  zmicro_service_list $@
+  cat $ZMICRO_RC
 }
 
 run() {

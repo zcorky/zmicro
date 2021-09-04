@@ -129,6 +129,19 @@ string_replace() {
   echo $base | sed -e "s%${origin}%${new}%g"
 }
 
+string_match() {
+  local text=$1
+  local regexp=$2
+
+  echo $text | grep "$regexp" >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+    return
+  fi
+
+  echo "false"
+}
+
 number_increase() {
   local base=$1
   local _step=$2
@@ -200,6 +213,13 @@ array_length() {
   echo ${#@}
 }
 
+set_var() {
+  local name=$1
+  local value=$2
+
+  eval "$name=$value"
+}
+
 export -f get_args_length
 
 export -f string_split
@@ -207,6 +227,7 @@ export -f string_split_length
 export -f string_split_last_element
 export -f string_split_last_second_element
 export -f string_replace
+export -f string_match
 
 export -f number_increase
 export -f number_step
@@ -215,3 +236,5 @@ export -f number_add
 export -f array_join
 export -f array_each
 export -f array_length
+
+export -f set_var

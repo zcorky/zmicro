@@ -95,6 +95,7 @@ zmicro_config_remove() {
   # New Key
   if [ "$line" != "" ]; then
     sed -i -e "s%${line}%%g" $ZMICRO_RC
+    sed -i "/^\s*$/d" $ZMICRO_RC
   fi
 }
 
