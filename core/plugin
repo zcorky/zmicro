@@ -172,6 +172,18 @@ plugin_get_description() {
   echo "$PLUGIN_DESCRIPTION"
 }
 
+plugin_get_dependencies() {
+  plugin_load_mod $1
+
+  if [ -z "$DEPENDENCIES" ]; then
+    echo "No Dependencies"
+    return
+  fi
+
+  echo "${DEPENDENCIES[@]}"
+}
+
+
 plugin_each() {
   local fn=$1
   local plugins=$(plugin_list_names)
@@ -192,5 +204,7 @@ export -f plugin_bin_path
 export -f plugin_exist
 export -f plugin_bin_exist
 export -f plugin_load_mod
+
 export -f plugin_get_version
 export -f plugin_get_description
+export -f plugin_get_dependencies

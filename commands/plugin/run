@@ -30,4 +30,13 @@ load_config $plugin_config_path
 #   2. load user config
 load_user_config
 
-run $plugin_commands_path "-" $plugin_command
+# internal commands
+if [ "$plugin_command" = "version" ]; then
+  zmicro plugin version $plugin_name
+elif [ "$plugin_command" = "description" ]; then
+  zmicro plugin description $plugin_name
+elif [ "$plugin_command" = "dependencies" ]; then
+  zmicro plugin dependencies $plugin_name
+else
+  run $plugin_commands_path "-" $plugin_command
+fi
