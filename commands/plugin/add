@@ -40,14 +40,14 @@ core() {
     exit 1
   fi
 
-  log_info "[$(timestamp)][plugin] add $(color_green $plugin_name)($plugin_url) version: $plugin_version"
+  log_info "[$(timestamp)][plugin] add $(color_green $plugin_name) version: $plugin_version"
 
   if [ "$(plugin_exist $plugin_name)" = "true" ]; then
     log_error "[$(timestamp)][plugin] already added, just update or remove"
     exit 0
   fi
 
-  log_debug "[$(timestamp)][plugin] add $plugin_name($plugin_version) url($plugin_url) ..."
+  log_debug "[$(timestamp)][plugin] add $plugin_name($plugin_version) ..."
   git clone $plugin_url -b $plugin_version $plugin_path >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH
   if [ "$?" != "0" ]; then
     log_error "[$(timestamp)][plugin] install error $plugin_name($plugin_version) ..."

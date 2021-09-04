@@ -49,7 +49,7 @@ require_mod() {
       return
     fi
 
-    log_info "[require] found depdencies: ${dependeny_count} ($mod_path)..."
+    log_info "[require] found depdencies: ${dependeny_count} ..."
 
     array_each require_parse ${DEPENDENCIES[@]}
 
