@@ -1,38 +1,87 @@
 #!/bin/bash
 
-config_rc() {
-  # ZMICRO_BIN_PATH: ${ZMICRO_BIN_PATH}
-  export PATH=$ZMICRO_BIN_PATH:$PATH
+# config_rc() {
+#   # ZMICRO_BIN_PATH: ${ZMICRO_BIN_PATH}
+#   export PATH=$ZMICRO_BIN_PATH:$PATH
 
-  # .bashrc
-  if [ ! -f $HOME/.bashrc ]; then
-    touch $HOME/.bashrc
-  fi
-  cat $HOME/.bashrc | grep ZMICRO_BIN_PATH >>/dev/null 2>&1
-  if [ "$?" != "0" ]; then
-    cat <<EOF >>$HOME/.bashrc
+#   # .bashrc
+#   if [ ! -f $HOME/.bashrc ]; then
+#     touch $HOME/.bashrc
+#   fi
+#   cat $HOME/.bashrc | grep ZMICRO_BIN_PATH >>/dev/null 2>&1
+#   if [ "$?" != "0" ]; then
+#     cat <<EOF >>$HOME/.bashrc
 
-# ZMICRO
-export ZMICRO_HOME=${ZMICRO_HOME}
-export ZMICRO_BIN_PATH=${ZMICRO_BIN_PATH}
-export PATH=\$ZMICRO_BIN_PATH:\$PATH
-EOF
-  fi
+# # ZMICRO
+# export ZMICRO_HOME=${ZMICRO_HOME}
+# export ZMICRO_BIN_PATH=${ZMICRO_BIN_PATH}
+# export PATH=\$ZMICRO_BIN_PATH:\$PATH
+# EOF
+#   fi
 
-  if [ ! -f $HOME/.zshrc ]; then
-    touch $HOME/.zshrc
-  fi
+#   if [ ! -f $HOME/.zshrc ]; then
+#     touch $HOME/.zshrc
+#   fi
 
-  cat $HOME/.zshrc | grep ZMICRO_BIN_PATH >>/dev/null 2>&1
-  if [ "$?" != "0" ]; then
-    cat <<EOF >>$HOME/.zshrc
+#   cat $HOME/.zshrc | grep ZMICRO_BIN_PATH >>/dev/null 2>&1
+#   if [ "$?" != "0" ]; then
+#     cat <<EOF >>$HOME/.zshrc
     
+# # ZMICRO
+# export ZMICRO_HOME=${ZMICRO_HOME}
+# export ZMICRO_BIN_PATH=${ZMICRO_BIN_PATH}
+# export PATH=\$ZMICRO_BIN_PATH:\$PATH
+# EOF
+#   fi
+# }
+
+config_clear() {
+  local profile=$1
+
+  # # ZMICRO_BIN_PATH: /home/binquant/.zmicro/bin
+  # export ZMICRO_HOME=/home/binquant/.zmicro
+  # export ZMICRO_BIN_PATH=/home/binquant/.zmicro/bin
+  # export PATH=$ZMICRO_BIN_PATH:$PATH
+
+  cat $profile | grep ZMICRO_BIN_PATH >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sed -i "/^# ZMICRO_BIN_PATH: \/home\/binquant\/.zmicro\/bin$/d" $profile
+    sed -i "/^export ZMICRO_HOME=\/home\/binquant\/.zmicro$/d" $profile
+    sed -i "/^export ZMICRO_BIN_PATH=\/home\/binquant\/.zmicro\/bin$/d" $profile
+    sed -i "/^export PATH=\$ZMICRO_BIN_PATH:\$PATH$/d" $profile
+  fi
+}
+
+config_rc() {
+  local profile=$1
+  if [ ! -f $profile ]; then
+    touch $profile
+  fi
+
+  cat $profile | grep "export ZMICRO_HOME=${ZMICRO_HOME}" >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    local origin_code=$(cat $profile)
+    tee $profile >> /dev/null <<EOF
+${origin_code}
+
 # ZMICRO
 export ZMICRO_HOME=${ZMICRO_HOME}
-export ZMICRO_BIN_PATH=${ZMICRO_BIN_PATH}
-export PATH=\$ZMICRO_BIN_PATH:\$PATH
+export PATH=\$ZMICRO_HOME/bin:\$PATH
 EOF
   fi
 }
 
-config_rc
+# https://unix.stackexchange.com/questions/104727/add-a-path-in-path-globally-for-every-user
+# if [ -f "/etc/environment" ]; then
+#   config_rc /etc/environment
+# else
+#   config_rc /etc/profile
+# fi
+
+# config_rc /etc/profile.d/zmicro.sh
+
+config_clear $HOME/.bashrc
+config_clear $HOME/.zshrc
+
+config_rc $HOME/.bashrc
+config_rc $HOME/.zshrc
