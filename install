@@ -1,5 +1,6 @@
 #!/bin/bash
 export ZMICRO_HOME=/usr/local/lib/zmicro
+export ZMICRO_LOG_DIR=/var/logs/zmicro
 export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
 
 export OLD_ZMICRO_HOME=$HOME/.zmicro
@@ -25,9 +26,15 @@ if [ ! -w $ZMICRO_HOME ]; then
   sudo chown -R $USER $ZMICRO_HOME
 fi
 
+# Logs
+# if [ ! -w $ZMICRO_LOG_DIR ]; then
+# @TODO ensure log permissions
+sudo chown -R $USER $ZMICRO_LOG_DIR
+# fi
+
 # Bin
 if [ -f $ZMICRO_LOCAL_BIN ]; then
-  rm -rf $ZMICRO_LOCAL_BIN
+  sudo rm -rf $ZMICRO_LOCAL_BIN
 fi
 sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
 
