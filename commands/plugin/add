@@ -53,7 +53,7 @@ core() {
   fi
 
   log_debug "[$(timestamp)][plugin] add $plugin_name($plugin_version) ..."
-  git clone $plugin_url -b $plugin_version $plugin_path 2>&1 | sudo tee -a $ZMICRO_LOG_COMMON_PATH 2>&1
+  git clone $plugin_url -b $plugin_version $plugin_path 2>&1 | sudo tee -a $ZMICRO_LOG_COMMON_PATH >> /dev/null 2>&1
   if [ "$?" != "0" ]; then
     log_error "[$(timestamp)][plugin] install error $plugin_name($plugin_version) ..."
     tail -n 50 $ZMICRO_LOG_ERROR_PATH
