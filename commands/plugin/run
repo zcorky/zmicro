@@ -40,5 +40,8 @@ elif [ "$plugin_command" = "dependencies" ]; then
 elif [ "$plugin_command" = "update" ]; then
   zmicro plugin update $plugin_name
 else
+  # load core utils
+  plugin_load_core daemon
+
   run $plugin_commands_path "-" $plugin_command
 fi

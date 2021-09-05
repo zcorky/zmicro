@@ -150,6 +150,24 @@ plugin_load_mod() {
   fi
 }
 
+plugin_load_core() {
+  local plugin_name=$1
+  local plugin_core_path="$(plugin_path $plugin_name)/core"
+  # local plugin_core_path="$(plugin_path $plugin_name)/core/load"
+
+  # if [ -f $plugin_core_path ]; then
+  #   \. $plugin_core_path
+  # fi
+
+  # echo "plugin_core_path: $plugin_core_path"
+
+  local utils=$(ls $plugin_core_path)
+  for util in $utils; do
+    log_debug "[plugin_load_core][${plugin_name}] load: $util"
+    . $plugin_core_path/$util
+  done
+}
+
 plugin_get_version() {
   plugin_load_mod $1
 
@@ -203,7 +221,9 @@ export -f plugin_mod_path
 export -f plugin_bin_path
 export -f plugin_exist
 export -f plugin_bin_exist
+
 export -f plugin_load_mod
+export -f plugin_load_core
 
 export -f plugin_get_version
 export -f plugin_get_description

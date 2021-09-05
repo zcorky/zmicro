@@ -129,6 +129,12 @@ string_replace() {
   echo $base | sed -e "s%${origin}%${new}%g"
 }
 
+string_remove() {
+  local text=$1
+  local need_remove=$2
+  string_replace $text $need_remove
+}
+
 string_match() {
   local text=$1
   local regexp=$2
@@ -209,6 +215,25 @@ array_each() {
   done
 }
 
+array_filter() {
+  local fn=$1
+  local args=${@:2}
+  local store=""
+
+  # @TODO GLOBAL, make outsize can get
+  Z_ARRAY_INDEX=0
+  local index=0
+  for element in ${args[@]}; do
+    index=$((index + 1))
+    Z_ARRAY_INDEX=$index
+    if [ "$($fn $element $index)" = "true" ]; then
+      store="$store $element"
+    fi
+  done
+
+  echo $store
+}
+
 array_length() {
   echo ${#@}
 }
@@ -227,6 +252,7 @@ export -f string_split_length
 export -f string_split_last_element
 export -f string_split_last_second_element
 export -f string_replace
+export -f string_remove
 export -f string_match
 
 export -f number_increase
@@ -236,5 +262,6 @@ export -f number_add
 export -f array_join
 export -f array_each
 export -f array_length
+export -f array_filter
 
 export -f set_var

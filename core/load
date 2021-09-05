@@ -24,6 +24,7 @@ load net
 load color
 load path
 load timestamp
+load delay
 load permission
 load help
 load version
@@ -33,7 +34,6 @@ load commander
 load plugin
 load pm
 load service
-load daemon
 
 # Cause Bug
 #   1. tput: No value for $TERM and no -T specified

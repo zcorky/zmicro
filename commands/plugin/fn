@@ -1,0 +1,40 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Usage:"
+  echo "  zmicro plugin fn <plugin_name> <fn_name> <fn_args...>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local plugin_name=$1
+  local fn=$2
+  local args=${@:3}
+
+  # @TODO
+  set +e
+
+  plugin_load_core $plugin_name
+
+  type $fn >> /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    eval "$fn $args"
+  else
+    log_error "$fn method is not not found"
+  fi
+
+  # @TODO
+  set -e
+}
+
+run() {
+  core $@
+}
+
+run $@

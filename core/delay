@@ -1,0 +1,14 @@
+#!/bin/bash
+
+delay() {
+  local fn=$@
+  if [ "$fn" = "" ]; then
+    log_error "[core][delay] fn is required"
+    exit 1
+  fi
+
+  sleep 1
+  eval $fn
+}
+
+export -f delay
