@@ -33,7 +33,7 @@ fi
 # . $ZMICRO_HOME/config/config
 
 # Init
-zmicro initialize
+zmicro initialize $@
 
 # echo ""
 # echo "First install, you should source profile:"

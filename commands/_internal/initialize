@@ -2,17 +2,17 @@
 
 set -e
 
-clone_git() {
+initialize_repo() {
   # install
   if [ ! -d $ZMICRO_HOME ]; then
     git clone $ZMICRO_GIT -b $ZMICRO_VERSION $ZMICRO_HOME
     # git clone $ZMICRO_GIT -b master $ZMICRO_HOME
-  else
-    log_info "[initailize] installed before, if you want to update, run 'zmicro update'"
+  # else
+  #   log_info "[initailize] installed before, if you want to update, run 'zmicro update'"
   fi
 }
 
-init() {
+initialize_config() {
   PATH=$ZMICRO_BIN_PATH:$PATH
   zmicro config rc
 
@@ -30,11 +30,65 @@ init() {
 
   # $ZMICRO_BIN_PATH/zmicro config git $USER $USER"@local"
   zmicro config git # $GIT_USERNAME $GIT_EMAIL
-
-  clone_git
-
-  # install dependency plugins ...
-  require_core_mod
 }
 
-init
+initialize_depdendencies() {
+  # install dependency plugins ...
+  require_core_mod $@
+}
+
+help() {
+  echo "update zmicro"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro update [...options]"
+  echo "    -p, --plugin <plugin_name | all>    Update all or one plugin"
+  echo "    -a, --all   Update core and all plugins"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+      -h | --help)
+        help
+        exit 0
+        ;;
+      -u | --update)
+        set_var is_plugin_update true
+        shift
+        ;;
+      *)
+        if [ "$(string_match $key ^-)" = "true" ]; then
+          echo "ERROR: unknown parameter \"$key\""
+          help
+          exit 1
+        fi
+
+        shift
+        ;;
+    esac
+  done
+
+  initialize_repo
+  initialize_config
+
+  if [ "$is_plugin_update" = "true" ]; then
+    initialize_depdendencies -u
+  else
+    initialize_depdendencies
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@
+

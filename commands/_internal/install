@@ -6,7 +6,7 @@ help() {
   echo "Install zmicro plugin"
   echo ""
   echo "Usage:"
-  echo "  zmicro install <plugin>"
+  echo "  zmicro install <self | plugin>"
 }
 
 core() {
@@ -15,7 +15,14 @@ core() {
     exit 0
   fi
 
-  zmicro plugin install $1
+  local plugin=$1
+
+  # install self
+  if [ -z "$plugin" ] || [ "$plugin" = "self" ] || [ "$plugin" = "zmicro" ]; then
+    $ZMICRO_HOME/install -u
+  else
+    zmicro plugin install $1
+  fi
 }
 
 run() {

@@ -21,7 +21,7 @@ plugin_register() {
     local bin_path=$ZMICRO_HOME/bin/$bin
 
     if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
-      log_warn "[$(timestamp)][plugin] $(color_red "remove") old bin: $bin"
+      log_debug "[$(timestamp)][plugin] $(color_red "remove") old bin: $bin"
       rm $bin_path
     fi
 
