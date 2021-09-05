@@ -2,12 +2,14 @@
 
 require() {
   local plugin_name=$1
+  local plugin_version=$2
+  local plugin_repo=$3
 
   if [ "$(zmicro plugin has $plugin_name)" = "false" ]; then
     log_info "[require] installing: ${plugin_name} ..."
     
     # @TODO
-    zmicro plugin install $plugin_name
+    zmicro plugin install $plugin_name $plugin_version $plugin_repo
     if [ "$?" = "0" ]; then
       log_success "[require] install success: ${plugin_name}"
     else
@@ -26,9 +28,10 @@ require_parse() {
   local text=$2
 
   local plugin_name=$(echo $text | awk -F '@' '{print $1}')
-  local plugin_version=$(echo $text | awk -F '@' '{print $2}')
-  local plugin_repo=$(echo $text | awk -F '@' '{print $3}')
+  local plugin_version=$(echo $text | awk -F '@' '{print $2}' | awk -F '#' '{print $1}')
+  local plugin_repo=$(echo $text | awk -F '#' '{print $2}')
 
+  # echo "[require_parse] ${plugin_name}(${plugin_version}) - ${plugin_repo}"
   log_info "[require] install plugin $plugin_name ($plugin_version) ..."
   require $plugin_name $plugin_version $plugin_repo
 }

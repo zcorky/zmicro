@@ -25,7 +25,11 @@ core() {
 
   local plugin_name=$1
   local plugin_version=$2
-  local plugin_url="${ZMICRO_PLUGIN_REPO_PREFIX}${plugin_name}"
+  local plugin_url=$3
+
+  if [ -z "$plugin_url" ]; then
+    plugin_url="${ZMICRO_PLUGIN_REPO_PREFIX}${plugin_name}"
+  fi
 
   check_plugin $plugin_name $plugin_version
 

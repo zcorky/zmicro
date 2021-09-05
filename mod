@@ -3,6 +3,7 @@ VERSION=v1.1.4
 DESCRIPTION="Zero's Service Manager"
 
 DEPENDENCIES=(
-  "swarm@v0.0.1"
-  "compose@v0.0.1"
+  #"machine@latest#https://github.com/zmicro-design/plugin-machine"
+  "swarm@latest"
+  "compose@latest"
 )
