@@ -27,6 +27,9 @@ update_one() {
   fi
   # cd - >>/dev/null 2>&1
 
+  # install depdendencies
+  require_plugin_mod $plugin_name
+
   # register
   plugin_register $plugin_name
 

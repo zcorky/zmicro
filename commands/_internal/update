@@ -32,8 +32,8 @@ help() {
   echo "update zmicro"
   echo ""
   echo "Usage:"
-  echo "  zmicro update [...options]"
-  echo "    -p, --plugin <plugin_name | all>    Update all or one plugin"
+  echo "  zmicro update [self | plugin_name] [...options]"
+  # echo "    -p, --plugin <plugin_name | all>    Update all or one plugin"
   echo "    -a, --all   Update core and all plugins"
 }
 
@@ -43,6 +43,7 @@ core() {
     exit 0
   fi
 
+  local plugin_name=""
   while [[ $# -gt 0 ]]; do
     local key=$1
     local value=$2
@@ -51,16 +52,16 @@ core() {
         help
         exit 0
         ;;
-      -p | --plugin)
-        if [ -z "$value" ]; then
-          log_error "plugin name is required"
-          exit 1
-        fi
+      # -p | --plugin)
+      #   if [ -z "$value" ]; then
+      #     log_error "plugin name is required"
+      #     exit 1
+      #   fi
 
-        set_var plugin_name $value
-        shift
-        shift
-        ;;
+      #   set_var plugin_name $value
+      #   shift
+      #   shift
+      #   ;;
       -a | --all)
         set_var update_all true
         shift
@@ -72,14 +73,17 @@ core() {
           exit 1
         fi
 
+        if [ -z $plugin_name ]; then
+          plugin_name=$key
+        fi
         shift
         ;;
     esac
   done
 
-  if [ "$plugin_name" ]; then
-    if [ "$plugin_name" = "all" ]; then
-      zmicro plugin update
+  if [ -n "$plugin_name" ]; then
+    if [ "$plugin_name" = "self" ]; then
+      update_zmicro
     else
       zmicro plugin update $plugin_name
     fi
