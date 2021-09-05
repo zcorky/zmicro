@@ -37,6 +37,8 @@ elif [ "$plugin_command" = "description" ]; then
   zmicro plugin description $plugin_name
 elif [ "$plugin_command" = "dependencies" ]; then
   zmicro plugin dependencies $plugin_name
+elif [ "$plugin_command" = "update" ]; then
+  zmicro plugin update $plugin_name
 else
   run $plugin_commands_path "-" $plugin_command
 fi
