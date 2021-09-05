@@ -26,9 +26,10 @@ if [ ! -w $ZMICRO_HOME ]; then
 fi
 
 # Bin
-if [ ! -f $ZMICRO_LOCAL_BIN ]; then
-  sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
+if [ -f $ZMICRO_LOCAL_BIN ]; then
+  rm -rf $ZMICRO_LOCAL_BIN
 fi
+sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
 
 # . $ZMICRO_HOME/config/config
 
