@@ -29,6 +29,9 @@ fi
 # Logs
 # if [ ! -w $ZMICRO_LOG_DIR ]; then
 # @TODO ensure log permissions
+if [ ! -d $ZMICRO_LOG_DIR ]; then
+  sudo mkdir -p $ZMICRO_LOG_DIR
+fi
 sudo chown -R $USER $ZMICRO_LOG_DIR
 # fi
 
