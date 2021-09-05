@@ -1,5 +1,0 @@
-#!/bin/bash
-
-usage=`top -bn 1 -i -c | grep Cpu | awk '{print $2}'`
-
-echo -e "${usage}"

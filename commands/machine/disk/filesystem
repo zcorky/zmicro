@@ -1,3 +1,0 @@
-#!/bin/bash
-
-echo $(cat /etc/fstab | grep UUID | awk '{ print $3}')

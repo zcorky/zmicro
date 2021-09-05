@@ -1,9 +1,0 @@
-#!/bin/bash
-
-TOTAL=$(free -m | grep Mem | awk '{print $2}')
-AVAILABLE=$(free -m | grep Mem | awk '{print $7}')
-USED=$((TOTAL - AVAILABLE))
-
-usage=$(($USED * 100 / $TOTAL))
-
-echo -e "${usage}"

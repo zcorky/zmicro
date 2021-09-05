@@ -2,7 +2,7 @@
 
 . $ZMICRO_HOME/core/env
 
-PLUGIN=package
+PLUGIN=machine
 
 help() {
   zmicro plugin run ${PLUGIN} --help
@@ -13,8 +13,6 @@ dependency_check() {
     log_info "plugin ${PLUGIN} is required, installing ..."
 
     zmicro plugin install ${PLUGIN}
-  # else
-  #   zmicro plugin update ${PLUGIN}
   fi
 }
 

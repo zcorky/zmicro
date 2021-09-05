@@ -5,8 +5,7 @@
 PLUGIN=compose
 
 help() {
-  echo "Usage:"
-  echo "  zmicro service <action> <service_name>"
+  zmicro plugin run ${PLUGIN} --help
 }
 
 dependency_check() {
