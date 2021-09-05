@@ -24,6 +24,9 @@ update_zmicro() {
 
   # log_timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
 
+  # update depdendencies
+  require_core_mod -u
+
   # Auto Register After Update
   plugin_register_all $ZMICRO_PLUGINS_PATH
 }
