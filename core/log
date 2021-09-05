@@ -43,7 +43,7 @@ log_init() {
 }
 
 log_info() {
-  echo -e "$(color_green ℹ) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e "$(color_green ℹ) ${@}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log_debug() {
@@ -51,20 +51,20 @@ log_debug() {
 }
 
 log_success() {
-  echo "$(color_green ✔) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+  echo "$(color_green ✔) ${@}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log_error() {
-  echo "$(color_red ✖) ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
+  echo "$(color_red ✖) ${@}" | sudo tee -a $ZMICRO_LOG_ERROR_PATH
 }
 
 log_warn() {
-  echo -e "$(color_yellow ⚠) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e "$(color_yellow ⚠) ${@}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log() {
   # @TODO will remove custum blanks
-  echo -e $@ | tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e $@ | sudo tee -a $ZMICRO_LOG_COMMON_PATH
   # log_info $@
 }
 
@@ -100,7 +100,7 @@ log_command() {
 
   command_path=$(get_command_path_with_fragments $base_command_path $command_fragments)
 
-  echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" >>$ZMICRO_LOG_COMMON_PATH
+  echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH >> /dev/null
 
   log_debug [$(timestamp)]$(color_success "[command] final command path: $command_path")
   log_debug ""
@@ -120,7 +120,7 @@ log_command() {
     $command_path $command_args
     exit_code=${PIPESTATUS[0]}
   else
-    $command_path $command_args # | tee -a $ZMICRO_LOG_COMMON_PATH
+    $command_path $command_args # | sudo tee -a $ZMICRO_LOG_COMMON_PATH
     exit_code=${PIPESTATUS[0]}
     # echo "exit_code: $exit_code($command)"
   fi
@@ -128,7 +128,7 @@ log_command() {
   if [ "$exit_code" = "0" ]; then
     log_success "[$(timestamp)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
   else
-    log_error "[$(timestamp)] $command_fragments error." >>$ZMICRO_LOG_COMMON_PATH
+    log_error "[$(timestamp)] $command_fragments error." | sudo tee -a $ZMICRO_LOG_COMMON_PATH >> /dev/null
   fi
 
   exit $exit_code

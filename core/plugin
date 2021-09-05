@@ -120,6 +120,10 @@ plugin_exist() {
   fi
 }
 
+plugin_has() {
+  plugin_exist $@
+}
+
 plugin_bin_exist() {
   if [ -d $(plugin_bin_path $1) ]; then
     echo "true"
@@ -221,6 +225,7 @@ export -f plugin_mod_path
 export -f plugin_bin_path
 export -f plugin_exist
 export -f plugin_bin_exist
+export -f plugin_has
 
 export -f plugin_load_mod
 export -f plugin_load_core

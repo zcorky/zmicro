@@ -25,7 +25,7 @@ update_one() {
 
   # Update @TODO
   cd $plugin_path
-  git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>&1
+  git pull origin master 2>&1 | sudo tee -a $ZMICRO_LOG_COMMON_PATH >> /dev/null
   if [ "$?" != "0" ]; then
     log_error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
     exit 1

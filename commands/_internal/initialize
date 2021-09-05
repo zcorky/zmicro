@@ -8,7 +8,7 @@ initialize_repo() {
     git clone $ZMICRO_GIT -b $ZMICRO_VERSION $ZMICRO_HOME
     # git clone $ZMICRO_GIT -b master $ZMICRO_HOME
   # else
-  #   log_info "[initailize] installed before, if you want to update, run 'zmicro update'"
+  #   log_info "[initailize] installed before (3), if you want to update, run 'zmicro update'"
   fi
 }
 

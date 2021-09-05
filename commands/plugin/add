@@ -48,7 +48,7 @@ core() {
   log_info "[$(timestamp)][plugin] add $(color_green $plugin_name) version: $plugin_version"
 
   if [ "$(plugin_exist $plugin_name)" = "true" ]; then
-    log_error "[$(timestamp)][plugin] already added, just update or remove"
+    log_success "[$(timestamp)][plugin] iinstalled before (1): ${plugin_name}"
     exit 0
   fi
 

@@ -7,7 +7,7 @@ require() {
   local force_update=$IS_REQUIRE_MOD_UPDATE_TMP_GLOBAL
 
   if [ "$(zmicro plugin has $plugin_name)" = "true" ]; then
-    log_debug "[$(timestamp)][require] installed before: ${plugin_name}"
+    log_debug "[$(timestamp)][require] installed before (2): ${plugin_name}"
 
     if [ "$force_update" = "true" ]; then
       log_info "[$(timestamp)][require] update: ${plugin_name}"
