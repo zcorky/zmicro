@@ -29,7 +29,9 @@ initialize_config() {
   fi
 
   # $ZMICRO_BIN_PATH/zmicro config git $USER $USER"@local"
-  zmicro config git # $GIT_USERNAME $GIT_EMAIL
+  local origin_user=$(git config --get user.name)
+  local origin_email=$(git config --get user.email)
+  zmicro config git $origin_user $origin_email
 }
 
 initialize_depdendencies() {
