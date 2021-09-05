@@ -43,7 +43,30 @@ daemon_logs() {
     exit 1
   fi
 
-  sudo journalctl -u $service
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+      -f | --follow)
+        set_var is_daemon_logs_follow true
+        shift
+        ;;
+      *)
+        if [ "$(string_match $key ^-)" = "true" ]; then
+          log_error "[daemon_logs] unknown parameter \"$key\""
+          exit 1
+        fi
+        
+        shift
+        ;;
+    esac
+  done
+
+  if [ "$is_daemon_logs_follow" = "true" ]; then
+    sudo journalctl -u $service -f
+  else
+    sudo journalctl -u $service -r
+  fi
 }
 
 daemon_status() {

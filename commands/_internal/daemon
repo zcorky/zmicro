@@ -59,6 +59,7 @@ core() {
 
   local action=$1
   local name=$2
+  local args=${@:3}
   if [ "$action" = "" ]; then
     log_error "action is required"
     help
@@ -70,7 +71,7 @@ core() {
       create $name
       ;;
     *)
-      eval "daemon_${action} ${name}"
+      eval "daemon_${action} ${name} ${args}"
       ;;
   esac
 }
