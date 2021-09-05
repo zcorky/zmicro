@@ -18,6 +18,7 @@ load() {
 }
 
 load require
+load lock
 load type
 load os
 load net

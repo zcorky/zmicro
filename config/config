@@ -22,6 +22,9 @@ export ZMICRO_MOD=$ZMICRO_HOME/mod
 # Log
 export ZMICRO_LOG_PATH=/var/log/${ZMICRO_NAME} #/tmp/zmicro
 
+# Lock
+export ZMICRO_LOCK_UPDATE_PATH=$ZMICRO_LOG_PATH/update.lock
+
 export ZMICRO_LOG_COMMON_PATH=$ZMICRO_LOG_PATH/common.$TODAY.log
 export ZMICRO_LOG_DEBUG_PATH=$ZMICRO_LOG_PATH/debug.log
 export ZMICRO_LOG_ERROR_PATH=$ZMICRO_LOG_PATH/error.log

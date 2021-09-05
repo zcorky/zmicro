@@ -1,0 +1,47 @@
+#!/bin/bash
+
+get_plugin_update_lock() {
+  echo "xxx"
+}
+
+is_plugin_need_update() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log_error "[is_plugin_need_update] plugin name is required"
+    exit 1
+  fi
+
+  # if [ ! -f $ZMICRO_LOCK_UPDATE_PATH ]; then
+  #   touch $ZMICRO_LOCK_UPDATE_PATH
+  # fi
+
+  # cat $ZMICRO_LOCK_UPDATE_PATH
+
+  # format: /tmp/zmicro.daemon.lock.1630824359
+  local format_prefix="zmicro.$plugin_name.lock."
+  local new_update_lock_file="/tmp/${format_prefix}$(date +%s)"
+  # echo "plugin_name: $new_update_lock_file"
+
+  ls /tmp | grep "${format_prefix}" >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    local last_update_timestamp=$(ls /tmp | grep "${format_prefix}" | tail -n 1 | awk -F '.' '{print $4}')
+    # echo "xxx: $last_update_timestamp $(timestamp_recently $last_update_timestamp)"
+    if [ "$(timestamp_recently $last_update_timestamp)" = "true" ]; then
+      echo "false"
+    else
+      # local origin_lock_filename=$(ls /tmp | grep "${format_prefix}" | tail -n 1)
+      # echo "remove /tmp/$origin_lock_filename"
+
+      rm -f /tmp/${format_prefix}*
+      sleep 1
+      touch $new_update_lock_file
+      echo "true"
+    fi
+  else
+    touch $new_update_lock_file >> /dev/null 2>&1
+    echo "true"
+  fi
+}
+
+export -f get_plugin_update_lock
+export -f is_plugin_need_update

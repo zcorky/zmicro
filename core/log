@@ -150,6 +150,20 @@ log_version() {
   fi
 }
 
+log_plugin_update_lock() {
+  # format: plugin_name#timestamps
+  # example: daemon#timestamps
+  if [ -z "$plugin_name" ]; then
+    log_error "[log_plugin_update_lock] plugin_name is required"
+    exit 1
+  fi
+
+  local msg="$plugin_name#$(timestamp)"
+  # sed -i "/^\s*$/d" $ZMICRO_LOCK_UPDATE_PATH
+  
+  # @TODO @TODO @TODO
+}
+
 export -f log_init
 
 export -f log
@@ -164,3 +178,5 @@ export -f log_timestamp
 export -f log_command
 export -f log_update
 export -f log_version
+
+export -f log_plugin_update_lock
