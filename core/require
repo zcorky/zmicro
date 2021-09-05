@@ -26,7 +26,7 @@ require() {
     log_error "[$(timestamp)][require] install failed: ${plugin_name}"
   fi
     
-  sleep 1
+  # sleep 1
 }
 
 require_parse() {
