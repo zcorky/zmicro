@@ -31,6 +31,14 @@ log_init() {
     log_debug "[log_init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
 
+  if [ ! -w $ZMICRO_LOG_PATH ]; then
+    sudo chown -R $current_user $ZMICRO_LOG_PATH
+  fi
+
+  if [ ! -w $ZMICRO_APP_LOGS_PATH ]; then
+    sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
+  fi
+
   log_debug "logs config done"
 }
 
