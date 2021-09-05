@@ -18,6 +18,8 @@ require() {
 
   log_info "[$(timestamp)][require] install: $plugin_name ($plugin_version) ..."
   
+  # log_info "[$(timestamp)][require] repo: ${plugin_repo}"
+
   # @TODO
   zmicro plugin install $plugin_name $plugin_version $plugin_repo
   if [ "$?" = "0" ]; then
@@ -42,7 +44,7 @@ require_parse() {
   local plugin_repo=$(echo $text | awk -F '#' '{print $2}')
 
   # echo "[require_parse] ${plugin_name}(${plugin_version}) - ${plugin_repo}"
-  # log_info "[$(timestamp)][require] install plugin $plugin_name ($plugin_version) ..."
+  # log_info "[$(timestamp)][require] install plugin $plugin_name ($plugin_version) - ${plugin_repo} ..."
   require $plugin_name $plugin_version $plugin_repo
 }
 

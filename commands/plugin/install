@@ -27,12 +27,22 @@ core() {
   local plugin_version=$2
   local plugin_url=$3
 
+  # compatible no version provided, like `zmicro plugin add` command
+  #   such as: zmicro install $plugin_name $plugin_url [$plugin_version]
+  if [ "$(string_match $plugin_version ^http)" = "true" ] || [ "$(string_match $plugin_version ^git)" = "true" ]; then
+    plugin_url=$plugin_version
+    plugin_version=$3
+  fi
+
   if [ -z "$plugin_url" ]; then
     plugin_url="${ZMICRO_PLUGIN_REPO_PREFIX}${plugin_name}"
   fi
 
-  check_plugin $plugin_name $plugin_version
+  if [ -z "$plugin_url" ]; then
+    check_plugin $plugin_name $plugin_version
+  fi
 
+  # echo "[commands][plugin][install] $plugin_name $plugin_url $plugin_version"
   zmicro plugin add $plugin_name $plugin_url $plugin_version
 }
 
