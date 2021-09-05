@@ -9,6 +9,41 @@ help() {
   echo "    Default timezone: Asia/Shanghai"
 }
 
+is_timezone_seted() {
+  local tz=$1
+  if [ -z $tz ]; then
+    log_error "[is_timezone_seted] timezone is required"
+    exit 1
+  fi
+
+  # @1 TZ env
+  if [ -n "$TZ" ]; then
+    echo "true"
+    return
+  fi
+
+  # @2 /etc/timezone
+  if [ -f "/etc/timezone" ]; then
+    cat /etc/timezone | grep $tz >> /dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      echo "true"
+      return
+    fi
+  fi
+
+  # @3 timedatectl
+  which timedatectl >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sudo timedatectl show | grep $tz >> /dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      echo "true"
+      return
+    fi
+  fi
+
+  echo "false"
+}
+
 core() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     help
@@ -29,14 +64,19 @@ core() {
   if [ "$(os_is_docker)" = "true" ]; then
     # @TODO
     # date >> /dev/null 2>&1
-    log_warn "@TODO set timezone in docker"
+    log_warn "[$(timestamp)][config] @TODO set timezone in docker"
+    return 
+  fi
+
+  if [ "$(is_timezone_seted $timezone)" = "true" ]; then
+    return
+  fi
+
+  sudo timedatectl set-timezone $timezone
+  if [ "$?" != "0" ]; then
+    log_error "[$(timestamp)][config] Failed to set timezone: $timezone"
   else
-    sudo timedatectl set-timezone $timezone
-    if [ "$?" != "0" ]; then
-      log_error "Failed to set timezone: $timezone"
-    else
-      log_success "Current timezone: $timezone"
-    fi
+    log_success "[$(timestamp)][config] Current timezone: $timezone"
   fi
 }
 
