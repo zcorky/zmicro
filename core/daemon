@@ -11,6 +11,12 @@ daemon_get_service_name() {
 }
 
 daemon_get_service_path() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   echo "/etc/systemd/system/${service}.service"
 }
@@ -24,7 +30,29 @@ daemon_is_service_exist() {
   fi
 }
 
+daemon_logs() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
+  local service=$(daemon_get_service_name $1)
+  if [ "$(daemon_is_service_exist $1)" = "false" ]; then
+    log_error "daemon service($1) not found"
+    exit 1
+  fi
+
+  sudo journalctl -u $service
+}
+
 daemon_status() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   if [ "$(daemon_is_service_exist $1)" = "false" ]; then
     log_error "daemon service($1) not found"
@@ -35,6 +63,12 @@ daemon_status() {
 }
 
 daemon_start() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   if [ "$(daemon_is_service_exist $1)" = "false" ]; then
     log_error "daemon service($1) not found"
@@ -45,6 +79,12 @@ daemon_start() {
 }
 
 daemon_stop() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   if [ "$(daemon_is_service_exist $1)" = "false" ]; then
     log_error "daemon service($1) not found"
@@ -55,6 +95,12 @@ daemon_stop() {
 }
 
 daemon_restart() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   if [ "$(daemon_is_service_exist $1)" = "false" ]; then
     log_error "daemon service($1) not found"
@@ -65,6 +111,12 @@ daemon_restart() {
 }
 
 daemon_reload() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   if [ "$(daemon_is_service_exist $1)" = "false" ]; then
     log_error "daemon service($1) not found"
@@ -75,6 +127,12 @@ daemon_reload() {
 }
 
 daemon_enable() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   if [ "$(daemon_is_service_exist $1)" = "false" ]; then
     log_error "daemon service($1) not found"
@@ -85,6 +143,12 @@ daemon_enable() {
 }
 
 daemon_disable() {
+  local name=$1
+  if [ "$name" = "" ]; then
+    log_error "name is required"
+    exit 1
+  fi
+
   local service=$(daemon_get_service_name $1)
   if [ "$(daemon_is_service_exist $1)" = "false" ]; then
     log_error "daemon service($1) not found"
@@ -109,6 +173,7 @@ daemon_create() {
     exit 1
   fi
 
+  local service_name=$(daemon_get_service_name $name)
   local service_path=$(daemon_get_service_path $name)
   sudo touch $service_path
   sudo tee $service_path >>/dev/null <<EOF
@@ -117,9 +182,9 @@ Description=zmicro service - ${name}
 
 [Service]
 # EnvironmentFile=$HOME/.bashrc
-Environment="ZMICRO_HOME=${ZMICRO_HOME}"
-Environment="ZMICRO_BIN_PATH=${ZMICRO_BIN_PATH}"
-Environment="PATH=$PATH"
+Environment=ZMICRO_HOME=${ZMICRO_HOME}
+# Environment=ZMICRO_BIN_PATH=${ZMICRO_BIN_PATH}
+Environment=PATH=/usr/local/bin:${ZMICRO_HOME}/bin:${PATH}
 ExecStart=${command}
 Restart=on-failure
 Type=simple
@@ -127,6 +192,9 @@ Type=simple
 [Install]
 WantedBy=multi-user.target 
 EOF
+
+  sudo systemctl daemon-reload
+  sudo systemctl start $service_name
 
   log_success "daemon serice ${name} created"
 }
@@ -139,13 +207,16 @@ daemon_remove() {
     exit 1
   fi
 
+  local service_name=$(daemon_get_service_name $name)
   local service_path=$(daemon_get_service_path $name)
   if [ "$(daemon_is_service_exist $name)" = "false" ]; then
     log_error "daemon service(${name}) not found"
     exit 1
   fi
 
+  sudo systemctl stop $service_name
   sudo rm $service_path
+  sudo systemctl daemon-reload
   log_success "daemon serice ${name} removed"
 }
 
@@ -153,6 +224,7 @@ export -f daemon_get_service_name
 export -f daemon_get_service_path
 export -f daemon_is_service_exist
 
+export -f daemon_logs
 export -f daemon_status
 export -f daemon_start
 export -f daemon_stop
