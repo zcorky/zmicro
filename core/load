@@ -21,6 +21,7 @@ load require
 load lock
 load type
 load os
+load fs
 load net
 load color
 load path
