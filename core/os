@@ -319,6 +319,17 @@ os_machine_id() {
   fi
 }
 
+os_add_permission() {
+  local path=$1
+  if [ -f $path ] && [ ! -w $path ]; then
+    sudo chown -R $(os_username) $path
+  fi
+}
+
+os_ensure_permission() {
+  os_add_permission $@
+}
+
 export -f os_homedir
 export -f os_username
 export -f os_shell
@@ -355,3 +366,6 @@ export -f os_system_usage
 export -f os_network_ip
 
 export -f os_machine_id
+
+export -f os_add_permission
+export -f os_ensure_permission

@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# @TODO
+os_ensure_permission $ZMICRO_LOG_COMMON_PATH
+os_ensure_permission $ZMICRO_LOG_DEBUG_PATH
+os_ensure_permission $ZMICRO_LOG_ERROR_PATH
+os_ensure_permission $ZMICRO_LOG_UPDATE_PATH
+os_ensure_permission $ZMICRO_LOG_VERSION_PATH
+os_ensure_permission $ZMICRO_LOG_NOTIFY_PATH
+# @TODO END
+
 DAYS_SECONDS_90=$((90 * 24 * 60 * 60))
 
 log_init() {
@@ -45,28 +54,28 @@ log_init() {
 }
 
 log_info() {
-  echo -e "$(color_green ℹ) ${@}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e "$(color_green ℹ) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log_debug() {
-  echo -e $@ | sudo tee -a $ZMICRO_LOG_DEBUG_PATH >> /dev/null 2>&1
+  echo -e $@ >> $ZMICRO_LOG_DEBUG_PATH
 }
 
 log_success() {
-  echo "$(color_green ✔) ${@}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH
+  echo "$(color_green ✔) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log_error() {
-  echo "$(color_red ✖) ${@}" | sudo tee -a $ZMICRO_LOG_ERROR_PATH
+  echo "$(color_red ✖) ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
 }
 
 log_warn() {
-  echo -e "$(color_yellow ⚠) ${@}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e "$(color_yellow ⚠) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log() {
   # @TODO will remove custum blanks
-  echo -e $@ | sudo tee -a $ZMICRO_LOG_COMMON_PATH
+  echo -e $@ | tee -a $ZMICRO_LOG_COMMON_PATH
   # log_info $@
 }
 
@@ -102,7 +111,7 @@ log_command() {
 
   command_path=$(get_command_path_with_fragments $base_command_path $command_fragments)
 
-  echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" | sudo tee -a $ZMICRO_LOG_COMMON_PATH >> /dev/null
+  echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" >> $ZMICRO_LOG_COMMON_PATH
 
   log_debug [$(timestamp)]$(color_success "[command] final command path: $command_path")
   log_debug ""
@@ -122,7 +131,7 @@ log_command() {
     $command_path $command_args
     exit_code=${PIPESTATUS[0]}
   else
-    $command_path $command_args # | sudo tee -a $ZMICRO_LOG_COMMON_PATH
+    $command_path $command_args # | tee -a $ZMICRO_LOG_COMMON_PATH
     exit_code=${PIPESTATUS[0]}
     # echo "exit_code: $exit_code($command)"
   fi
@@ -130,7 +139,7 @@ log_command() {
   if [ "$exit_code" = "0" ]; then
     log_success "[$(timestamp)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
   else
-    log_error "[$(timestamp)] $command_fragments error." | sudo tee -a $ZMICRO_LOG_COMMON_PATH >> /dev/null
+    log_error "[$(timestamp)] $command_fragments error." >> $ZMICRO_LOG_COMMON_PATH
   fi
 
   exit $exit_code
