@@ -200,7 +200,7 @@ log_clean_check() {
   # echo "delta: $delta"
   if [ $delta -gt $DAYS_SECONDS_90 ]; then
     # do clean
-    log_clean & >> /dev/null 2>&1
+    log_clean # & >> /dev/null 2>&1
   # else
     # echo "[log_clean_check] no need clean"
   fi
@@ -234,6 +234,7 @@ log_clean() {
   if [ -f "$LOG_CLEAN_BACKUP_FILE" ]; then
     # @TODO safe
     sudo rm -rf ${LOG_CLEAN_DIR}/*.log >> /dev/null 2>&1
+    # sudo rm -rf /var/log/zmicro/*.log >> /dev/null 2>&1
   fi
 
   # retimestamp

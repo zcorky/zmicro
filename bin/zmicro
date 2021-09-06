@@ -17,7 +17,7 @@ export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
 . $ZMICRO_CORE_PATH/env
 
 # @TODO
-log_clean_check & >> /dev/null 2>&1
+log_clean_check # & >> /dev/null 2>&1
 
 # # INIT with ZMICRO_HOME
 # if [ "$(is_run_init $1)" = "true" ]; then
