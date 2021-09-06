@@ -4,7 +4,7 @@
 
 update_zmicro() {
   local origin_version=$(get_current_version)
-  log_update PREV
+  # log_update PREV
 
   cd $ZMICRO_HOME
   git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2>&1
@@ -13,14 +13,10 @@ update_zmicro() {
     exit -1
   fi
 
-  log_update LATEST
+  # log_update LATEST
   local new_version=$(get_current_version)
 
-  if [ "$origin_version" != "$new_version" ]; then
-    log "Update Success. Version: $new_version"
-  else
-    log "No Changes. Version: $new_version"
-  fi
+  log_version $origin_version $new_version
 
   # log_timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
 

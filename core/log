@@ -138,15 +138,18 @@ log_command() {
 log_update() {
   stage=$1 # START | END
   current_version=$(get_current_version)
-  log_timestamp "[${current_version}] ${stage}" | sudo tee -a $ZMICRO_LOG_UPDATE_PATH
+  log_info "[$(timestamp)] ${stage} ${current_version} "
 }
 
 log_version() {
-  PREV=$1
-  CURRENT=$2
+  local PREV=$1
+  local CURRENT=$2
 
-  if [ -d $ZMICRO_LOG_VERSION_PATH ] || [ "$PREV" != "$CURRENT" ]; then
-    log_timestamp "[$CURRENT] ${PREV} => ${CURRENT}" | sudo tee -a $ZMICRO_LOG_VERSION_PATH
+  if [ "$PREV" != "$CURRENT" ]; then
+    log_info "[$(timestamp)][$CURRENT] ${PREV} => ${CURRENT}"
+    log_success "update success: $CURRENT"
+  else
+    log_success "no changes: $CURRENT"
   fi
 }
 
