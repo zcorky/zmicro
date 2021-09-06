@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DAYS_SECONDS_90=$((90 * 24 * 60 * 60))
+
 log_init() {
   . $ZMICRO_CORE_PATH/os
   . $ZMICRO_CORE_PATH/color
@@ -47,7 +49,7 @@ log_info() {
 }
 
 log_debug() {
-  echo -e $@ >> $ZMICRO_LOG_DEBUG_PATH
+  echo -e $@ | sudo tee -a $ZMICRO_LOG_DEBUG_PATH >> /dev/null 2>&1
 }
 
 log_success() {
@@ -167,7 +169,82 @@ log_plugin_update_lock() {
   # @TODO @TODO @TODO
 }
 
+# keep in 90d
+log_clean_check() {
+  local log_last_check=$ZMICRO_LOG_PATH/.last_clean
+
+  # initialize
+  if [ ! -f $log_last_check ]; then
+    echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+
+    # clean
+    log_clean & >> /dev/null 2>&1
+    return
+  fi
+
+  local last_check_timestamp=$(cat $log_last_check)
+  if [ -z "$last_check_timestamp" ]; then
+    echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+    return
+  fi
+
+  local lcts=$(timestamp_to_seconds $last_check_timestamp);
+  if [ "$?" != "0" ]; then
+    echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+    return
+  fi
+
+  local now=$(date +%s)
+  local delta=$((now - lcts))
+  # will rm logs after 90 days
+  # echo "delta: $delta"
+  if [ $delta -gt $DAYS_SECONDS_90 ]; then
+    # do clean
+    log_clean & >> /dev/null 2>&1
+  # else
+    # echo "[log_clean_check] no need clean"
+  fi
+}
+
+log_clean() {
+  # if [ ! -d $ZMICRO_LOG_PATH ]; then
+  #   export ZMICRO_LOG_PATH=${LOG_CLEAN_DIR}
+  # fi
+
+  local LOG_CLEAN_DIR=$ZMICRO_LOG_PATH
+  # if [ -d "$LOG_CLEAN_DIR" ]; then
+  #   LOG_CLEAN_DIR=/var/log/zmicro
+  # fi
+
+  # if [ "$(string_match $LOG_CLEAN_DIR ^${/var/log/zmicro})"]; then
+  #   LOG_CLEAN_DIR=/var/log/zmicro
+  # fi
+
+  echo "$LOG_CLEAN_DIR" | grep zmicro >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    LOG_CLEAN_DIR=/var/log/zmicro
+  fi
+
+  local LOG_CLEAN_BACKUP_FILE=${LOG_CLEAN_DIR}/backup.$(date +%Y-%m-%d_%H_%M_%S).gz
+  log_debug "[timestamps][log_clean] clean logs dir: ${ZMICRO_LOG_PATH}"
+
+  # backup
+  log_debug "[timestamps][log_clean] backup ${LOG_CLEAN_BACKUP_FILE}"
+  sudo tar -zcvf ${LOG_CLEAN_BACKUP_FILE} --exclude '*.gz' ${LOG_CLEAN_DIR} >> /dev/null 2>&1
+  if [ -f "$LOG_CLEAN_BACKUP_FILE" ]; then
+    # @TODO safe
+    sudo rm -rf ${LOG_CLEAN_DIR}/*.log >> /dev/null 2>&1
+  fi
+
+  # retimestamp
+  local log_last_check=$ZMICRO_LOG_PATH/.last_clean
+  echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+}
+
 export -f log_init
+
+export -f log_clean_check
+export -f log_clean
 
 export -f log
 export -f log_success

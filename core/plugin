@@ -167,7 +167,7 @@ plugin_load_core() {
 
   local utils=$(ls $plugin_core_path)
   for util in $utils; do
-    log_debug "[plugin_load_core][${plugin_name}] load: $util"
+    log_debug "[$(timestamp)][plugin_load_core][${plugin_name}] load: $util"
     . $plugin_core_path/$util
   done
 }
