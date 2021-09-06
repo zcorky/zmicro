@@ -126,6 +126,34 @@ zmicro_config_list() {
   less $ZMICRO_RC
 }
 
+read_from_pipe() { read "$@" <&0; }
+
+config_profile() {
+  local path=$1
+  local text=$(</dev/stdin)
+
+  if [ -z "$path" ] || [ -z "$text" ]; then
+    log_error "[$(timestamp)][config_profile] path and text is required"
+    exit 1
+  fi
+
+  if [ ! -f $path ]; then
+    log_error "[$(timestamp)][config_profile] path $path not found"
+    exit 1
+  fi
+
+  # no permission
+  # try to use sudo/root
+  if [ ! -w $path ]; then
+    sudo tee -a $path >> /dev/null <<EOF
+${text}
+EOF
+    return
+  fi
+
+  echo "$text" >> $path
+}
+
 export -f load_config_file
 export -f load_config_dir
 
@@ -139,3 +167,5 @@ export -f zmicro_config_list
 export -f zmicro_config_get
 export -f zmicro_config_set
 export -f zmicro_config_remove
+
+export -f config_profile
