@@ -76,6 +76,86 @@ EOF
   fi
 }
 
+# Global, need root
+config_global_rc() {
+  local profile=$1
+
+  # if not found, ignore
+  if [ ! -f $profile ]; then
+    log_error "[$(timestamp)][config_global_rc] profile $profile not found"
+    exit 1
+  fi
+
+  cat $profile | grep "export ZMICRO_HOME=${ZMICRO_HOME}" >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+#     sudo tee -a $profile >> /dev/null <<EOF
+# # ZMICRO
+# export ZMICRO_HOME=${ZMICRO_HOME}
+# export PATH=\$ZMICRO_HOME/bin:\$PATH
+# EOF
+    local text=$(cat <<-END
+# ZMICRO
+export ZMICRO_HOME=${ZMICRO_HOME}
+export PATH=\$ZMICRO_HOME/bin:\$PATH 
+END
+)
+    sudo tee -a $profile >> /dev/null <<EOF
+${text}
+EOF
+  fi
+}
+
+config_global_rc_ignore_if_not_found() {
+  local profile=$1
+  if [ ! -f $profile ]; then
+    return
+  fi
+
+  config_global_rc $profile
+}
+
+config_global_rc_force_create_if_not_found() {
+  local profile=$1
+  if [ ! -f $profile ]; then
+    sudo touch $profile
+  fi
+
+  config_global_rc $profile
+}
+
+# common
+config_profile() {
+  config_global_rc_force_create_if_not_found /etc/profile.d/zmicro2.sh
+}
+
+config_bashrc() {
+  # OLD
+  config_clear $HOME/.bashrc
+
+  # HOME
+  config_rc $HOME/.bashrc
+
+  # # GLOBAL
+  # #   ubuntu  20
+  # config_global_rc_ignore_if_not_found /etc/bashrc 
+  # #   centos  8
+  # config_global_rc_ignore_if_not_found /etc/bash.bashrc 
+}
+
+config_zshrc() {
+  # OLD
+  config_clear $HOME/.zshrc
+
+  # HOME
+  config_rc $HOME/.zshrc
+
+  # # GLOBAL
+  # #   ubuntu 20
+  # config_global_rc_ignore_if_not_found /etc/zsh/zprofile 
+  # #   centos 8
+  # config_global_rc_ignore_if_not_found /etc/zshrc 
+}
+
 # https://unix.stackexchange.com/questions/104727/add-a-path-in-path-globally-for-every-user
 # if [ -f "/etc/environment" ]; then
 #   config_rc /etc/environment
@@ -83,10 +163,6 @@ EOF
 #   config_rc /etc/profile
 # fi
 
-# config_rc /etc/profile.d/zmicro.sh
-
-config_clear $HOME/.bashrc
-config_clear $HOME/.zshrc
-
-config_rc $HOME/.bashrc
-config_rc $HOME/.zshrc
+config_profile
+config_bashrc
+config_zshrc
