@@ -10,6 +10,11 @@ plugin_register() {
   local plugin_path=$(plugin_path $plugin_name)
   local plugin_bin_path=$(plugin_bin_path $plugin_name)
 
+  # Fix permission
+  if [ ! -w "$ZMICRO_HOME/bin" ]; then
+    sudo chown -R $(os_username) $ZMICRO_HOME/bin
+  fi
+
   if [ ! -d $plugin_bin_path ]; then
     # exit 0
     return
@@ -38,6 +43,11 @@ plugin_unregister() {
   fi
 
   local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+
+  # Fix permission
+  if [ ! -w "$ZMICRO_HOME/bin" ]; then
+    sudo chown -R $(os_username) $ZMICRO_HOME/bin
+  fi
 
   if [ ! -d $plugin_path/$plugin/bin ]; then
     # exit 0
