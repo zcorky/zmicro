@@ -209,9 +209,10 @@ array_each() {
   Z_ARRAY_INDEX=0
   local index=0
   for element in ${args[@]}; do
-    index=$((index + 1))
     Z_ARRAY_INDEX=$index
     $fn $index $element
+
+    index=$((index + 1))
   done
 }
 
@@ -224,11 +225,12 @@ array_filter() {
   Z_ARRAY_INDEX=0
   local index=0
   for element in ${args[@]}; do
-    index=$((index + 1))
     Z_ARRAY_INDEX=$index
     if [ "$($fn $element $index)" = "true" ]; then
       store="$store $element"
     fi
+
+    index=$((index + 1))
   done
 
   echo $store
@@ -236,6 +238,61 @@ array_filter() {
 
 array_length() {
   echo ${#@}
+}
+
+array_find() {
+  local fn=$1
+  local args=${@:2}
+  local store=""
+
+  local index=0
+  for element in ${args[@]}; do
+    if [ "$($fn $element $index)" = "true" ]; then
+      echo $element
+      return
+    fi
+
+    index=$((index + 1))
+  done
+}
+
+# @TODO https://unix.stackexchange.com/questions/282557/scope-of-local-variables-in-shell-functions
+# same variables will be override if you use it in others functions
+array_find_by_index() {
+  local nth=$1
+  local elements_array_find_by_index=${@:2}
+  local element_array_find_by_index=""
+
+  each() {
+    if [ -n "$element_array_find_by_index" ]; then
+      return
+    fi
+
+    local index=$1
+    local item=$2
+   
+    if [ $index -eq $nth ]; then
+      element_array_find_by_index=$item
+    fi
+  }
+
+  array_each each $elements_array_find_by_index
+
+  echo $element_array_find_by_index
+}
+
+# @TODO https://stackoverflow.com/questions/15685736/how-to-extract-a-particular-element-from-an-array-in-bash
+array_nth_element() {
+  array_find_by_index $@
+}
+
+array_first_element() {
+  array_find_by_index 0 $@
+}
+
+array_last_element() {
+  local length=$(array_length $@)
+  array_find_by_index $(($length - 1)) $@
 }
 
 set_var() {
@@ -263,5 +320,10 @@ export -f array_join
 export -f array_each
 export -f array_length
 export -f array_filter
+export -f array_find
+export -f array_find_by_index
+export -f array_nth_element
+export -f array_first_element
+export -f array_last_element
 
 export -f set_var
