@@ -175,6 +175,11 @@ plugin_load_core() {
 
   # echo "plugin_core_path: $plugin_core_path"
 
+  # ignore if not found
+  if [ ! -d $plugin_core_path ]; then
+    return
+  fi
+
   local utils=$(ls $plugin_core_path)
   for util in $utils; do
     log_debug "[$(timestamp)][plugin_load_core][${plugin_name}] load: $util"
