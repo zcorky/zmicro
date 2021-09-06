@@ -39,6 +39,10 @@ elif [ "$plugin_command" = "dependencies" ]; then
   zmicro plugin dependencies $plugin_name
 elif [ "$plugin_command" = "update" ]; then
   zmicro plugin update $plugin_name
+elif [ "$(array_first_element $plugin_command)" = "fn" ]; then
+  # zmicro plugin run daemon fn daemon_list => zmicro plugin fn daemon daemon_list
+  # zdaemon fn daemon_list => zmicro plugin fn daemon daemon_list
+  zmicro plugin fn $plugin_name ${plugin_command:2}
 else
   # load core utils
   plugin_load_core daemon
