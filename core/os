@@ -330,6 +330,16 @@ os_ensure_permission() {
   os_add_permission $@
 }
 
+os_is_pid_valid() {
+  local pid=$1
+  local pid_file=/proc/$pid/status
+  if [ -f $pid_file ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 os_get_pid_memory() {
   local pid=$1
   local pid_file=/proc/$pid/status
@@ -345,6 +355,14 @@ os_get_pid_memory() {
   fi
 
   echo $memory
+}
+
+os_kill_pid() {
+  local pid=$1
+  if [ "$(os_is_pid_valid $pid)" = "true" ]; then
+    # log "kill pid: $pid"
+    kill -9 $pid
+  fi
 }
 
 export -f os_homedir
@@ -387,4 +405,6 @@ export -f os_machine_id
 export -f os_add_permission
 export -f os_ensure_permission
 
+export -f os_is_pid_valid
 export -f os_get_pid_memory
+export -f os_kill_pid
