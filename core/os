@@ -330,6 +330,23 @@ os_ensure_permission() {
   os_add_permission $@
 }
 
+os_get_pid_memory() {
+  local pid=$1
+  local pid_file=/proc/$pid/status
+  if [ ! -f $pid_file ]; then
+    echo "0"
+    return
+  fi
+
+  local memory=$(cat $pid_file | grep VmRSS | awk '{print $2}')
+  if [ -z "$memory" ]; then
+    echo "0"
+    return
+  fi
+
+  echo $memory
+}
+
 export -f os_homedir
 export -f os_username
 export -f os_shell
@@ -369,3 +386,5 @@ export -f os_machine_id
 
 export -f os_add_permission
 export -f os_ensure_permission
+
+export -f os_get_pid_memory
