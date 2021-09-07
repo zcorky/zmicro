@@ -319,15 +319,35 @@ os_machine_id() {
   fi
 }
 
-os_add_permission() {
+os_rw_permission() {
   local path=$1
-  if [ -f $path ] && [ ! -w $path ]; then
-    sudo chown -R $(os_username) $path
+  if [ -f $path ]; then
+    if  [ ! -r $path ] || [ ! -w $path ]; then
+      sudo chmod o+rw $path
+    fi
+  fi
+
+  if [ -d $path ]; then
+    if [ ! -w $path ]; then
+      sudo chown -R $(os_username) $path
+    fi
   fi
 }
 
 os_ensure_permission() {
-  os_add_permission $@
+  os_rw_permission $@
+}
+
+# @TODO
+os_ensure_logs_permission() {
+  os_ensure_permission $ZMICRO_LOG_PATH
+
+  os_ensure_permission $ZMICRO_LOG_COMMON_PATH
+  os_ensure_permission $ZMICRO_LOG_DEBUG_PATH
+  os_ensure_permission $ZMICRO_LOG_ERROR_PATH
+  os_ensure_permission $ZMICRO_LOG_UPDATE_PATH
+  os_ensure_permission $ZMICRO_LOG_VERSION_PATH
+  os_ensure_permission $ZMICRO_LOG_NOTIFY_PATH
 }
 
 os_is_pid_valid() {
@@ -402,8 +422,9 @@ export -f os_network_ip
 
 export -f os_machine_id
 
-export -f os_add_permission
+export -f os_rw_permission
 export -f os_ensure_permission
+export -f os_ensure_logs_permission
 
 export -f os_is_pid_valid
 export -f os_get_pid_memory

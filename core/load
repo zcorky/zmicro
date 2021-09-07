@@ -1,19 +1,28 @@
 #!/bin/bash
 
+# @TODO
+command -v os_ensure_permission >> /dev/null
+if [ "$?" != "0" ]; then
+  # echo "load os_ensure_permission"
+  . $ZMICRO_HOME/core/os
+fi
+
+os_ensure_logs_permission
+
 load() {
   if [ ! -d $ZMICRO_LOG_PATH ]; then
     . $ZMICRO_CORE_PATH/log
     log_init
   fi
 
-  ensure_permission() {
-    local path=$1
-    if [ -f $path ] && [ ! -w $path ]; then
-      sudo chown -R $(os_username) $path
-    fi
-  }
+  # ensure_permission() {
+  #   local path=$1
+  #   if [ -f $path ] && [ ! -w $path ]; then
+  #     sudo chown -R $(os_username) $path
+  #   fi
+  # }
 
-  ensure_permission $ZMICRO_LOG_DEBUG_PATH
+  # ensure_permission $ZMICRO_LOG_DEBUG_PATH
   echo -e "$(date "+%Y-%m-%d %H:%M:%S")[CORE] load $1" | tee -a $ZMICRO_LOG_DEBUG_PATH >> /dev/null
 
   local FN_PATH=$ZMICRO_CORE_PATH/$1
