@@ -1,30 +1,41 @@
 #!/bin/bash
 
-TMP_ZMICRO_CONFIG_PATH=$ZMICRO_HOME/config
-TMP_ZMICRO_ZMICRO_CORE_PATH=$ZMICRO_HOME/core
-TMP_ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
+ensure_vars() {
+  if [ -z "$ZMICRO_CONFIG_PATH" ]; then
+    ZMICRO_CONFIG_PATH=$ZMICRO_HOME/config
+  fi
+  if [ -z "$ZMICRO_CORE_PATH" ]; then
+    ZMICRO_CORE_PATH=$ZMICRO_HOME/core
+  fi
+  if [ -z "$ZMICRO_PLUGINS_PATH" ]; then
+    ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
+  fi
+}
 
-# Load Base Config
-. $TMP_ZMICRO_CONFIG_PATH/config
 
-# @TODO override ZMICRO_CORE_PATH
-export ZMICRO_CORE_PATH=$TMP_ZMICRO_ZMICRO_CORE_PATH
-export ZMICRO_PLUGINS_PATH=$TMP_ZMICRO_PLUGINS_PATH
+env() {
+  ensure_vars
 
-# Load Doreamon Fns
-# . $ZMICRO_CORE_PATH/load
-# . $CURRENT_DIR/load
-\. $TMP_ZMICRO_ZMICRO_CORE_PATH/load
+  # Load Base Config
+  . $ZMICRO_CONFIG_PATH/config
 
-# Load Config in TMP_ZMICRO_CONFIG_PATH
-load_config $TMP_ZMICRO_CONFIG_PATH
+  # Load Doreamon Fns
+  . $ZMICRO_CORE_PATH/load
+  # . $CURRENT_DIR/load
 
-# Load User Config
-# @FIX install step doesnot generate ZMICRO_RC
-[[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
+  # 配置加载顺序
+  # 1. mod
+  load_core_mod
+  # 2. Load Config config/*
+  load_config $ZMICRO_CONFIG_PATH
+  # 3. Load User Config .zmicrorc
+  [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
 
-# Do for mac os
-if [ "$(os_is_macos)" = "true" ]; then
-  export ZMICRO_APP_LOGS_PATH=$HOME/.local/zmicro/logs
-  export ZMICRO_APP_DATA_PATH=$HOME/.local/zmicro/data
-fi
+  # Do for mac os
+  if [ "$(os_is_macos)" = "true" ]; then
+    export ZMICRO_APP_LOGS_PATH=$HOME/.local/zmicro/logs
+    export ZMICRO_APP_DATA_PATH=$HOME/.local/zmicro/data
+  fi
+}
+
+env

@@ -1,51 +1,32 @@
 #!/bin/bash
 
-# command_path=$ZMICRO_PLUGINS_PATH/$1
-# run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGINS_PATH $@
+# @TODO will cause plugin help does not works
+#
+# help() {
+#   echo "Usage:"
+#   echo "  zmicro plugin run <plugin_name> <plugin_command> <args...>"
+#   echo ""
+# }
 
-# echo "in plugin: $@"
+core() {
+  # if [ "$0" = "-h" ] || [ "$0" = "--help" ]; then
+  #   help
+  #   exit 0
+  # fi
+  local plugin_name=$1
+  local plugin_command=${@:2}
 
-plugin_name=$1
-plugin_command=${@:2}
+  if [ -z "$plugin_name" ]; then
+    log_error "[run] plugin name is required"
+    exit 1
+  fi
 
-if [ -z "$plugin_name" ]; then
-  log_error "plugin name is required"
-  exit 1
-fi
+  plugin_run $plugin_name $plugin_command
+}
 
-if [ -z $ZMICRO_PLUGINS_PATH ]; then
-  ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
-fi
+# @TODO donot override core/run
+::run() {
+  core $@
+}
 
-plugin_base_path=$ZMICRO_PLUGINS_PATH/$plugin_name
-plugin_config_path=$plugin_base_path/config
-plugin_commands_path=$plugin_base_path/commands
-
-# echo "plugin_commands_path: $plugin_commands_path"
-# echo "plugin_name: $plugin_name"
-# echo "plugin_command: $plugin_command"
-# before run
-#   1. load config
-load_config $plugin_config_path
-#   2. load user config
-load_user_config
-
-# internal commands
-if [ "$plugin_command" = "version" ]; then
-  zmicro plugin version $plugin_name
-elif [ "$plugin_command" = "description" ]; then
-  zmicro plugin description $plugin_name
-elif [ "$plugin_command" = "dependencies" ]; then
-  zmicro plugin dependencies $plugin_name
-elif [ "$plugin_command" = "update" ]; then
-  zmicro plugin update $plugin_name
-elif [ "$(array_first_element $plugin_command)" = "fn" ]; then
-  # zmicro plugin run daemon fn daemon_list => zmicro plugin fn daemon daemon_list
-  # zdaemon fn daemon_list => zmicro plugin fn daemon daemon_list
-  zmicro plugin fn $plugin_name ${plugin_command:2}
-else
-  # load core utils
-  plugin_load_core $plugin_name
-
-  run $plugin_commands_path "-" $plugin_command
-fi
+::run $@

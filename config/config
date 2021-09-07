@@ -39,9 +39,6 @@ export ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
 export ZMICRO_PLUGIN_GITHUB="https://github.com/zmicro-design"
 export ZMICRO_PLUGIN_REPO_PREFIX="$ZMICRO_PLUGIN_GITHUB/plugin-"
 
-# Service (use Compose)
-export ZMICRO_SERVICE_PATH=$ZMICRO_HOME/services
-
 # Data
 export ZMICRO_APP_DATA_PATH=/data
 # Logs
@@ -50,6 +47,7 @@ export ZMICRO_APP_LOGS_PATH=/logs
 # @TODO MAC
 [[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
 
+# PATHS
 export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin #$(realpath $(dirname "$0"))
 export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
 export ZMICRO_CONFIGS_PATH=$ZMICRO_HOME/config

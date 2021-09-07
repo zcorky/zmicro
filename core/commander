@@ -78,7 +78,7 @@ has_command_path_internal() {
 
 has_command_path() {
   local base_command_path=$1
-  local base_plugin_path=$2
+  local base_plugin_get_path=$2
   local command=${@:3}
 
   # 1. internal
@@ -154,7 +154,7 @@ get_command_path_internal() {
 
 get_command_path() {
   local base_command_path=$1
-  local base_plugin_path=$2
+  local base_plugin_get_path=$2
   local command=${@:3}
 
   # @TODO

@@ -1,8 +1,10 @@
 #!/bin/bash
 
 get_service_dirs() {
-  # echo $ZMICRO_SERVICE_PATH | awk -F ':' '{out=""; for(i=1;i<=NF;i++){out=out" "$i}; print out}'
-  string_split : $ZMICRO_SERVICE_PATH
+  # echo $ZMICRO_SERVICES_PATH | awk -F ':' '{out=""; for(i=1;i<=NF;i++){out=out" "$i}; print out}'
+
+  # echo "override: ZMICRO_SERVICES_PATH=$ZMICRO_SERVICES_PATH"
+  string_split : $ZMICRO_SERVICES_PATH
 }
 
 get_service_path() {
@@ -71,7 +73,7 @@ zmicro_service_run() {
   local service_name=$1
   local commands=${@:2}
 
-  log_debug "[$(timestamp)][service] ZMICRO_SERVICE_PATH: $ZMICRO_SERVICE_PATH"
+  log_debug "[$(timestamp)][service] ZMICRO_SERVICES_PATH: $ZMICRO_SERVICES_PATH"
   log_debug "[$(timestamp)][service] service name: $service_name"
   log_debug "[$(timestamp)][service] service command: $commands"
 
@@ -104,7 +106,7 @@ zmicro_service_get_config() {
 }
 
 zmicro_service_detect_service_path() {
-  local custom_service_path=$(zmicro config get ZMICRO_SERVICE_PATH)
+  local custom_service_path=$(zmicro config get ZMICRO_SERVICES_PATH)
   if [ "$custom_service_path" = "" ]; then
     log_error "Please your service path first."
     log "Run the following command to config:"

@@ -34,8 +34,8 @@ core() {
 
   log_debug "[$(timestamp)][plugin] remove $plugin_name ..."
 
-  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
-  if [ ! -d $plugin_path ]; then
+  local plugin_get_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+  if [ ! -d $plugin_get_path ]; then
     log "[$(timestamp)][plugin] already removed"
     exit 0
   fi
@@ -45,7 +45,7 @@ core() {
   # unregister
   plugin_unregister $plugin_name
   # remove code
-  rm -rf $plugin_path
+  rm -rf $plugin_get_path
 
   log_success "[$(timestamp)][plugin] remove success $plugin_name"
 }

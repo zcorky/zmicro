@@ -62,38 +62,38 @@ core() {
   local new_zmicro_service_path=""
   if [ "$delete" = "true" ]; then
     # delete
-    new_zmicro_service_path=$(string_replace $ZMICRO_SERVICE_PATH ${service_path}:)
+    new_zmicro_service_path=$(string_replace $ZMICRO_SERVICES_PATH ${service_path}:)
   elif [ "$override" = "true" ]; then
     # override
     new_zmicro_service_path=$service_path
   elif [ "$tmp_start" = "true" ]; then
     # backup
-    if [ "$(zmicro config get ZMICRO_SERVICE_PATH_BAK)" != "" ]; then
-      log_warn "found ZMICRO_SERVICE_PATH_BAK, not clean last"
+    if [ "$(zmicro config get ZMICRO_SERVICES_PATH_BAK)" != "" ]; then
+      log_warn "found ZMICRO_SERVICES_PATH_BAK, not clean last"
       exit 0
     fi
 
     new_zmicro_service_path=$service_path
-    zmicro config set ZMICRO_SERVICE_PATH_BAK $ZMICRO_SERVICE_PATH
+    zmicro config set ZMICRO_SERVICES_PATH_BAK $ZMICRO_SERVICES_PATH
   elif [ "$tmp_end" = "true" ]; then
     # recover
-    if [ "$(zmicro config get ZMICRO_SERVICE_PATH_BAK)" = "" ]; then
-      log_error "zmicro config service recover backup failed, not found ZMICRO_SERVICE_PATH_BAK"
+    if [ "$(zmicro config get ZMICRO_SERVICES_PATH_BAK)" = "" ]; then
+      log_error "zmicro config service recover backup failed, not found ZMICRO_SERVICES_PATH_BAK"
       exit 1
     fi
 
-    zmicro config set ZMICRO_SERVICE_PATH $(zmicro config get ZMICRO_SERVICE_PATH_BAK)
-    zmicro config remove ZMICRO_SERVICE_PATH_BAK
+    zmicro config set ZMICRO_SERVICES_PATH $(zmicro config get ZMICRO_SERVICES_PATH_BAK)
+    zmicro config remove ZMICRO_SERVICES_PATH_BAK
     exit 0
   else
     # add
-    new_zmicro_service_path="$service_path:$ZMICRO_SERVICE_PATH"
+    new_zmicro_service_path="$service_path:$ZMICRO_SERVICES_PATH"
   fi
 
   if [ -n "$new_zmicro_service_path" ]; then
     log_debug "config service new path: $new_zmicro_service_path"
 
-    zmicro config set ZMICRO_SERVICE_PATH $new_zmicro_service_path
+    zmicro config set ZMICRO_SERVICES_PATH $new_zmicro_service_path
   fi
 }
 

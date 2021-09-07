@@ -24,7 +24,7 @@ load_config() {
     exit 1
   fi
 
-  load_core_mod
+  # load_core_mod
 
   if [ -f $CONFIG_PATH ]; then
     load_config_file $CONFIG_PATH
@@ -37,8 +37,14 @@ load_config() {
 }
 
 load_config_file() {
-  CONFIG_FILE=$1
-  \. $CONFIG_FILE
+  local CONFIG_FILE=$1
+  
+  if [ -f $CONFIG_FILE ]; then
+    log_debug "[$(timestamp)][load_config_file]: $CONFIG_FILE"
+
+    # \. $CONFIG_FILE
+    . $CONFIG_FILE
+  fi
 }
 
 load_config_dir() {

@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# @TODO
+if [ -z "$ZMICRO_PLUGIN_GLOBAL_PARENT" ]; then
+  export ZMICRO_PLUGIN_GLOBAL_PARENT="<IGNORE_ROOT_PLUGIN>"
+fi
+if [ -z "$ZMICRO_PLUGIN_GLOBAL_CURRENT" ]; then
+  export ZMICRO_PLUGIN_GLOBAL_CURRENT="<IGNORE_ROOT_PLUGIN>"
+fi
+
+
 plugin_register() {
   local plugin_name=$1
   if [ "$plugin_name" = "" ]; then
@@ -7,20 +16,20 @@ plugin_register() {
     exit 1
   fi
 
-  local plugin_path=$(plugin_path $plugin_name)
-  local plugin_bin_path=$(plugin_bin_path $plugin_name)
+  local plugin_get_path=$(plugin_get_path $plugin_name)
+  local plugin_get_bin_path=$(plugin_get_bin_path $plugin_name)
 
   # Fix permission
   if [ ! -w "$ZMICRO_HOME/bin" ]; then
     sudo chown -R $(os_username) $ZMICRO_HOME/bin
   fi
 
-  if [ ! -d $plugin_bin_path ]; then
+  if [ ! -d $plugin_get_bin_path ]; then
     # exit 0
     return
   fi
 
-  log_debug "[$(timestamp)][plugin] bins_path: $plugin_bin_path"
+  log_debug "[$(timestamp)][plugin] bins_path: $plugin_get_bin_path"
   local bins=$(plugin_list_bins $plugin_name)
   for bin in $bins; do
     local bin_path=$ZMICRO_HOME/bin/$bin
@@ -31,7 +40,7 @@ plugin_register() {
     fi
 
     log_success "[$(timestamp)][plugin] $(color_green "register") $plugin_name bin: $(color_success $bin)"
-    ln -s $plugin_bin_path/$bin $bin_path
+    ln -s $plugin_get_bin_path/$bin $bin_path
   done
 }
 
@@ -42,19 +51,19 @@ plugin_unregister() {
     exit 1
   fi
 
-  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+  local plugin_get_path=$ZMICRO_PLUGINS_PATH/$plugin_name
 
   # Fix permission
   if [ ! -w "$ZMICRO_HOME/bin" ]; then
     sudo chown -R $(os_username) $ZMICRO_HOME/bin
   fi
 
-  if [ ! -d $plugin_path/$plugin/bin ]; then
+  if [ ! -d $plugin_get_path/$plugin/bin ]; then
     # exit 0
     return
   fi
 
-  log_debug "[$(timestamp)][plugin] bins_path: $plugin_path/$plugin/bin"
+  log_debug "[$(timestamp)][plugin] bins_path: $plugin_get_path/$plugin/bin"
   local bins=$(plugin_list_bins $plugin_name)
   for bin in $bins; do
     local bin_path=$ZMICRO_HOME/bin/$bin
@@ -67,32 +76,32 @@ plugin_unregister() {
 }
 
 plugin_register_all() {
-  local plugin_path=$1
-  if [ "$plugin_path" = "-" ]; then
+  local plugin_get_path=$1
+  if [ "$plugin_get_path" = "-" ]; then
     return
   fi
 
-  local plugins=$(ls $plugin_path)
+  local plugins=$(ls $plugin_get_path)
 
   log_debug "\n\n[$(timestamp)][plugin]"
   for plugin in $plugins; do
     log_debug "[$(timestamp)][plugin] find plugin: $plugin"
 
-    if [ ! -d "$plugin_path/$plugin/bin" ]; then
+    if [ ! -d "$plugin_get_path/$plugin/bin" ]; then
       continue
     fi
 
-    log_debug "[$(timestamp)][plugin] bins_path: $plugin_path/$plugin/bin"
-    local bins=$(ls $plugin_path/$plugin/bin)
+    log_debug "[$(timestamp)][plugin] bins_path: $plugin_get_path/$plugin/bin"
+    local bins=$(ls $plugin_get_path/$plugin/bin)
     for bin in $bins; do
       local bin_path=$ZMICRO_HOME/bin/$bin
-      local plugin_bin_path=$plugin_path/$plugin/bin/$bin
+      local plugin_get_bin_path=$plugin_get_path/$plugin/bin/$bin
 
       if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
         log_debug "[$(timestamp)][plugin] register $plugin bin: $bin"
 
         set +e
-        ln -s $plugin_bin_path $bin_path
+        ln -s $plugin_get_bin_path $bin_path
         if [ "$?" != "0" ]; then
           log_warn "[$(timestamp)][plugin] failed to register $plugin bin: $bin"
         fi
@@ -102,28 +111,43 @@ plugin_register_all() {
   done
 }
 
-plugin_path() {
+plugin_get_path() {
   local plugin_name=$1
   if [ -z $plugin_name ]; then
-    log_error "[plugin_path] plugin name is required"
+    log_error "[plugin_get_path] plugin name is required"
     exit 1
   fi
 
   echo $ZMICRO_PLUGINS_PATH/$plugin_name
 }
 
-plugin_mod_path() {
+plugin_get_mod_path() {
   local plugin_name=$1
-  echo $(plugin_path $plugin_name)/mod
+  echo $(plugin_get_path $plugin_name)/mod
 }
 
-plugin_bin_path() {
+plugin_get_bin_path() {
   local plugin_name=$1
   echo $ZMICRO_PLUGINS_PATH/$plugin_name/bin
 }
 
+plugin_get_core_path() {
+  local plugin_name=$1
+  echo $(plugin_get_path $plugin_name)/core
+}
+
+plugin_get_config_path() {
+  local plugin_name=$1
+  echo $(plugin_get_path $plugin_name)/config
+}
+
+plugin_get_commands_path() {
+  local plugin_name=$1
+  echo $(plugin_get_path $plugin_name)/commands
+}
+
 plugin_exist() {
-  if [ -d $(plugin_path $1) ]; then
+  if [ -d $(plugin_get_path $1) ]; then
     echo "true"
   else
     echo "false"
@@ -135,7 +159,7 @@ plugin_has() {
 }
 
 plugin_bin_exist() {
-  if [ -d $(plugin_bin_path $1) ]; then
+  if [ -d $(plugin_get_bin_path $1) ]; then
     echo "true"
   else
     echo "false"
@@ -151,29 +175,22 @@ plugin_list_bins() {
   if [ "$(plugin_exist $plugin_name)" != "true" ]; then
     echo ""
   else
-    ls $(plugin_bin_path $plugin_name)
+    ls $(plugin_get_bin_path $plugin_name)
   fi
 }
 
 plugin_load_mod() {
   local plugin_name=$1
-  local plugin_mod_path="$(plugin_path $plugin_name)/mod"
+  local plugin_get_mod_path=$(plugin_get_mod_path $plugin_name)
 
-  if [ -f $plugin_mod_path ]; then
-    \. $plugin_mod_path
+  if [ -f $plugin_get_mod_path ]; then
+    load_config_file $plugin_get_mod_path
   fi
 }
 
 plugin_load_core() {
   local plugin_name=$1
-  local plugin_core_path="$(plugin_path $plugin_name)/core"
-  # local plugin_core_path="$(plugin_path $plugin_name)/core/load"
-
-  # if [ -f $plugin_core_path ]; then
-  #   \. $plugin_core_path
-  # fi
-
-  # echo "plugin_core_path: $plugin_core_path"
+  local plugin_core_path=$(plugin_get_core_path $plugin_name)
 
   # ignore if not found
   if [ ! -d $plugin_core_path ]; then
@@ -183,7 +200,71 @@ plugin_load_core() {
   local utils=$(ls $plugin_core_path)
   for util in $utils; do
     log_debug "[$(timestamp)][plugin_load_core][${plugin_name}] load: $util"
-    . $plugin_core_path/$util
+    load_config_file $plugin_core_path/$util
+  done
+}
+
+plugin_load_config() {
+  local plugin_name=$1
+  local plugin_config_path="$(plugin_get_config_path $plugin_name)"
+
+  # ignore if not found
+  if [ ! -d $plugin_config_path ]; then
+    return
+  fi
+
+  local configs=$(ls $plugin_config_path)
+  for config in $configs; do
+    log_debug "[$(timestamp)][plugin_load_core][${plugin_name}] load: $config"
+    load_config_file $plugin_config_path/$config
+  done
+}
+
+plugin_load_override_config() {
+  local plugin_name=$1
+  # config/overrides/*
+  local plugin_overwrite_config_path="$(plugin_get_config_path $plugin_name)/overrides"
+  
+  log_debug "[$(timestamp)][plugin_load_override_config][${plugin_name}] $plugin_overwrite_config_path"
+
+  # ignore if not found
+  if [ ! -d $plugin_overwrite_config_path ]; then
+    return
+  fi
+
+  local configs=$(ls $plugin_overwrite_config_path)
+  for config in $configs; do
+    log_debug "[$(timestamp)][plugin_load_override_config][${plugin_name}] load: $config"
+    load_config_file $plugin_overwrite_config_path/$config
+  done
+}
+
+plugin_load_parent_override_config() {
+  local plugin_name=$1
+  # config/overrides/*
+  local config_dir="$(plugin_get_config_path $plugin_name)/overrides"
+  
+  log_debug "[$(timestamp)][plugin_load_parent_override_config] $config_dir"
+
+  # @TODO core <IGNORE_ROOT_PLUGIN>, ignore
+  if [ "$plugin_name" = "<IGNORE_ROOT_PLUGIN>" ]; then
+    return
+  fi
+
+  if [ -z "$plugin_name" ]; then
+    log_error "[$(timestamp)][plugin_load_parent_override_config] plugin name is required"
+    exit 1
+  fi
+
+  # ignore if not found
+  if [ ! -d $config_dir ]; then
+    return
+  fi
+
+  local configs=$(ls $config_dir)
+  for config in $configs; do
+    log_debug "[$(timestamp)][plugin_load_parent_override_config][${plugin_name}] load: $config"
+    load_config_file $config_dir/$config
   done
 }
 
@@ -227,6 +308,70 @@ plugin_each() {
   array_each $fn $plugins
 }
 
+plugin_run() {
+  log_debug "[$(timestamp)][plugin_run] in plugin: $@"
+
+  local plugin_name=$1
+  local plugin_command=${@:2}
+
+  if [ -z "$plugin_name" ]; then
+    log_error "[$(timestamp)][plugin_run] plugin name is required"
+    exit 1
+  fi
+
+  # @TODO
+  export ZMICRO_PLUGIN_GLOBAL_PARENT=$ZMICRO_PLUGIN_GLOBAL_CURRENT
+  export ZMICRO_PLUGIN_GLOBAL_CURRENT=$plugin_name
+  
+  log_debug "[$(timestamp)][plugin_run] PARENT: $ZMICRO_PLUGIN_GLOBAL_PARENT, CURRENT: $ZMICRO_PLUGIN_GLOBAL_CURRENT"
+
+
+  # 插件配置加载顺序非常重要，相对于 core 配置加载，增加了插件配置
+  #   1. core config (默认已加载，不需要重新加载)
+  #
+  #   2. plugin config (加载插件配置)
+  plugin_load_config $plugin_name
+  #   3. user config (加载用户配置，可能会覆盖插件配置和核心配置)
+  load_user_config
+  #   4. override user config @TODO 这一步是为了应对需要强制使用插件自身配置的情况
+  #       比如，定制的插件有自己的 services 目录
+  plugin_load_override_config $plugin_name
+  #   5. mod 加载插件 mod
+  plugin_load_mod $plugin_name
+  #   6. parent override 覆盖变量
+  #     不是已经有 plugin_load_override_config，为什么还需要这个？
+  #       因为有可能一个插件使用 zmicro 命令调用了另一个插件的时候，加载第二个插件，
+  #         根据配置加载顺序，会加载 user_config，覆盖了第一个插件的 override 配置
+  #         也就是使得第一个配置的 override 配置失效
+  #         这时候的补救措施的就是：
+  #           父插件的 override 配置优先级 > 子配置
+  #             也就是要子配置重新加载父配置的 override 配置
+  #       可以打开 load_file_config 日志看看配置加载的顺序，会发现
+  plugin_load_parent_override_config $ZMICRO_PLUGIN_GLOBAL_PARENT
+
+  # internal commands
+  if [ "$plugin_command" = "version" ]; then
+    zmicro plugin version $plugin_name
+  elif [ "$plugin_command" = "description" ]; then
+    zmicro plugin description $plugin_name
+  elif [ "$plugin_command" = "dependencies" ]; then
+    zmicro plugin dependencies $plugin_name
+  elif [ "$plugin_command" = "update" ]; then
+    zmicro plugin update $plugin_name
+  elif [ "$(array_first_element $plugin_command)" = "fn" ]; then
+    # zmicro plugin run daemon fn daemon_list => zmicro plugin fn daemon daemon_list
+    # zdaemon fn daemon_list => zmicro plugin fn daemon daemon_list
+    zmicro plugin fn $plugin_name ${plugin_command:2}
+  else
+    # load plugin core(utils)
+    plugin_load_core $plugin_name
+
+    local _plugin_get_commands_path=$(plugin_get_commands_path $plugin_name)
+    # echo "_plugin_get_commands_path:: $_plugin_get_commands_path"
+    run $_plugin_get_commands_path "-" $plugin_command
+  fi
+}
+
 export -f plugin_register_all
 export -f plugin_register
 export -f plugin_unregister
@@ -235,16 +380,25 @@ export -f plugin_list_names
 export -f plugin_list_bins
 export -f plugin_each
 
-export -f plugin_path
-export -f plugin_mod_path
-export -f plugin_bin_path
+export -f plugin_get_path
+export -f plugin_get_bin_path
+export -f plugin_get_mod_path
+export -f plugin_get_core_path
+export -f plugin_get_config_path
+export -f plugin_get_commands_path
+
 export -f plugin_exist
 export -f plugin_bin_exist
 export -f plugin_has
 
 export -f plugin_load_mod
 export -f plugin_load_core
+export -f plugin_load_config
+export -f plugin_load_override_config
+export -f plugin_load_parent_override_config
 
 export -f plugin_get_version
 export -f plugin_get_description
 export -f plugin_get_dependencies
+
+export -f plugin_run

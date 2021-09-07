@@ -2,12 +2,12 @@
 
 run() {
   local base_command_path=$1
-  local base_plugin_path=$2
+  local base_plugin_get_path=$2
   local command=$3
   local sub_command=$4
 
   # register plugins commands
-  # plugin_register_all $base_plugin_path
+  # plugin_register_all $base_plugin_get_path
 
   log_debug ""
   log_debug "[$(timestamp)][command] base command path: $base_command_path"

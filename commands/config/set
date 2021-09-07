@@ -5,7 +5,7 @@ help() {
   echo "  zmicro config set <key> <value>"
   echo ""
   echo "Available Config keys:"
-  echo "  ZMICRO_SERVICE_PATH"
+  echo "  ZMICRO_SERVICES_PATH"
 }
 
 core() {

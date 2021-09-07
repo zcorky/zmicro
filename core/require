@@ -115,9 +115,9 @@ require_plugin_mod() {
     exit 1
   fi
 
-  # echo "plugin_name: $(plugin_mod_path $plugin_name)"
+  # echo "plugin_name: $(plugin_get_mod_path $plugin_name)"
   # echo "${DEPENDENCIES[@]}"
-  require_mod $(plugin_mod_path $plugin_name) $@
+  require_mod $(plugin_get_mod_path $plugin_name) $@
 }
 
 export -f require

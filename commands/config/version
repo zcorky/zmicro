@@ -3,7 +3,7 @@
 config_version() {
   if [ ! -f $ZMICRO_RC ]; then
     cat << EOF > $ZMICRO_RC
-ZMICRO_SERVICE_PATH=${ZMICRO_SERVICE_PATH}
+ZMICRO_SERVICES_PATH=${ZMICRO_SERVICES_PATH}
 EOF
     return
   fi
