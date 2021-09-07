@@ -186,7 +186,7 @@ plugin_load_configs() {
   local config_path=$2
 
   if [ -z "$plugin_name" ]; then
-    log_error "[$(timestamp)][plugin_run] plugin name is required"
+    log_error "[$(timestamp)][plugin_load_configs] plugin name is required"
   fi
 
   if [ "$(plugin_has $plugin_name)" = "false" ]; then
@@ -201,15 +201,16 @@ plugin_load_configs() {
 
   # is config file
   if [ -f $config_path ]; then
-    load_config_file $plugin_get_mod_path
+    log_debug "[$(timestamp)][plugin_load_configs][${plugin_name}][file] load: $config_path"
+    load_config_file $config_path
     return 
   fi
 
   # is config dir
+  log_debug "[$(timestamp)][plugin_load_configs][${plugin_name}][dir] load: $config_path"
   local configs=$(ls $config_path)
   for config in $configs; do
-    log_debug "[$(timestamp)][plugin_load_core][${plugin_name}] load: $config"
-    load_config_file $plugin_core_path/$config
+    load_config_file $config_path/$config
   done
 }
 
