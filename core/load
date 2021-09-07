@@ -7,14 +7,15 @@ if [ "$?" != "0" ]; then
   . $ZMICRO_HOME/core/os
 fi
 
+command -v log_init >> /dev/null
+if [ "$?" != "0" ]; then
+  . $ZMICRO_CORE_PATH/log
+  log_init
+fi
+
 os_ensure_logs_permission
 
 load() {
-  if [ ! -d $ZMICRO_LOG_PATH ]; then
-    . $ZMICRO_CORE_PATH/log
-    log_init
-  fi
-
   # ensure_permission() {
   #   local path=$1
   #   if [ -f $path ] && [ ! -w $path ]; then

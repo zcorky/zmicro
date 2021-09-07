@@ -321,16 +321,26 @@ os_machine_id() {
 
 os_rw_permission() {
   local path=$1
-  if [ -f $path ]; then
-    if  [ ! -r $path ] || [ ! -w $path ]; then
-      sudo chmod o+rw $path
-    fi
+  # if [ -f $path ]; then
+  #   if  [ ! -r $path ] || [ ! -w $path ]; then
+  #     sudo chmod o+rw $path
+  #   fi
+  # fi
+
+  # if [ -d $path ]; then
+  #   if [ ! -w $path ]; then
+  #     sudo chown -R $(os_username) $path
+  #   fi
+  # fi
+
+  # path not exist
+  if [ ! -e $path ]; then
+    return
   fi
 
-  if [ -d $path ]; then
-    if [ ! -w $path ]; then
-      sudo chown -R $(os_username) $path
-    fi
+  if [ ! -r $path ] || [ ! -w $path ]; then
+    log "add rw permission: $path"
+    sudo chmod o+rw $path
   fi
 }
 

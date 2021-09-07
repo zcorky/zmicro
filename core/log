@@ -13,11 +13,12 @@ log_init() {
     exit 1
   fi
 
-  # echo "[init] config log"
-  if [ ! -d /var/log ]; then
-    sudo mkdir -p /var/log
+  # @TODO
+  if [ -z "$ZMICRO_LOG_PATH" ]; then
+    ZMICRO_LOG_PATH=/var/log/zmicro
   fi
 
+  # # echo "[init] config log"
   if [ ! -d $ZMICRO_LOG_PATH ]; then
     sudo mkdir -p $ZMICRO_LOG_PATH
     sudo chown -R $current_user $ZMICRO_LOG_PATH
