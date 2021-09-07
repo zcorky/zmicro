@@ -17,6 +17,16 @@ core() {
   local fn=$2
   local args=${@:3}
 
+  if [ -z "$plugin_name" ]; then
+    log_error "[plugin][fn] plugin_name is required"
+    exit 1
+  fi
+
+  if [ -z "$fn" ]; then
+    log_error "[plugin][fn] fn_name is required"
+    exit 1
+  fi
+
   # @TODO
   set +e
 
