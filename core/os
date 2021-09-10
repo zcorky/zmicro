@@ -339,8 +339,8 @@ os_rw_permission() {
   fi
 
   if [ ! -r $path ] || [ ! -w $path ]; then
-    sudo chmod o+rw $path
-    
+    sudo chmod a+rw $path
+
     log_debug "add rw permission: $path"
   fi
 }
