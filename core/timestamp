@@ -12,6 +12,11 @@ timestamp_to_seconds() {
     exit 1
   fi
 
+  if [ "$(os_is_macos)" = "true" ]; then
+    date -jf "%Y-%m-%d %H:%M:%S" "$text" +%s
+    return
+  fi
+
   date -d "$text" +%s
 }
 
@@ -60,7 +65,7 @@ timestamp_in_x_minutes() {
   local x_seconds=$((60 * $x_minutes))
   local ts=$text
 
-  echo $text | grep ":" >> /dev/null 2>&1
+  echo $text | grep ":" >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     ts=$(timestamp_to_seconds $text)
   fi
