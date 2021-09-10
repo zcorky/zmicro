@@ -7,9 +7,10 @@ update_zmicro() {
   # log_update PREV
 
   cd $ZMICRO_HOME
-  git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2>&1
+  git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2 >> $ZMICRO_LOG_ERROR_PATH # 2>&1
   if [ "$?" != "0" ]; then
     echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
+    tail -n 50 $ZMICRO_LOG_ERROR_PATH
     exit -1
   fi
 
