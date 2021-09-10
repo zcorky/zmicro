@@ -14,10 +14,8 @@ export ZMICRO_GIT=https://github.com/zcorky/zmicro
 # RC
 export ZMICRO_RC=$HOME/.zmicrorc
 
-
 # Mod
 export ZMICRO_MOD=$ZMICRO_HOME/mod
-
 
 # Log
 export ZMICRO_LOG_PATH=/var/log/${ZMICRO_NAME} #/tmp/zmicro
@@ -33,7 +31,6 @@ export ZMICRO_LOG_UPDATE_PATH=$ZMICRO_LOG_PATH/update.log
 export ZMICRO_LOG_VERSION_PATH=$ZMICRO_LOG_PATH/version.log
 export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
 
-
 # Plugin
 export ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
 export ZMICRO_PLUGIN_GITHUB="https://github.com/zmicro-design"
@@ -46,6 +43,7 @@ export ZMICRO_APP_LOGS_PATH=/logs
 
 # @TODO MAC
 [[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_LOGS_PATH=/opt/logs
 
 # PATHS
 export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin #$(realpath $(dirname "$0"))

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # @TODO
-command -v os_ensure_permission >> /dev/null
+command -v os_ensure_permission >>/dev/null
 if [ "$?" != "0" ]; then
   # echo "load os_ensure_permission"
   . $ZMICRO_HOME/core/os
 fi
 
-command -v log_init >> /dev/null
+command -v log_init >>/dev/null
 if [ "$?" != "0" ]; then
   . $ZMICRO_CORE_PATH/log
   log_init
@@ -24,7 +24,7 @@ load() {
   # }
 
   # ensure_permission $ZMICRO_LOG_DEBUG_PATH
-  echo -e "$(date "+%Y-%m-%d %H:%M:%S")[CORE] load $1" | tee -a $ZMICRO_LOG_DEBUG_PATH >> /dev/null
+  echo -e "$(date "+%Y-%m-%d %H:%M:%S")[CORE] load $1" | tee -a $ZMICRO_LOG_DEBUG_PATH >>/dev/null
 
   local FN_PATH=$ZMICRO_CORE_PATH/$1
 

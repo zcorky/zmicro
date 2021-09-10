@@ -350,6 +350,7 @@ os_ensure_permission() {
 
 # @TODO
 os_ensure_logs_permission() {
+  echo "HOME: $ZMICRO_HOME"
   os_ensure_permission $ZMICRO_LOG_PATH
 
   os_ensure_permission $ZMICRO_LOG_COMMON_PATH

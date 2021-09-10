@@ -22,7 +22,7 @@ log_init() {
   if [ ! -d $ZMICRO_LOG_PATH ]; then
     sudo mkdir -p $ZMICRO_LOG_PATH
     sudo chown -R $current_user $ZMICRO_LOG_PATH
-    
+
     # @TODO load core os utils
     log_debug "[log_init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
@@ -50,7 +50,7 @@ log_info() {
 }
 
 log_debug() {
-  echo -e $@ >> $ZMICRO_LOG_DEBUG_PATH
+  echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
 }
 
 log_success() {
@@ -103,7 +103,7 @@ log_command() {
 
   command_path=$(get_command_path_with_fragments $base_command_path $command_fragments)
 
-  echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" >> $ZMICRO_LOG_COMMON_PATH
+  echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" >>$ZMICRO_LOG_COMMON_PATH
 
   log_debug [$(timestamp)]$(color_success "[command] final command path: $command_path")
   log_debug ""
@@ -131,7 +131,7 @@ log_command() {
   if [ "$exit_code" = "0" ]; then
     log_success "[$(timestamp)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
   else
-    log_error "[$(timestamp)] $command_fragments error." >> $ZMICRO_LOG_COMMON_PATH
+    log_error "[$(timestamp)] $command_fragments error." >>$ZMICRO_LOG_COMMON_PATH
   fi
 
   exit $exit_code
@@ -166,7 +166,7 @@ log_plugin_update_lock() {
 
   local msg="$plugin_name#$(timestamp)"
   # sed -i "/^\s*$/d" $ZMICRO_LOCK_UPDATE_PATH
-  
+
   # @TODO @TODO @TODO
 }
 
@@ -176,22 +176,23 @@ log_clean_check() {
 
   # initialize
   if [ ! -f $log_last_check ]; then
-    echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+    echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
 
     # clean
-    log_clean & >> /dev/null 2>&1
+    log_clean &
+    >>/dev/null 2>&1
     return
   fi
 
   local last_check_timestamp=$(cat $log_last_check)
   if [ -z "$last_check_timestamp" ]; then
-    echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+    echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
     return
   fi
 
-  local lcts=$(timestamp_to_seconds $last_check_timestamp);
+  local lcts=$(timestamp_to_seconds $last_check_timestamp)
   if [ "$?" != "0" ]; then
-    echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+    echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
     return
   fi
 
@@ -202,7 +203,7 @@ log_clean_check() {
   if [ $delta -gt $DAYS_SECONDS_90 ]; then
     # do clean
     log_clean # & >> /dev/null 2>&1
-  # else
+    # else
     # echo "[log_clean_check] no need clean"
   fi
 }
@@ -221,7 +222,7 @@ log_clean() {
   #   LOG_CLEAN_DIR=/var/log/zmicro
   # fi
 
-  echo "$LOG_CLEAN_DIR" | grep zmicro >> /dev/null 2>&1
+  echo "$LOG_CLEAN_DIR" | grep zmicro >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     LOG_CLEAN_DIR=/var/log/zmicro
   fi
@@ -231,16 +232,16 @@ log_clean() {
 
   # backup
   log_debug "[timestamps][log_clean] backup ${LOG_CLEAN_BACKUP_FILE}"
-  sudo tar -zcvf ${LOG_CLEAN_BACKUP_FILE} --exclude '*.gz' ${LOG_CLEAN_DIR} >> /dev/null 2>&1
+  sudo tar -zcvf ${LOG_CLEAN_BACKUP_FILE} --exclude '*.gz' ${LOG_CLEAN_DIR} >>/dev/null 2>&1
   if [ -f "$LOG_CLEAN_BACKUP_FILE" ]; then
     # @TODO safe
-    sudo rm -rf ${LOG_CLEAN_DIR}/*.log >> /dev/null 2>&1
+    sudo rm -rf ${LOG_CLEAN_DIR}/*.log >>/dev/null 2>&1
     # sudo rm -rf /var/log/zmicro/*.log >> /dev/null 2>&1
   fi
 
   # retimestamp
   local log_last_check=$ZMICRO_LOG_PATH/.last_clean
-  echo "$(timestamp)" | sudo tee $log_last_check >> /dev/null 2>&1
+  echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
 }
 
 export -f log_init
