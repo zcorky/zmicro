@@ -13,7 +13,7 @@ config_clear() {
   # export ZMICRO_BIN_PATH=/home/$(os_username)/.zmicro/bin
   # export PATH=$ZMICRO_BIN_PATH:$PATH
 
-  cat $profile | grep ZMICRO_BIN_PATH >> /dev/null 2>&1
+  cat $profile | grep ZMICRO_BIN_PATH >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     sed -i "/^# ZMICRO_BIN_PATH: \/home\/$(os_username)\/.zmicro\/bin$/d" $profile
     sed -i "/^export ZMICRO_HOME=\/home\/$(os_username)\/.zmicro$/d" $profile
@@ -30,12 +30,13 @@ config_profile() {
 
   cat $profile | grep "export ZMICRO_HOME=${ZMICRO_HOME}" >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
-    local text=$(cat <<-END
+    local text=$(
+      cat <<-END
 # ZMICRO
 export ZMICRO_HOME=${ZMICRO_HOME}
 export PATH=\$ZMICRO_HOME/bin:\$PATH 
 END
-)
+    )
     echo "$text" | os_fs_write -a $profile
   fi
 }
@@ -52,12 +53,13 @@ config_global_rc() {
 
   cat $profile | grep "export ZMICRO_HOME=${ZMICRO_HOME}" >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
-    local text=$(cat <<-END
+    local text=$(
+      cat <<-END
 # ZMICRO
 export ZMICRO_HOME=${ZMICRO_HOME}
 export PATH=\$ZMICRO_HOME/bin:\$PATH 
 END
-)
+    )
     echo "$text" | os_fs_write -a $profile
   fi
 }
@@ -82,7 +84,9 @@ config_global_rc_force_create() {
 
 # common
 config_common() {
-  config_global_rc_force_create /etc/profile.d/zmicro.sh
+  if [ -d "/etc/profile.d" ]; then
+    config_global_rc_force_create /etc/profile.d/zmicro.sh
+  fi
 }
 
 config_bashrc() {
@@ -94,9 +98,9 @@ config_bashrc() {
 
   # # GLOBAL
   # #   ubuntu  20
-  # config_global_rc_ignore_if_not_found /etc/bashrc 
+  # config_global_rc_ignore_if_not_found /etc/bashrc
   # #   centos  8
-  # config_global_rc_ignore_if_not_found /etc/bash.bashrc 
+  # config_global_rc_ignore_if_not_found /etc/bash.bashrc
 }
 
 config_zshrc() {
@@ -108,9 +112,9 @@ config_zshrc() {
 
   # # GLOBAL
   # #   ubuntu 20
-  # config_global_rc_ignore_if_not_found /etc/zsh/zprofile 
+  # config_global_rc_ignore_if_not_found /etc/zsh/zprofile
   # #   centos 8
-  # config_global_rc_ignore_if_not_found /etc/zshrc 
+  # config_global_rc_ignore_if_not_found /etc/zshrc
 }
 
 # https://unix.stackexchange.com/questions/104727/add-a-path-in-path-globally-for-every-user
