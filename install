@@ -32,19 +32,25 @@ fi
 if [ ! -d $ZMICRO_LOG_DIR ]; then
   sudo mkdir -p $ZMICRO_LOG_DIR
 fi
-sudo chown -R $USER $ZMICRO_LOG_DIR
+if [ ! -w $ZMICRO_LOG_DIR ]; then
+  sudo chown -R $USER $ZMICRO_LOG_DIR
+fi
 # fi
 
 # Bin
 if [ -f $ZMICRO_LOCAL_BIN ]; then
   sudo rm -rf $ZMICRO_LOCAL_BIN
 fi
+
 sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
 
 # . $ZMICRO_HOME/config/config
 
 # Init
 zmicro initialize $@
+
+echo "Congratualation. Zmicro install successfully"
+echo "Now you can see play with zmicro."
 
 # echo ""
 # echo "First install, you should source profile:"
