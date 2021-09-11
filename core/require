@@ -17,7 +17,7 @@ require() {
   fi
 
   log_info "[$(timestamp)][require] install: $plugin_name ($plugin_version) ..."
-  
+
   # log_info "[$(timestamp)][require] repo: ${plugin_repo}"
 
   # @TODO
@@ -27,7 +27,7 @@ require() {
   else
     log_error "[$(timestamp)][require] install failed: ${plugin_name}"
   fi
-    
+
   # sleep 1
 }
 
@@ -49,7 +49,7 @@ require_parse() {
 }
 
 require_mod() {
-    # @TODO overide core DEPENDENCIES
+  # @TODO overide core DEPENDENCIES
   if [ -n ${DEPENDENCIES} ]; then
     # echo "overide DEPENDENCIES"
     DEPENDENCIES=()
@@ -63,18 +63,18 @@ require_mod() {
     local key=$1
     local value=$2
     case $key in
-      -u | --update)
-        set_var is_require_mod_update true
-        shift
-        ;;
-      *)
-        if [ "$(string_match $key ^-)" = "true" ]; then
-          log_error "[require_mod] ERROR: unknown parameter \"$key\""
-          exit 1
-        fi
+    -u | --update)
+      set_var is_require_mod_update true
+      shift
+      ;;
+    *)
+      if [ "$(string_match $key ^-)" = "true" ]; then
+        log_error "[require_mod] ERROR: unknown parameter \"$key\""
+        exit 1
+      fi
 
-        shift
-        ;;
+      shift
+      ;;
     esac
   done
 

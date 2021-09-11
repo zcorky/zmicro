@@ -15,8 +15,8 @@ update_one() {
     return
   fi
 
-  local plugin_get_path=$ZMICRO_PLUGINS_PATH/$plugin_name
-  if [ ! -d $plugin_get_path ]; then
+  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+  if [ ! -d $plugin_path ]; then
     log "[$(timestamp)][plugin] not found"
     exit 0
   fi
@@ -24,8 +24,8 @@ update_one() {
   log_info "[$(timestamp)][plugin] updating $plugin_name ..."
 
   # Update @TODO
-  cd $plugin_get_path
-  git pull origin master >> $ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
+  cd $plugin_path
+  git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
   if [ "$?" != "0" ]; then
     log_error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
     tail -n 50 $ZMICRO_LOG_ERROR_PATH

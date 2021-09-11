@@ -33,6 +33,7 @@ export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
 
 # Plugin
 export ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
+
 export ZMICRO_PLUGIN_GITHUB="https://github.com/zmicro-design"
 export ZMICRO_PLUGIN_REPO_PREFIX="$ZMICRO_PLUGIN_GITHUB/plugin-"
 
@@ -59,3 +60,8 @@ export ZMICRO_SERVICES_PATH=$ZMICRO_HOME/services
 export DEFAULT_GIT_USERNAME=$USER
 export DEFAULT_GIT_PASSWORD=
 export DEFAULT_GIT_EMAIL=$USER@local
+
+if [ "$(net_is_github_visitable)" = "false" ]; then
+  export ZMICRO_PLUGIN_GITHUB="https://gitee.com/zmicro-design"
+  export ZMICRO_PLUGIN_REPO_PREFIX="$ZMICRO_PLUGIN_GITHUB/plugin-"
+fi
