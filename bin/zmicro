@@ -13,6 +13,8 @@ is_run_init() {
 
 export ZMICRO_HOME=/usr/local/lib/zmicro
 export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
+export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin
+export PATH=$ZMICRO_BIN_PATH:$PATH
 
 . $ZMICRO_CORE_PATH/env
 
