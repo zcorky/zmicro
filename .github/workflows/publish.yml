@@ -9,7 +9,7 @@ jobs:
   on-success:
     needs: publish
     runs-on: ubuntu-latest
-    if: ${{ needs.publish.result == 'success' }}
+    if: ${{ always() && needs.publish.result == 'success' }}
     steps:
       - name: Notification Feishu
         uses: whatwewant/action-robot-feishu@v0.0.13
@@ -25,7 +25,7 @@ jobs:
   on-failure:
     needs: publish
     runs-on: ubuntu-latest
-    if: ${{ needs.publish.result == 'failure' }}
+    if: ${{ always() && needs.publish.result == 'failure' }}
     steps:
       - name: Notification Feishu
         uses: whatwewant/action-robot-feishu@v0.0.13
