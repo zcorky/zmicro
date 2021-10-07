@@ -3,11 +3,11 @@
 # Usage:
 #   default mode: echo "$var" | os_fs_write $file_path
 #   append mode: echo "$var" | os_fs_write -a $file_path
-# 
+#
 # Example:
 #   echo "hi" | os_fs_write /tmp/hi
 #   echo "$HOME" | os_fs_write /tmp/hi
-# 
+#
 #   @NOTICE 当写入多行数据的时候，必须加引号，否则换行将消失
 #     text=$(cat <<-END
 #     line1
@@ -44,11 +44,11 @@ os_fs_write() {
   # try to use sudo/root
   if [ ! -w $path ]; then
     if [ "$is_append_mode" = "true" ]; then
-      sudo tee -a $path >> /dev/null <<EOF
+      sudo tee -a $path >>/dev/null <<EOF
 ${text}
 EOF
     else
-      sudo tee $path >> /dev/null <<EOF
+      sudo tee $path >>/dev/null <<EOF
 ${text}
 EOF
     fi
@@ -56,13 +56,13 @@ EOF
   fi
 
   if [ "$is_append_mode" = "true" ]; then
-    echo "$text" >> $path
+    echo "$text" >>$path
   else
-    echo "$text" > $path
+    echo "$text" >$path
   fi
-#     tee -a $path >> /dev/null <<EOF
-# ${text}
-# EOF
+  #     tee -a $path >> /dev/null <<EOF
+  # ${text}
+  # EOF
 }
 
 os_fs_read() {
@@ -86,5 +86,32 @@ os_fs_read() {
   cat $path
 }
 
+os_fs_remove_empty_line() {
+  local file_path=$1
+  if [ -z "$file_path" ]; then
+    log_error "[$(timestamp)][os_fs_remove_empty_line] file_path is required"
+    exit 1
+  fi
+
+  # remove empty line
+  #   reference: https://stackoverflow.com/questions/10347653/awk-remove-blank-lines
+  awk NF $file_path >$file_path
+}
+
+os_fs_remove_line_has_str() {
+  local file_path=$1
+  local match_str=$2
+
+  if [ -z "$file_path" ] || [ -z "$match_str" ]; then
+    log_error "[$(timestamp)][os_fs_remove_line_has_str] file_path and match_str is required"
+    exit 1
+  fi
+
+  sed -i -e "s%.*${match_str}.*%%g" $file_path
+}
+
 export -f os_fs_write
 export -f os_fs_read
+
+export -f os_fs_remove_line_has_str
+export -f os_fs_remove_empty_line
