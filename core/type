@@ -139,7 +139,7 @@ string_match() {
   local text=$1
   local regexp=$2
 
-  echo $text | grep "$regexp" >> /dev/null 2>&1
+  echo $text | grep "$regexp" >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     echo "true"
     return
@@ -187,6 +187,23 @@ array_join() {
   if [ "$seperator" = "<>" ]; then
     seperator=""
   fi
+
+  local res=""
+  for element in $args; do
+    if [ "$res" = "" ]; then
+      res=$element
+      continue
+    fi
+
+    res="${res}${seperator}${element}"
+  done
+
+  echo $res
+}
+
+array_join_line() {
+  local seperator="\n"
+  local args=${@}
 
   local res=""
   for element in $args; do
@@ -270,7 +287,7 @@ array_find_by_index() {
 
     local index=$1
     local item=$2
-   
+
     if [ $index -eq $nth ]; then
       element_array_find_by_index=$item
     fi
@@ -325,5 +342,7 @@ export -f array_find_by_index
 export -f array_nth_element
 export -f array_first_element
 export -f array_last_element
+
+export -f array_join_line
 
 export -f set_var
