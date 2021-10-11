@@ -1,0 +1,52 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Usage:"
+  echo "  zmicro go <where>"
+}
+
+core() {
+  local where=$1
+  if [ "$where" = "-h" ] || [ "$where" = "--help" ]; then
+    help
+    exit 1
+  fi
+
+  if [ -z "$where" ]; then
+    where="home"
+  fi
+
+  case $where in
+    home)
+      cd $ZMICRO_HOME
+      exec $SHELL
+      ;;
+    plugin)
+      local plugin_name=$2
+      if [ -z "$plugin_name" ]; then
+        log_error "plugin name is required"
+        exit 1
+      fi
+
+      local plugin_path=$ZMICRO_HOME/plugins/$plugin_name
+      if [ ! -d $plugin_path ]; then
+        log_error "unknown plugin ${plugin_name}"
+        exit 1
+      fi
+
+      cd $plugin_path
+      exec $SHELL
+      ;;
+    *)
+      log_error "unknown go where: $where"
+      ;;
+  esac
+}
+
+run() {
+  core $@
+}
+
+run $@
