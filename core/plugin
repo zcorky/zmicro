@@ -354,6 +354,8 @@ plugin_run() {
     zmicro plugin update $plugin_name
   elif [ "$plugin_command" = "release" ]; then
     zmicro plugin release $plugin_name
+  elif [ "$plugin_command" = "go" ]; then
+    zmicro go plugin $plugin_name
   elif [ "$(array_first_element $plugin_command)" = "fn" ]; then
     # zmicro plugin run daemon fn daemon_list => zmicro plugin fn daemon daemon_list
     # zdaemon fn daemon_list => zmicro plugin fn daemon daemon_list
