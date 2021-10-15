@@ -114,7 +114,9 @@ log_command() {
   # Load Init
   if [ -f "$init_path" ]; then
     log_debug "[$(timestamp)][command] load init in $init_path"
-    . $init_path
+
+    # . $init_path
+    load_config_file $init_path
   fi
 
   # @TODO if use log command, donot record log, caused bug

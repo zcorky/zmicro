@@ -1,0 +1,48 @@
+#!/bin/bash
+
+load inquirer
+
+required() {
+  if [ "$1" = "" ]; then
+    echo false
+  else
+    echo true
+  fi
+}
+
+help() {
+  echo "Usage:"
+  echo "  zmicro release"
+  echo ""
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local origin_version=$(get_current_version)
+  inquirer_text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
+
+  sed -i -e "s/${origin_version}/$new_version/" mod >>/dev/null 2>&1
+
+  #@TODO mod-e file occurred
+  if [ -f "mod-e" ]; then
+    rm mod-e >>/dev/null 2>&1
+  fi
+
+  git add mod
+  git commit -m "chore(release): bumped version to ${new_version}"
+  git tag ${new_version}
+  git push origin ${new_version}
+  git push origin master
+
+  log_success "[release] ${plugin_name} ${new_version}"
+}
+
+run() {
+  core $@
+}
+
+run $@
