@@ -31,20 +31,27 @@ export ZMICRO_LOG_UPDATE_PATH=$ZMICRO_LOG_PATH/update.log
 export ZMICRO_LOG_VERSION_PATH=$ZMICRO_LOG_PATH/version.log
 export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
 
+# Data
+export ZMICRO_APP_DATA_PATH=/data
+# Logs
+export ZMICRO_APP_LOGS_PATH=/logs
+# Configs
+export ZMICRO_APP_CONFIGS_PATH=/configs
+
+# @TODO MAC
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_LOGS_PATH=/opt/logs
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_CONFIGS_PATH=/opt/configs
+
 # Plugin
 export ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
 
 export ZMICRO_PLUGIN_GITHUB="https://github.com/zmicro-design"
 export ZMICRO_PLUGIN_REPO_PREFIX="$ZMICRO_PLUGIN_GITHUB/plugin-"
 
-# Data
-export ZMICRO_APP_DATA_PATH=/data
-# Logs
-export ZMICRO_APP_LOGS_PATH=/logs
-
-# @TODO MAC
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_LOGS_PATH=/opt/logs
+export ZMICRO_PLUGINS_DATA_PATH=$ZMICRO_APP_DATA_PATH/plugins
+export ZMICRO_PLUGINS_LOGS_PATH=$ZMICRO_APP_LOGS_PATH/plugins
+export ZMICRO_PLUGINS_CONFIGS_PATH=$ZMICRO_APP_CONFIGS_PATH/plugins
 
 # PATHS
 export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin #$(realpath $(dirname "$0"))

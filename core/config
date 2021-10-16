@@ -38,6 +38,11 @@ load_config() {
 
 load_config_file() {
   local CONFIG_FILE=$1
+
+  if [ -z "$CONFIG_FILE" ]; then
+    log_error "[load_config_file] config file path is required"
+    exit 1
+  fi
   
   if [ -f $CONFIG_FILE ]; then
     log_debug "[$(timestamp)][load_config_file]: $CONFIG_FILE"

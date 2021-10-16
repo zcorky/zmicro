@@ -120,6 +120,55 @@ plugin_get_path() {
   echo $ZMICRO_PLUGINS_PATH/$plugin_name
 }
 
+plugin_get_app_data_path() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log_error "[plugin_get_app_data_path] plugin name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_PLUGINS_DATA_PATH/$plugin_name
+  if [ ! -d $path ]; then
+    sudo mkdir -p $path
+    sudo chown $USER $path
+  fi
+
+  echo $path
+}
+
+plugin_get_app_logs_path() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log_error "[plugin_get_app_logs_path] plugin name is required"
+    exit 1
+  fi
+
+
+  local path=$ZMICRO_PLUGINS_LOGS_PATH/$plugin_name
+  if [ ! -d $path ]; then
+    sudo mkdir -p $path
+    sudo chown $USER $path
+  fi
+
+  echo $path
+}
+
+plugin_get_app_configs_path() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log_error "[plugin_get_app_configs_path] plugin name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_PLUGINS_CONFIGS_PATH/$plugin_name
+  if [ ! -d $path ]; then
+    sudo mkdir -p $path
+    sudo chown $USER $path
+  fi
+
+  echo $path
+}
+
 plugin_get_mod_path() {
   local plugin_name=$1
   echo $(plugin_get_path $plugin_name)/mod
@@ -259,6 +308,16 @@ plugin_load_parent_override_config() {
   plugin_load_configs $plugin_name $config_dir
 }
 
+plugin_load_app_configs() {
+  local plugin_name=$1
+  # config/overrides/*
+  local config_path=$(plugin_get_app_configs_path $plugin_name)
+
+  log_debug "[$(timestamp)][plugin_load_app_configs][${plugin_name}] $config_path"
+
+  plugin_load_configs $plugin_name $config_path
+}
+
 plugin_get_version() {
   plugin_load_mod $1
 
@@ -337,6 +396,8 @@ plugin_run() {
   #             也就是要子配置重新加载父配置的 override 配置
   #       可以打开 load_file_config 日志看看配置加载的顺序，会发现
   plugin_load_parent_override_config $ZMICRO_PLUGIN_GLOBAL_PARENT
+  #   7. load app(user custom) config
+  plugin_load_app_configs $plugin_name
 
   # help
   if [ "$plugin_command" = "" ]; then
@@ -389,6 +450,10 @@ export -f plugin_get_core_path
 export -f plugin_get_config_path
 export -f plugin_get_commands_path
 
+export -f plugin_get_app_data_path
+export -f plugin_get_app_logs_path
+export -f plugin_get_app_configs_path
+
 export -f plugin_exist
 export -f plugin_bin_exist
 export -f plugin_has
@@ -400,6 +465,8 @@ export -f plugin_load_core
 export -f plugin_load_config
 export -f plugin_load_override_config
 export -f plugin_load_parent_override_config
+
+export -f plugin_load_app_configs
 
 export -f plugin_get_version
 export -f plugin_get_description
