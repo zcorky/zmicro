@@ -113,7 +113,6 @@ os_tmp() {
 
 #
 os_is_bash() {
-  set +e
   echo $(os_shell) | grep -o bash >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     echo "false"
@@ -121,11 +120,9 @@ os_is_bash() {
   fi
 
   echo "true"
-  set -e
 }
 
 os_is_zsh() {
-  set +e
   echo $(os_shell) | grep -o zsh >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     echo "false"
@@ -133,7 +130,6 @@ os_is_zsh() {
   fi
 
   echo "true"
-  set -e
 }
 
 os_is_macos() {

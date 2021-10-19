@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 load_config() {
   # @TOREMOVE
@@ -7,7 +6,7 @@ load_config() {
   local old_home=$(zmicro_config_get HOME)
   if [ "$old_home" != "" ]; then
     log_debug "remove old config .zmicrorc"
-    
+
     zmicro_config_remove HOME
     zmicro_config_remove BIN
     zmicro_config_remove VERSION
@@ -43,7 +42,7 @@ load_config_file() {
     log_error "[load_config_file] config file path is required"
     exit 1
   fi
-  
+
   if [ -f $CONFIG_FILE ]; then
     log_debug "[$(timestamp)][load_config_file]: $CONFIG_FILE"
 
@@ -80,7 +79,7 @@ load_mod_config() {
 
 load_core_mod() {
   load_config_file $ZMICRO_MOD
-  
+
   load_mod_config
 }
 
@@ -112,7 +111,7 @@ zmicro_config_set() {
 
   # New Key
   if [ "$line" = "" ]; then
-    echo "${key}=${value}" >> $ZMICRO_RC
+    echo "${key}=${value}" >>$ZMICRO_RC
     return
   fi
 
