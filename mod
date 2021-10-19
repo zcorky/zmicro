@@ -9,4 +9,5 @@ DEPENDENCIES=(
   "daemon@latest"
   "swarm@latest"
   "compose@latest"
+  "cron@latest"
 )
