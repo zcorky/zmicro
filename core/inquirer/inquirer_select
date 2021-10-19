@@ -3,7 +3,7 @@
 
 # store the current set options
 OLD_SET=$-
-set -e
+# set -e
 
 arrow="$(echo -e '\xe2\x9d\xaf')"
 checked="$(echo -e '\xe2\x97\x89')"

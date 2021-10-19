@@ -99,12 +99,10 @@ plugin_register_all() {
       if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
         log_debug "[$(timestamp)][plugin] register $plugin bin: $bin"
 
-        set +e
         ln -s $plugin_get_bin_path $bin_path
         if [ "$?" != "0" ]; then
           log_warn "[$(timestamp)][plugin] failed to register $plugin bin: $bin"
         fi
-        set -e
       fi
     done
   done
@@ -142,7 +140,6 @@ plugin_get_app_logs_path() {
     log_error "[plugin_get_app_logs_path] plugin name is required"
     exit 1
   fi
-
 
   local path=$ZMICRO_PLUGINS_LOGS_PATH/$plugin_name
   if [ ! -d $path ]; then
