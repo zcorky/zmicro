@@ -97,6 +97,11 @@ config_bashrc() {
   # HOME
   config_profile $HOME/.bashrc
 
+  # Global
+  if [ -f "/etc/bash.bashrc" ]; then
+    config_global_rc /etc/bash.bashrc
+  fi
+
   # # GLOBAL
   # #   ubuntu  20
   # config_global_rc_ignore_if_not_found /etc/bashrc
@@ -110,6 +115,11 @@ config_zshrc() {
 
   # HOME
   config_profile $HOME/.zshrc
+
+  # Global
+  if [ -f "/etc/zsh/zshrc" ]; then
+    config_global_rc /etc/zsh/zshrc
+  fi
 
   # # GLOBAL
   # #   ubuntu 20
