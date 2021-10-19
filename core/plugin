@@ -41,6 +41,11 @@ plugin_register() {
     log_success "[$(timestamp)][plugin][$(color_green "register")] $plugin_name bin: $(color_success $bin)"
     ln -s $plugin_get_bin_path/$bin $bin_path
   done
+
+  # Initialize Dirs
+  plugin_get_app_configs_path $plugin_name >>/dev/null
+  plugin_get_app_logs_path $plugin_name >>/dev/null
+  plugin_get_app_data_path $plugin_name >>/dev/null
 }
 
 plugin_unregister() {
