@@ -16,8 +16,13 @@ core() {
   local fn=$1
   local args=${@:2}
 
+  if [ -z "$fn" ]; then
+    log_error "method is required"
+    exit 1
+  fi
+
   # @TODO
-  set +e
+  # set +e
 
   type $fn >> /dev/null 2>&1
   if [ $? -eq 0 ]; then
@@ -27,7 +32,7 @@ core() {
   fi
 
   # @TODO
-  set -e
+  # set -e
 }
 
 run() {
