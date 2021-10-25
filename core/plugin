@@ -16,22 +16,26 @@ plugin_register() {
   fi
 
   local plugin_get_path=$(plugin_get_path $plugin_name)
-  local plugin_get_bin_path=$(plugin_get_bin_path $plugin_name)
+  local plugin_bin_path=$(plugin_get_bin_path $plugin_name)
 
   # Fix permission
   if [ ! -w "$ZMICRO_HOME/bin" ]; then
     sudo chown -R $(os_username) $ZMICRO_HOME/bin
   fi
 
-  if [ ! -d $plugin_get_bin_path ]; then
+  if [ ! -d $plugin_bin_path ]; then
     # exit 0
     return
   fi
 
-  log_debug "[$(timestamp)][plugin] bins_path: $plugin_get_bin_path"
+  log_debug "[$(timestamp)][plugin] bins_path: $plugin_bin_path"
   local bins=$(plugin_list_bins $plugin_name)
   for bin in $bins; do
     local bin_path=$ZMICRO_HOME/bin/$bin
+
+    if [ -d "$plugin_bin_path/$bin" ]; then
+      continue
+    fi
 
     if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
       log_debug "[$(timestamp)][plugin][$(color_red "remove")] old bin: $bin"
@@ -39,8 +43,25 @@ plugin_register() {
     fi
 
     log_success "[$(timestamp)][plugin][$(color_green "register")] $plugin_name bin: $(color_success $bin)"
-    ln -s $plugin_get_bin_path/$bin $bin_path
+    ln -s $plugin_bin_path/$bin $bin_path
   done
+
+  local plugin_sub_bin_path=$(plugin_get_sub_bin_path $plugin_name)
+  if [ -d "$plugin_sub_bin_path" ]; then
+    log_debug "[$(timestamp)][plugin] sub_bins_path: $plugin_bin_path"
+    local sub_bins=$(ls $plugin_sub_bin_path)
+    for bin in $sub_bins; do
+      local bin_path=$ZMICRO_HOME/bin/sub/$bin
+
+      if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
+        log_debug "[$(timestamp)][plugin][$(color_red "remove")] old sub bin: $bin"
+        rm $bin_path
+      fi
+
+      log_success "[$(timestamp)][plugin][$(color_green "register")] $plugin_name sub bin: $(color_success $bin)"
+      ln -s $plugin_sub_bin_path/$bin $bin_path
+    done
+  fi
 
   # Initialize Dirs
   plugin_get_app_configs_path $plugin_name >>/dev/null
@@ -179,6 +200,11 @@ plugin_get_mod_path() {
 plugin_get_bin_path() {
   local plugin_name=$1
   echo $ZMICRO_PLUGINS_PATH/$plugin_name/bin
+}
+
+plugin_get_sub_bin_path() {
+  local plugin_name=$1
+  echo $ZMICRO_PLUGINS_PATH/$plugin_name/bin/zmicro
 }
 
 plugin_get_core_path() {
@@ -447,6 +473,7 @@ export -f plugin_each
 
 export -f plugin_get_path
 export -f plugin_get_bin_path
+export -f plugin_get_sub_bin_path
 export -f plugin_get_mod_path
 export -f plugin_get_core_path
 export -f plugin_get_config_path
