@@ -87,6 +87,12 @@ has_command_path() {
     return 0
   fi
 
+  # 1.1 internal sub
+  local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
+  if has_command_path_internal $internal_sub_base_path $command; then
+    return 0
+  fi
+
   # 2. normal
   #   2.1 _run: take over run when _run exist
   #   2.2 normal
@@ -164,6 +170,13 @@ get_command_path() {
   local internal_base_path=$base_command_path/_internal
   if has_command_path_internal $internal_base_path $command; then
     echo $(get_command_path_internal $internal_base_path $command)
+    return 0
+  fi
+
+  # 1.1 internal sub
+  local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
+  if has_command_path_internal $internal_sub_base_path $command; then
+    echo $(get_command_path_internal $internal_sub_base_path $command)
     return 0
   fi
 
