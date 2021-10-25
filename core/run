@@ -54,4 +54,44 @@ run() {
   log_command "$command_path"
 }
 
+run_js() {
+  local script=$1
+  if [ -z "$script" ]; then
+    log_error "js script is required"
+    exit 1
+  fi
+
+  load_nvm() {
+    local NVM_DIR=$HOME/.nvm
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+      . "$NVM_DIR/nvm.sh" # This loads nvm
+    fi
+  }
+
+  is_nodejs_installed() {
+    load_nvm
+
+    which node >> /dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      echo "true"
+    else
+      echo "false"
+    fi
+  }
+
+  if [ "$(is_nodejs_installed)" = "false" ]; then
+    zpackage install nodejs
+  fi
+
+  load_nvm
+
+  # @TODO
+  if [ "$(net_is_google_visitable)" = "false" ]; then
+    export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
+  fi
+
+  node $@
+}
+
 export -f run
+export -f run_js
