@@ -34,6 +34,30 @@ pm() {
 
 # node npm
 pm_npm() {
+  load_nvm() {
+    local NVM_DIR=$HOME/.nvm
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+      . "$NVM_DIR/nvm.sh" # This loads nvm
+    fi
+  }
+
+  is_nodejs_installed() {
+    load_nvm
+
+    which node >> /dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      echo "true"
+    else
+      echo "false"
+    fi
+  }
+
+  if [ "$(is_nodejs_installed)" = "false" ]; then
+    zpackage install nodejs
+  fi
+
+  load_nvm
+
   # @TODO
   if [ "$(net_is_google_visitable)" = "false" ]; then
     export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
@@ -42,15 +66,16 @@ pm_npm() {
   npm $@
 }
 
-pm_nvm() {
-  # @TODO
-  if [ "$(net_is_google_visitable)" = "false" ]; then
-    export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist
-  fi
+# pm_nvm() {
+#   # @TODO
+#   if [ "$(net_is_google_visitable)" = "false" ]; then
+#     export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist
+#   fi
 
-  nvm $@
-}
+#   nvm $@
+# }
 
 export -f pm
+
+# export -f pm_nvm
 export -f pm_npm
-export -f pm_nvm
