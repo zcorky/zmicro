@@ -90,7 +90,8 @@ require_mod() {
       return
     fi
 
-    log_info "[$(timestamp)][require] found depdencies: ${dependeny_count} ..."
+    log_info "[$(timestamp)][require] found depdencies: $(color_green ${dependeny_count}) ..."
+    echo ""
 
     array_each require_parse ${DEPENDENCIES[@]}
 

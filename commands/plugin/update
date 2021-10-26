@@ -11,7 +11,9 @@ update_one() {
   local plugin_old_version=$(plugin_get_version $plugin_name)
 
   if [ "$(is_plugin_need_update $plugin_name)" = "false" ]; then
-    log_info "[$(timestamp)][plugin][update] ignore $plugin_name updated in recently"
+    # log_info "[$(timestamp)][plugin][update] ignore $plugin_name updated in recently"
+    # log_info "[$(timestamp)][plugin][$(color_yellow "recently")] $plugin_name($plugin_old_version)"
+    # echo ""
     return
   fi
 
@@ -44,7 +46,8 @@ update_one() {
   if [ "$plugin_old_version" != "$plugin_new_version" ]; then
     log_success "[$(timestamp)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color_success $plugin_new_version))"
   else
-    log_success "[$(timestamp)][plugin] $plugin_name version not change ($plugin_old_version)"
+    log_info "[$(timestamp)][plugin][$(color_green "no change")] $plugin_name($plugin_old_version)"
+    echo ""
   fi
 }
 
