@@ -15,7 +15,7 @@ plugin_register() {
     exit 1
   fi
 
-  local plugin_get_path=$(plugin_get_path $plugin_name)
+  # local plugin_get_path=$(plugin_get_path $plugin_name)
   local plugin_bin_path=$(plugin_get_bin_path $plugin_name)
 
   # Fix permission
@@ -76,19 +76,19 @@ plugin_unregister() {
     exit 1
   fi
 
-  local plugin_get_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
 
   # Fix permission
   if [ ! -w "$ZMICRO_HOME/bin" ]; then
     sudo chown -R $(os_username) $ZMICRO_HOME/bin
   fi
 
-  if [ ! -d $plugin_get_path/$plugin/bin ]; then
+  if [ ! -d $plugin_path/$plugin/bin ]; then
     # exit 0
     return
   fi
 
-  log_debug "[$(timestamp)][plugin][unregister] bins_path: $plugin_get_path/$plugin/bin"
+  log_debug "[$(timestamp)][plugin][unregister] bins_path: $plugin_path/$plugin/bin"
   local bins=$(plugin_list_bins $plugin_name)
   for bin in $bins; do
     local bin_path=$ZMICRO_HOME/bin/$bin
@@ -101,31 +101,31 @@ plugin_unregister() {
 }
 
 plugin_register_all() {
-  local plugin_get_path=$1
-  if [ "$plugin_get_path" = "-" ]; then
+  local plugin_path=$1
+  if [ "$plugin_path" = "-" ]; then
     return
   fi
 
-  local plugins=$(ls $plugin_get_path)
+  local plugins=$(ls $plugin_path)
 
   log_debug "\n\n[$(timestamp)][plugin]"
   for plugin in $plugins; do
     log_debug "[$(timestamp)][plugin] find plugin: $plugin"
 
-    if [ ! -d "$plugin_get_path/$plugin/bin" ]; then
+    if [ ! -d "$plugin_path/$plugin/bin" ]; then
       continue
     fi
 
-    log_debug "[$(timestamp)][plugin] bins_path: $plugin_get_path/$plugin/bin"
-    local bins=$(ls $plugin_get_path/$plugin/bin)
+    log_debug "[$(timestamp)][plugin] bins_path: $plugin_path/$plugin/bin"
+    local bins=$(ls $plugin_path/$plugin/bin)
     for bin in $bins; do
       local bin_path=$ZMICRO_HOME/bin/$bin
-      local plugin_get_bin_path=$plugin_get_path/$plugin/bin/$bin
+      local plugin_bin_path=$plugin_path/$plugin/bin/$bin
 
       if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
         log_debug "[$(timestamp)][plugin][register] $plugin bin: $bin"
 
-        ln -s $plugin_get_bin_path $bin_path
+        ln -s $plugin_bin_path $bin_path
         if [ "$?" != "0" ]; then
           log_warn "[$(timestamp)][plugin][register] failed to register $plugin bin: $bin"
         fi
@@ -292,9 +292,9 @@ plugin_load_configs() {
 
 plugin_load_mod() {
   local plugin_name=$1
-  local plugin_get_mod_path=$(plugin_get_mod_path $plugin_name)
+  local plugin_mod_path=$(plugin_get_mod_path $plugin_name)
 
-  plugin_load_configs $plugin_name $plugin_get_mod_path
+  plugin_load_configs $plugin_name $plugin_mod_path
 }
 
 plugin_load_core() {
@@ -457,9 +457,9 @@ plugin_run() {
     # load plugin core(utils)
     plugin_load_core $plugin_name
 
-    local _plugin_get_commands_path=$(plugin_get_commands_path $plugin_name)
-    # echo "_plugin_get_commands_path:: $_plugin_get_commands_path"
-    run $_plugin_get_commands_path "-" $plugin_command
+    local plugin_commands_path=$(plugin_get_commands_path $plugin_name)
+    # echo "plugin_commands_path:: $plugin_commands_path"
+    run $plugin_commands_path "-" $plugin_command
   fi
 }
 
