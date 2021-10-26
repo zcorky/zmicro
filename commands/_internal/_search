@@ -1,0 +1,32 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Install zmicro plugin"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro install <self | plugin>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local plugin=$1
+
+  # install self
+  if [ -z "$plugin" ] || [ "$plugin" = "self" ] || [ "$plugin" = "zmicro" ]; then
+    $ZMICRO_HOME/install -u
+  else
+    zmicro plugin install $1
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@

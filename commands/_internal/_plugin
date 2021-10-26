@@ -1,0 +1,54 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Usage:"
+  echo "  zmicro plugin <action> <args...>"
+  echo ""
+  echo "Action:"
+  echo "    add <plugin_name> <plugin_url> [plugin_version]"
+  echo "    dependencies <plugin_name>"
+  echo "    description <plugin_name>"
+  echo "    fn <plugin_name> <fn_name> <fn_args...>"
+  echo "    has <plugin_name>"
+  echo "    install <plugin_name> [plugin_version]"
+  echo "    list"
+  echo "    ls"
+  echo "    register <plugin_name>"
+  echo "    release <plugin_name>"
+  echo "    remove <plugin_name>"
+  echo "    run <plugin_name> <plugin_command> <args...>"
+  echo "    update <plugin_name>"
+  echo "    version <plugin_name>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local action=$1
+  local args=${@:2}
+
+  local core_path=$ZMICRO_PLUGINS_PATH/core
+  local command_path=$core_path/commands/$action
+
+  if [ ! -f "$command_path" ]; then
+    log_error "No such command: zmicro plugin ${action}. use --help for help"
+    exit 1
+  fi
+
+  load_config_dir $core_path/config
+  load_config_dir $core_path/core
+  load_config_file $core_path/mod
+  
+  $command_path $args
+}
+
+run() {
+  core $@
+}
+
+run $@
