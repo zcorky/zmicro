@@ -16,4 +16,6 @@ ENV   ZMICRO_VERSION=${VERSION}
 
 RUN   echo "ZMICRO_VERSION => ${VERSION}"
 
+ENV   USER=root
+
 RUN   curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
