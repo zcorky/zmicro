@@ -6,6 +6,9 @@ update_zmicro() {
   local origin_version=$(get_current_version)
   # log::update PREV
 
+  # @TODO add auto update
+  zmicro auto update 
+
   log::update core zmicro START
 
   cd $ZMICRO_HOME
