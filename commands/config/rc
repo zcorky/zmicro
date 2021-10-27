@@ -13,6 +13,10 @@ config_clear() {
   # export ZMICRO_BIN_PATH=/home/$(os::username)/.zmicro/bin
   # export PATH=$ZMICRO_BIN_PATH:$PATH
 
+  if [ ! -f "$profile" ]; then
+    return
+  fi
+
   # remove .zmicro version
   cat $profile | grep "# ZMICRO_BIN_PATH" >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
