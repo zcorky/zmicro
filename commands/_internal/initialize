@@ -86,6 +86,9 @@ core() {
   else
     initialize_depdendencies
   fi
+
+  # @TODO add auto update
+  zmicro auto update 
 }
 
 run() {
