@@ -98,12 +98,12 @@ fs::remove_empty_line() {
   awk NF $file_path >$file_path
 }
 
-os::fs_remove_line_has_str() {
+fs::remove_line_has_str() {
   local file_path=$1
   local match_str=$2
 
   if [ -z "$file_path" ] || [ -z "$match_str" ]; then
-    log::error "[$(timestamp)][os::fs_remove_line_has_str] file_path and match_str is required"
+    log::error "[$(timestamp)][fs::remove_line_has_str] file_path and match_str is required"
     exit 1
   fi
 
@@ -113,5 +113,5 @@ os::fs_remove_line_has_str() {
 export -f fs::write
 export -f fs::read
 
-export -f os::fs_remove_line_has_str
+export -f fs::remove_line_has_str
 export -f fs::remove_empty_line
