@@ -137,9 +137,24 @@ log::command() {
 }
 
 log::update() {
-  stage=$1 # START | END
-  current_version=$(get_current_version)
-  log::info "[$(timestamp)] ${stage} ${current_version} "
+  local type=$1
+  local name=$2
+  local stage=$3 # START | END | ERROR
+  local current_version=$(get_current_version)
+  log::info "[$(timestamp)][${type}: ${name}][${current_version}][${stage}]" >> $ZMICRO_LOG_UPDATE_PATH
+ 
+  if [ "$type" = "core" ]; then
+    echo "====== DETAIL LOG ${stage} ======" >> $ZMICRO_LOG_UPDATE_PATH
+  else
+    echo "  ====== DETAIL LOG ${stage} ======" >> $ZMICRO_LOG_UPDATE_PATH
+  fi
+
+  if [ "$stage" = "END" ] || [ "$stage" = "ERROR" ]; then
+    if [ "$type" = "core" ] && [ "$name" = "zmicro" ]; then
+      echo "" >> $ZMICRO_LOG_UPDATE_PATH
+      echo "" >> $ZMICRO_LOG_UPDATE_PATH
+    fi
+  fi
 }
 
 log::version() {

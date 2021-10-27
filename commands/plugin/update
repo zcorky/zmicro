@@ -14,15 +14,17 @@ update_one() {
     # log::info "[$(timestamp)][plugin][update] ignore $plugin_name updated in recently"
     # log::info "[$(timestamp)][plugin][$(color::yellow "recently")] $plugin_name($plugin_old_version)"
     # echo ""
+    # log::update plugin $plugin_name END
     return
   fi
 
   local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
   if [ ! -d $plugin_path ]; then
-    log "[$(timestamp)][plugin] not found"
+    log_error "[$(timestamp)][plugin] not found"
     exit 0
   fi
 
+  log::update plugin $plugin_name START
   log::info "[$(timestamp)][plugin] updating $plugin_name ..."
 
   # Update @TODO
@@ -30,6 +32,7 @@ update_one() {
   git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
   if [ "$?" != "0" ]; then
     log::error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
+    log::update plugin $plugin_name ERROR
     tail -n 50 $ZMICRO_LOG_ERROR_PATH
     exit 1
   fi
@@ -49,6 +52,8 @@ update_one() {
     log::info "[$(timestamp)][plugin][$(color::green "no change")] $plugin_name($plugin_old_version)"
     echo ""
   fi
+
+  log::update plugin $plugin_name END
 }
 
 core() {

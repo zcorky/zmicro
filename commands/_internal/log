@@ -15,7 +15,7 @@ log_with_options() {
         ;;
       u)
         # echo "Visit Update Log"
-        tail $ZMICRO_LOG_UPDATE_PATH
+        tail -f $ZMICRO_LOG_UPDATE_PATH
         exit 0
         ;;
       n)

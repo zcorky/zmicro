@@ -2,7 +2,7 @@
 
 fetch_git() {
   cd $ZMICRO_HOME
-  git fetch origin >> $ZMICRO_LOG_UPDATE_PATH 2>&1
+  git fetch origin >> $ZMICRO_LOG_COMMON_PATH 2>&1
   if [ "$?" != "0" ]; then
     log "Fetch ZMicro Error"
     exit 1
