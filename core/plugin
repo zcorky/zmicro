@@ -15,7 +15,7 @@ plugin::register() {
     exit 1
   fi
 
-  # local plugin::get_path=$(plugin::get_path $plugin_name)
+  # local plugin_path=$(plugin::get_path $plugin_name)
   local plugin_bin_path=$(plugin::get_bin_path $plugin_name)
 
   # Fix permission

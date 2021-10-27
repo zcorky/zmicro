@@ -34,7 +34,7 @@ core() {
 
   log::debug "[$(timestamp)][plugin] remove $plugin_name ..."
 
-  local plugin::get_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
   if [ ! -d $plugin::get_path ]; then
     log "[$(timestamp)][plugin] already removed"
     exit 0
