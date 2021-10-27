@@ -17,14 +17,14 @@ core() {
   local key=$1
   local value=$2
   if [ "$key" = "" ] || [ "$value" = "" ]; then
-    log_error "key and value is required"
-    log_error ""
+    log::error "key and value is required"
+    log::error ""
     
     help
     exit 1
   fi
 
-  zmicro_config_set $key $value >> /dev/null 2>&1
+  config::set $key $value >> /dev/null 2>&1
 }
 
 run() {

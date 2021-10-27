@@ -301,7 +301,7 @@ _list_input() {
 #   cleanup
 # }
 
-inquirer_select() {
+inquirer::select() {
   _list_input "$1" "$2"
   local var_name=$3
   eval $var_name=\'"${_list_options[$_list_selected_index]}"\'
@@ -313,7 +313,7 @@ inquirer_select() {
   cleanup
 }
 
-inquirer_select_index() {
+inquirer::select_index() {
   _list_input "$1" "$2"
   local var_name=$3
   eval $var_name=\'"$_list_selected_index"\'
@@ -325,4 +325,4 @@ inquirer_select_index() {
   cleanup
 }
 
-export -f inquirer_select
+export -f inquirer::select

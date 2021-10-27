@@ -7,12 +7,12 @@ get_args_length() {
   echo $length
 }
 
-string_split() {
+string::split() {
   local seperator=$1
   local str=$2
 
   if [ "$seperator" = "" ] || [ "$str" = "" ]; then
-    log_error "seperator(\$1) and str(\$2) is required"
+    log::error "seperator(\$1) and str(\$2) is required"
     exit 1
   fi
 
@@ -23,36 +23,36 @@ string_split() {
   echo $str | awk -F $seperator '{out=""; for(i=1;i<=NF;i++){out=out" "$i}; print out}'
 }
 
-string_split_length() {
+string::split_length() {
   local seperator=$1
   local str=$2
 
   if [ "$seperator" = "" ] || [ "$str" = "" ]; then
-    log_error "seperator(\$1) and str(\$2) is required"
+    log::error "seperator(\$1) and str(\$2) is required"
     exit 1
   fi
 
   echo $str | awk -F ${seperator} '{print NF}'
 }
 
-string_split_last_element() {
+string::split_last_element() {
   local seperator=$1
   local str=$2
 
   if [ "$seperator" = "" ] || [ "$str" = "" ]; then
-    log_error "seperator(\$1) and str(\$2) is required"
+    log::error "seperator(\$1) and str(\$2) is required"
     exit 1
   fi
 
   echo $str | awk -F $seperator '{print $(NF-0)}'
 }
 
-string_split_last_second_element() {
+string::split_last_second_element() {
   local seperator=$1
   local str=$2
 
   if [ "$seperator" = "" ] || [ "$str" = "" ]; then
-    log_error "seperator(\$1) and str(\$2) is required"
+    log::error "seperator(\$1) and str(\$2) is required"
     exit 1
   fi
 
@@ -66,11 +66,11 @@ string_split_slice() {
   local end=$4
 
   if [ "$seperator" = "" ] || [ "$str" = "" ] || [ "$start" = "" ]; then
-    log_error "seperator, str, start is required"
+    log::error "seperator, str, start is required"
     exit 1
   fi
 
-  local array=$(string_split $seperator $str)
+  local array=$(string::split $seperator $str)
   local length=$(get_args_length $array)
 
   # not set, use default length
@@ -88,7 +88,7 @@ string_split_slice() {
     if [ $index -ge $start ] && [ $index -lt $end ]; then
       res="$res $element"
       # echo "$res"
-      index=$(number_step $index)
+      index=$(number::step $index)
       continue
     fi
 
@@ -96,14 +96,14 @@ string_split_slice() {
       break
     fi
 
-    index=$(number_step $index)
+    index=$(number::step $index)
   done
 
   # echo x:$res
-  echo $(array_join $seperator $res)
+  echo $(array::join $seperator $res)
 }
 
-string_replace() {
+string::replace() {
   local base=$1
   local origin=$2
   local new=$3
@@ -113,7 +113,7 @@ string_replace() {
   fi
 
   if [ "$base" = "" ] || [ "$origin" = "" ]; then
-    log_error "base, origin, new is required"
+    log::error "base, origin, new is required"
     exit 1
   fi
 
@@ -129,13 +129,13 @@ string_replace() {
   echo $base | sed -e "s%${origin}%${new}%g"
 }
 
-string_remove() {
+string::remove() {
   local text=$1
   local need_remove=$2
-  string_replace $text $need_remove
+  string::replace $text $need_remove
 }
 
-string_match() {
+string::match() {
   local text=$1
   local regexp=$2
 
@@ -148,24 +148,24 @@ string_match() {
   echo "false"
 }
 
-number_increase() {
+number::increase() {
   local base=$1
   local _step=$2
   local step=${_step:-1}
 
   if [ "$base" = "" ]; then
-    log_error "base is required"
+    log::error "base is required"
     exit 1
   fi
 
   echo $((base + step))
 }
 
-number_step() {
-  echo $(number_increase $1 $2)
+number::step() {
+  echo $(number::increase $1 $2)
 }
 
-number_add() {
+number::add() {
   local res=0
 
   for num in $@; do
@@ -175,12 +175,12 @@ number_add() {
   echo $res
 }
 
-array_join() {
+array::join() {
   local seperator=$1
   local args=${@:2}
 
   if [ "$seperator" = "" ] || [ "$args" = "" ]; then
-    log_error "seperator, args is required"
+    log::error "seperator, args is required"
     exit 1
   fi
 
@@ -201,7 +201,7 @@ array_join() {
   echo $res
 }
 
-array_join_line() {
+array::join_line() {
   local seperator="\n"
   local args=${@}
 
@@ -218,7 +218,7 @@ array_join_line() {
   echo $res
 }
 
-array_each() {
+array::each() {
   local fn=$1
   local args=${@:2}
 
@@ -233,7 +233,7 @@ array_each() {
   done
 }
 
-array_filter() {
+array::filter() {
   local fn=$1
   local args=${@:2}
   local store=""
@@ -253,11 +253,11 @@ array_filter() {
   echo $store
 }
 
-array_length() {
+array::length() {
   echo ${#@}
 }
 
-array_find() {
+array::find() {
   local fn=$1
   local args=${@:2}
   local store=""
@@ -275,7 +275,7 @@ array_find() {
 
 # @TODO https://unix.stackexchange.com/questions/282557/scope-of-local-variables-in-shell-functions
 # same variables will be override if you use it in others functions
-array_find_by_index() {
+array::find_by_index() {
   local nth=$1
   local elements_array_find_by_index=${@:2}
   local element_array_find_by_index=""
@@ -293,26 +293,26 @@ array_find_by_index() {
     fi
   }
 
-  array_each each $elements_array_find_by_index
+  array::each each $elements_array_find_by_index
 
   echo $element_array_find_by_index
 }
 
 # @TODO https://stackoverflow.com/questions/15685736/how-to-extract-a-particular-element-from-an-array-in-bash
-array_nth_element() {
-  array_find_by_index $@
+array::nth_element() {
+  array::find_by_index $@
 }
 
-array_first_element() {
-  array_find_by_index 0 $@
+array::first_element() {
+  array::find_by_index 0 $@
 }
 
-array_last_element() {
-  local length=$(array_length $@)
-  array_find_by_index $(($length - 1)) $@
+array::last_element() {
+  local length=$(array::length $@)
+  array::find_by_index $(($length - 1)) $@
 }
 
-set_var() {
+os::set_var() {
   local name=$1
   local value=$2
 
@@ -321,28 +321,28 @@ set_var() {
 
 export -f get_args_length
 
-export -f string_split
-export -f string_split_length
-export -f string_split_last_element
-export -f string_split_last_second_element
-export -f string_replace
-export -f string_remove
-export -f string_match
+export -f string::split
+export -f string::split_length
+export -f string::split_last_element
+export -f string::split_last_second_element
+export -f string::replace
+export -f string::remove
+export -f string::match
 
-export -f number_increase
-export -f number_step
-export -f number_add
+export -f number::increase
+export -f number::step
+export -f number::add
 
-export -f array_join
-export -f array_each
-export -f array_length
-export -f array_filter
-export -f array_find
-export -f array_find_by_index
-export -f array_nth_element
-export -f array_first_element
-export -f array_last_element
+export -f array::join
+export -f array::each
+export -f array::length
+export -f array::filter
+export -f array::find
+export -f array::find_by_index
+export -f array::nth_element
+export -f array::first_element
+export -f array::last_element
 
-export -f array_join_line
+export -f array::join_line
 
-export -f set_var
+export -f os::set_var

@@ -17,11 +17,11 @@ core() {
   local plugin_command=${@:2}
 
   if [ -z "$plugin_name" ]; then
-    log_error "[run] plugin name is required"
+    log::error "[run] plugin name is required"
     exit 1
   fi
 
-  plugin_run $plugin_name $plugin_command
+  plugin::run $plugin_name $plugin_command
 }
 
 # @TODO donot override core/run

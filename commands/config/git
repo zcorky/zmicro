@@ -8,7 +8,7 @@ config_git() {
   git config --global core.editor "vim"
 
   # if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
-  #   log_warn "Config Git: USERNAME and EMAIL is required"
+  #   log::warn "Config Git: USERNAME and EMAIL is required"
   #   exit 0
   # fi
 

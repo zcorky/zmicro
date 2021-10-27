@@ -18,23 +18,23 @@ core() {
         exit 0
         ;;
       -d | --delete)
-        set_var delete true
+        os::set_var delete true
         shift
         ;;
       -o | --override)
-        set_var override true 
+        os::set_var override true 
         shift
         ;;
       --tmp-start)
-        set_var tmp_start true 
+        os::set_var tmp_start true 
         shift
         ;;
       --tmp-end)
-        set_var tmp_end true 
+        os::set_var tmp_end true 
         shift
         ;;
       *)
-        if [ "$(string_match $key ^-)" = "true" ]; then
+        if [ "$(string::match $key ^-)" = "true" ]; then
           echo "ERROR: unknown parameter \"$key\""
           help
           exit 1
@@ -48,8 +48,8 @@ core() {
 
   # local service_path=$1
   if [ "$service_path" = "" ]; then
-    log_error "custom service path is required"
-    log_error ""
+    log::error "custom service path is required"
+    log::error ""
     
     help
     exit 1
@@ -62,14 +62,14 @@ core() {
   local new_zmicro_service_path=""
   if [ "$delete" = "true" ]; then
     # delete
-    new_zmicro_service_path=$(string_replace $ZMICRO_SERVICES_PATH ${service_path}:)
+    new_zmicro_service_path=$(string::replace $ZMICRO_SERVICES_PATH ${service_path}:)
   elif [ "$override" = "true" ]; then
     # override
     new_zmicro_service_path=$service_path
   elif [ "$tmp_start" = "true" ]; then
     # backup
     if [ "$(zmicro config get ZMICRO_SERVICES_PATH_BAK)" != "" ]; then
-      log_warn "found ZMICRO_SERVICES_PATH_BAK, not clean last"
+      log::warn "found ZMICRO_SERVICES_PATH_BAK, not clean last"
       exit 0
     fi
 
@@ -78,7 +78,7 @@ core() {
   elif [ "$tmp_end" = "true" ]; then
     # recover
     if [ "$(zmicro config get ZMICRO_SERVICES_PATH_BAK)" = "" ]; then
-      log_error "zmicro config service recover backup failed, not found ZMICRO_SERVICES_PATH_BAK"
+      log::error "zmicro config service recover backup failed, not found ZMICRO_SERVICES_PATH_BAK"
       exit 1
     fi
 
@@ -91,7 +91,7 @@ core() {
   fi
 
   if [ -n "$new_zmicro_service_path" ]; then
-    log_debug "config service new path: $new_zmicro_service_path"
+    log::debug "config service new path: $new_zmicro_service_path"
 
     zmicro config set ZMICRO_SERVICES_PATH $new_zmicro_service_path
   fi

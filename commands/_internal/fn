@@ -17,7 +17,7 @@ core() {
   local args=${@:2}
 
   if [ -z "$fn" ]; then
-    log_error "method is required"
+    log::error "method is required"
     exit 1
   fi
 
@@ -28,7 +28,7 @@ core() {
   if [ $? -eq 0 ]; then
     eval "$fn $args"
   else
-    log_error "$fn method is not not found"
+    log::error "$fn method is not not found"
   fi
 
   # @TODO

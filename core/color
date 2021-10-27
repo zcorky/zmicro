@@ -6,7 +6,7 @@ export YELLOW="\e[33m"
 export GRAY="\e[37m"
 export ENDCOLOR="\e[0m"
 
-if [ "$(os_is_macos)" = "true" ]; then
+if [ "$(os::is_macos)" = "true" ]; then
   RED="\033[31m"
   GREEN="\033[32m"
   YELLOW="\033[33m"
@@ -14,8 +14,8 @@ if [ "$(os_is_macos)" = "true" ]; then
   ENDCOLOR="\033[0m"
 fi
 
-color_success() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::success() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -23,8 +23,8 @@ color_success() {
   echo -e "${GREEN}${@}${ENDCOLOR}"
 }
 
-color_error() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::error() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -32,8 +32,8 @@ color_error() {
   echo -e "${RED}${@}${ENDCOLOR}"
 }
 
-color_warn() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::warn() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -41,8 +41,8 @@ color_warn() {
   echo -e "${YELLOW}${@}${ENDCOLOR}"
 }
 
-color_disable() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::disable() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -50,8 +50,8 @@ color_disable() {
   echo -e "${GRAY}${@}${ENDCOLOR}"
 }
 
-color_green() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::green() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -59,8 +59,8 @@ color_green() {
   echo -e "${GREEN}${@}${ENDCOLOR}"
 }
 
-color_red() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::red() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -68,8 +68,8 @@ color_red() {
   echo -e "${RED}${@}${ENDCOLOR}"
 }
 
-color_yellow() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::yellow() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -77,11 +77,11 @@ color_yellow() {
   echo -e "${YELLOW}${@}${ENDCOLOR}"
 }
 
-export -f color_success
-export -f color_error
-export -f color_warn
-export -f color_disable
+export -f color::success
+export -f color::error
+export -f color::warn
+export -f color::disable
 
-export -f color_green
-export -f color_red
-export -f color_yellow
+export -f color::green
+export -f color::red
+export -f color::yellow

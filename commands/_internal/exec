@@ -23,7 +23,7 @@ core() {
   if [ $? -eq 0 ]; then
     eval "$shell_command $shell_command_args"
   else
-    log_error "$fn method is not not found"
+    log::error "$fn method is not not found"
   fi
 
   # @TODO

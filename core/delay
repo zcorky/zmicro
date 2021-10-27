@@ -1,9 +1,9 @@
 #!/bin/bash
 
-delay() {
+os::delay() {
   local fn=$@
   if [ "$fn" = "" ]; then
-    log_error "[core][delay] fn is required"
+    log::error "[core][os::delay] fn is required"
     exit 1
   fi
 
@@ -11,4 +11,4 @@ delay() {
   eval $fn
 }
 
-export -f delay
+export -f os::delay

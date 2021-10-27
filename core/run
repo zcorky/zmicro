@@ -7,12 +7,12 @@ run() {
   local sub_command=$4
 
   # register plugins commands
-  # plugin_register_all $base_plugin_get_path
+  # plugin::register_all $base_plugin_get_path
 
-  log_debug ""
-  log_debug "[$(timestamp)][command] base command path: $base_command_path"
-  log_debug "[$(timestamp)][command] run: ${@:3}"
-  log_debug "[$(timestamp)][command]"
+  log::debug ""
+  log::debug "[$(timestamp)][command] base command path: $base_command_path"
+  log::debug "[$(timestamp)][command] run: ${@:3}"
+  log::debug "[$(timestamp)][command]"
 
   # Use Help Command
   if [ "$sub_command" = "help" ]; then
@@ -20,13 +20,13 @@ run() {
     exit 1
   fi
 
-  # command_path=$(get_command_path $@)
+  # command_path=$(commander::get_command_path $@)
   # if [ "$?" != "0" ]; then
-  if ! has_command_path "$@"; then
+  if ! commander::has_command_path "$@"; then
     local commands=${@:3}
     # DEBUG
-    log_debug "[$(timestamp)][command]"
-    log_debug "[$(timestamp)][command] command: $commands"
+    log::debug "[$(timestamp)][command]"
+    log::debug "[$(timestamp)][command] command: $commands"
 
     # Help
     if [ "$command" != "" ]; then
@@ -37,7 +37,7 @@ run() {
       fi
 
       if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
-        echo -e "No such command: $(color_red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
+        echo -e "No such command: $(color::red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
         echo ""
       fi
     fi
@@ -47,17 +47,17 @@ run() {
   fi
 
   # Get Command
-  log_debug "[$(timestamp)][command]"
-  log_debug "[$(timestamp)][command] get command path start ..."
-  command_path=$(get_command_path $@)
+  log::debug "[$(timestamp)][command]"
+  log::debug "[$(timestamp)][command] get command path start ..."
+  command_path=$(commander::get_command_path $@)
 
-  log_command "$command_path"
+  log::command "$command_path"
 }
 
-run_js() {
+run::js() {
   local script=$1
   if [ -z "$script" ]; then
-    log_error "js script is required"
+    log::error "js script is required"
     exit 1
   fi
 
@@ -86,7 +86,7 @@ run_js() {
   load_nvm
 
   # @TODO
-  if [ "$(net_is_google_visitable)" = "false" ]; then
+  if [ "$(net::is_google_visitable)" = "false" ]; then
     export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
   fi
 
@@ -94,4 +94,4 @@ run_js() {
 }
 
 export -f run
-export -f run_js
+export -f run::js

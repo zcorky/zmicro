@@ -8,7 +8,7 @@ initialize_repo() {
     git clone $ZMICRO_GIT -b $ZMICRO_VERSION $ZMICRO_HOME
     # git clone $ZMICRO_GIT -b master $ZMICRO_HOME
   # else
-  #   log_info "[initailize] installed before (3), if you want to update, run 'zmicro update'"
+  #   log::info "[initailize] installed before (3), if you want to update, run 'zmicro update'"
   fi
 }
 
@@ -23,7 +23,7 @@ initialize_config() {
   # zmicro config timezone
 
     # Do for MacOS
-  if [ "$(os_is_macos)" != "true" ]; then
+  if [ "$(os::is_macos)" != "true" ]; then
     zmicro config locale
     zmicro config timezone
   fi
@@ -36,7 +36,7 @@ initialize_config() {
 
 initialize_depdendencies() {
   # install dependency plugins ...
-  require_core_mod $@
+  require::core_mod $@
 }
 
 help() {
@@ -63,11 +63,11 @@ core() {
         exit 0
         ;;
       -u | --update)
-        set_var is_plugin_update true
+        os::set_var is_plugin_update true
         shift
         ;;
       *)
-        if [ "$(string_match $key ^-)" = "true" ]; then
+        if [ "$(string::match $key ^-)" = "true" ]; then
           echo "ERROR: unknown parameter \"$key\""
           help
           exit 1

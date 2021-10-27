@@ -8,11 +8,11 @@ help() {
 
 update_one() {
   local plugin_name=$1
-  local plugin_old_version=$(plugin_get_version $plugin_name)
+  local plugin_old_version=$(plugin::get_version $plugin_name)
 
-  if [ "$(is_plugin_need_update $plugin_name)" = "false" ]; then
-    # log_info "[$(timestamp)][plugin][update] ignore $plugin_name updated in recently"
-    # log_info "[$(timestamp)][plugin][$(color_yellow "recently")] $plugin_name($plugin_old_version)"
+  if [ "$(plugin::is_plugin_need_update $plugin_name)" = "false" ]; then
+    # log::info "[$(timestamp)][plugin][update] ignore $plugin_name updated in recently"
+    # log::info "[$(timestamp)][plugin][$(color::yellow "recently")] $plugin_name($plugin_old_version)"
     # echo ""
     return
   fi
@@ -23,30 +23,30 @@ update_one() {
     exit 0
   fi
 
-  log_info "[$(timestamp)][plugin] updating $plugin_name ..."
+  log::info "[$(timestamp)][plugin] updating $plugin_name ..."
 
   # Update @TODO
   cd $plugin_path
   git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
   if [ "$?" != "0" ]; then
-    log_error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
+    log::error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
     tail -n 50 $ZMICRO_LOG_ERROR_PATH
     exit 1
   fi
   # cd - >>/dev/null 2>&1
 
   # install depdendencies
-  require_plugin_mod $plugin_name -u
+  require::plugin_mod $plugin_name -u
 
   # register
-  plugin_register $plugin_name
+  plugin::register $plugin_name
 
-  local plugin_new_version=$(plugin_get_version $plugin_name)
+  local plugin_new_version=$(plugin::get_version $plugin_name)
 
   if [ "$plugin_old_version" != "$plugin_new_version" ]; then
-    log_success "[$(timestamp)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color_success $plugin_new_version))"
+    log::success "[$(timestamp)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color::success $plugin_new_version))"
   else
-    log_info "[$(timestamp)][plugin][$(color_green "no change")] $plugin_name($plugin_old_version)"
+    log::info "[$(timestamp)][plugin][$(color::green "no change")] $plugin_name($plugin_old_version)"
     echo ""
   fi
 }
@@ -82,7 +82,7 @@ core() {
     update_one $name
   }
 
-  plugin_each fn
+  plugin::each fn
 }
 
 run() {

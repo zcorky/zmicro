@@ -283,7 +283,7 @@ text_input_default_validator() {
 #   cleanup
 # }
 
-inquirer_text() {
+inquirer::text() {
   local prompt=$1
   local var_name=$2
   local _text_default_value=$3
@@ -311,4 +311,4 @@ inquirer_text() {
   cleanup
 }
 
-export -f inquirer_text
+export -f inquirer::text

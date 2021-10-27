@@ -26,13 +26,13 @@ core() {
     plugin)
       local plugin_name=$2
       if [ -z "$plugin_name" ]; then
-        log_error "plugin name is required"
+        log::error "plugin name is required"
         exit 1
       fi
 
       local plugin_path=$ZMICRO_HOME/plugins/$plugin_name
       if [ ! -d $plugin_path ]; then
-        log_error "unknown plugin ${plugin_name}"
+        log::error "unknown plugin ${plugin_name}"
         exit 1
       fi
 
@@ -40,7 +40,7 @@ core() {
       exec $SHELL
       ;;
     *)
-      log_error "unknown go where: $where"
+      log::error "unknown go where: $where"
       ;;
   esac
 }

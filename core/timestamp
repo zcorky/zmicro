@@ -5,14 +5,14 @@ timestamp() {
   echo $res
 }
 
-timestamp_to_seconds() {
+timestamp::to_seconds() {
   local text=$@
   if [ -z "$text" ]; then
-    log_error "[timestamp_to_seconds] timestamp string is required"
+    log::error "[timestamp::to_seconds] timestamp string is required"
     exit 1
   fi
 
-  if [ "$(os_is_macos)" = "true" ]; then
+  if [ "$(os::is_macos)" = "true" ]; then
     date -jf "%Y-%m-%d %H:%M:%S" "$text" +%s
     return
   fi
@@ -20,7 +20,7 @@ timestamp_to_seconds() {
   date -d "$text" +%s
 }
 
-timestamp_gt() {
+timestamp::gt() {
   local a=$1
   local b=$2
 
@@ -34,7 +34,7 @@ timestamp_gt() {
   fi
 }
 
-timestamp_lt() {
+timestamp::lt() {
   local a=$1
   local b=$2
 
@@ -48,17 +48,17 @@ timestamp_lt() {
 # in x minutes
 # example: 5 2021-09-05 11:30:10
 # example: 5 1630824627
-timestamp_in_x_minutes() {
+timestamp::in_x_minutes() {
   local x_minutes=$1
   local text=${@:2}
 
   if [ -z "$x_minutes" ]; then
-    log_error "[timestamp_recently] x_minutes is required"
+    log::error "[timestamp::recently] x_minutes is required"
     exit 1
   fi
 
   if [ -z "$text" ]; then
-    log_error "[timestamp_recently] timestamp string | numver is required"
+    log::error "[timestamp::recently] timestamp string | numver is required"
     exit 1
   fi
 
@@ -67,23 +67,23 @@ timestamp_in_x_minutes() {
 
   echo $text | grep ":" >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
-    ts=$(timestamp_to_seconds $text)
+    ts=$(timestamp::to_seconds $text)
   fi
 
   local now=$(date +%s)
   local ts_5m_later=$(($ts + $x_seconds))
 
-  timestamp_lt $now $ts_5m_later
+  timestamp::lt $now $ts_5m_later
 }
 
 # in 5 minutes
-timestamp_recently() {
-  timestamp_in_x_minutes 5 $@
+timestamp::recently() {
+  timestamp::in_x_minutes 5 $@
 }
 
 export -f timestamp
-export -f timestamp_to_seconds
-export -f timestamp_gt
-export -f timestamp_lt
-export -f timestamp_in_x_minutes
-export -f timestamp_recently
+export -f timestamp::to_seconds
+export -f timestamp::gt
+export -f timestamp::lt
+export -f timestamp::in_x_minutes
+export -f timestamp::recently

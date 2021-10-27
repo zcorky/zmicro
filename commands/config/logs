@@ -14,9 +14,9 @@ core() {
   fi
 
   # echo "[init] config logs"
-  log_init
+  log::init
   
-  log_version $ZMICRO_VERSION $ZMICRO_VERSION
+  log::version $ZMICRO_VERSION $ZMICRO_VERSION
 }
 
 run() {

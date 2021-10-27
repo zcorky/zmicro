@@ -12,7 +12,7 @@ help() {
 is_timezone_seted() {
   local tz=$1
   if [ -z $tz ]; then
-    log_error "[is_timezone_seted] timezone is required"
+    log::error "[is_timezone_seted] timezone is required"
     exit 1
   fi
 
@@ -52,7 +52,7 @@ core() {
 
   local _timezone=$1
   local timezone=${_timezone:-$DEFAULT_TIMEZONE}
-  log_debug "timezone: $timezone"
+  log::debug "timezone: $timezone"
 
   # Show current timezone
   # timedatectl status
@@ -61,10 +61,10 @@ core() {
   # timedatectl list-timezones
 
   # Set timezone
-  if [ "$(os_is_docker)" = "true" ]; then
+  if [ "$(os::is_docker)" = "true" ]; then
     # @TODO
     # date >> /dev/null 2>&1
-    log_warn "[$(timestamp)][config] @TODO set timezone in docker"
+    log::warn "[$(timestamp)][config] @TODO set timezone in docker"
     return 
   fi
 
@@ -74,9 +74,9 @@ core() {
 
   sudo timedatectl set-timezone $timezone
   if [ "$?" != "0" ]; then
-    log_error "[$(timestamp)][config] Failed to set timezone: $timezone"
+    log::error "[$(timestamp)][config] Failed to set timezone: $timezone"
   else
-    log_success "[$(timestamp)][config] Current timezone: $timezone"
+    log::success "[$(timestamp)][config] Current timezone: $timezone"
   fi
 }
 

@@ -3,19 +3,19 @@
 update_version() {
   PREV=$ZMICRO_VERSION
 
-  load_core_mod
+  config::load_core_mod
 
   LATEST=$ZMICRO_VERSION
 
   # echo "Load Version: $ZMICRO_VERSION"
   # echo "BBB: $PREV => $LATEST"
-  log_version $PREV $LATEST
+  log::version $PREV $LATEST
 
   echo $LATEST
 }
 
 get_current_version() {
-  load_core_mod
+  config::load_core_mod
   
   echo $ZMICRO_VERSION
 }

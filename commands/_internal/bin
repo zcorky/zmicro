@@ -20,20 +20,20 @@ core() {
   case $1 in
   ls | list)
     print() {
-      echo "$1 $(color_success ${@:2})"
+      echo "$1 $(color::success ${@:2})"
     }
 
-    array_each print $(ls $ZMICRO_BIN_PATH)
+    array::each print $(ls $ZMICRO_BIN_PATH)
     ;;
   register)
     # echo "register ZMICRO_PLUGINS_PATH: $ZMICRO_PLUGINS_PATH"
-    plugin_register_all $ZMICRO_PLUGINS_PATH
-    log_success "register all commands done"
-    log_info ""
+    plugin::register_all $ZMICRO_PLUGINS_PATH
+    log::success "register all commands done"
+    log::info ""
     zmicro bin list
     ;;
   *)
-    log_info "unknown command: $1"
+    log::info "unknown command: $1"
     help
     exit 0
     ;;

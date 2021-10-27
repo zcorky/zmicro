@@ -33,7 +33,7 @@ pm() {
 }
 
 # node npm
-pm_npm() {
+pm::npm() {
   load_nvm() {
     local NVM_DIR=$HOME/.nvm
     if [ -s "$NVM_DIR/nvm.sh" ]; then
@@ -59,7 +59,7 @@ pm_npm() {
   load_nvm
 
   # @TODO
-  if [ "$(net_is_google_visitable)" = "false" ]; then
+  if [ "$(net::is_google_visitable)" = "false" ]; then
     export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
   fi
 
@@ -68,7 +68,7 @@ pm_npm() {
 
 # pm_nvm() {
 #   # @TODO
-#   if [ "$(net_is_google_visitable)" = "false" ]; then
+#   if [ "$(net::is_google_visitable)" = "false" ]; then
 #     export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist
 #   fi
 
@@ -78,4 +78,4 @@ pm_npm() {
 export -f pm
 
 # export -f pm_nvm
-export -f pm_npm
+export -f pm::npm

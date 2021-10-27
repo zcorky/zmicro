@@ -1,10 +1,10 @@
 #!/bin/bash
 
-os_homedir() {
+os::homedir() {
   echo $HOME
 }
 
-os_username() {
+os::username() {
   if [ "$USER" != "" ]; then
     echo $USER
     return
@@ -16,45 +16,45 @@ os_username() {
     return
   fi
 
-  log_error "Cannot get user by os_username"
+  log::error "Cannot get user by os::username"
   exit 1
 }
 
-os_shell() {
+os::shell() {
   echo $SHELL
 }
 
-os_bash_profile() {
+os::bash_profile() {
   echo "$HOME/.bashrc"
 }
 
-os_zsh_profile() {
+os::zsh_profile() {
   echo "$HOME/.zshrc"
 }
 
-os_shell_profile() {
-  if [ "$(os_is_zsh)" = "true" ]; then
-    os_zsh_profile
-  elif [ "$(os_is_bash)" = "true" ]; then
-    os_bash_profile
+os::shell_profile() {
+  if [ "$(os::is_zsh)" = "true" ]; then
+    os::zsh_profile
+  elif [ "$(os::is_bash)" = "true" ]; then
+    os::bash_profile
   else
     echo "$HOME/.profile"
   fi
 }
 
-os_hostname() {
+os::hostname() {
   echo $HOST
 }
 
-os_uptime() {
+os::uptime() {
   echo $(uptime -p)
 }
 
-os_arch() {
+os::arch() {
   echo $(uname -m)
 }
 
-os_release() {
+os::release() {
   local issue=""
 
   # Red Hat
@@ -99,21 +99,21 @@ os_release() {
   echo $res
 }
 
-os_kernel() {
+os::kernel() {
   echo $(uname -s)
 }
 
-os_pwd() {
+os::pwd() {
   echo $PWD
 }
 
-os_tmp() {
+os::tmp() {
   echo /tmp
 }
 
 #
-os_is_bash() {
-  echo $(os_shell) | grep -o bash >>/dev/null 2>&1
+os::is_bash() {
+  echo $(os::shell) | grep -o bash >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     echo "false"
     return
@@ -122,8 +122,8 @@ os_is_bash() {
   echo "true"
 }
 
-os_is_zsh() {
-  echo $(os_shell) | grep -o zsh >>/dev/null 2>&1
+os::is_zsh() {
+  echo $(os::shell) | grep -o zsh >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     echo "false"
     return
@@ -132,8 +132,8 @@ os_is_zsh() {
   echo "true"
 }
 
-os_is_macos() {
-  local kernel=$(os_kernel)
+os::is_macos() {
+  local kernel=$(os::kernel)
 
   if [ "$kernel" = "Darwin" ]; then
     echo true
@@ -142,8 +142,8 @@ os_is_macos() {
   fi
 }
 
-os_is_linux() {
-  local kernel=$(os_kernel)
+os::is_linux() {
+  local kernel=$(os::kernel)
 
   if [ "$kernel" = "Linux" ]; then
     echo true
@@ -152,7 +152,7 @@ os_is_linux() {
   fi
 }
 
-os_is_centos() {
+os::is_centos() {
   which yum >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
@@ -161,7 +161,7 @@ os_is_centos() {
   fi
 }
 
-os_is_ubuntu() {
+os::is_ubuntu() {
   which apt >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
@@ -170,7 +170,7 @@ os_is_ubuntu() {
   fi
 }
 
-os_is_alpine() {
+os::is_alpine() {
   which apk >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
@@ -179,7 +179,7 @@ os_is_alpine() {
   fi
 }
 
-os_is_archlinux() {
+os::is_archlinux() {
   which pacman >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
@@ -188,7 +188,7 @@ os_is_archlinux() {
   fi
 }
 
-os_is_federa() {
+os::is_federa() {
   which dnf >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo true
@@ -197,7 +197,7 @@ os_is_federa() {
   fi
 }
 
-os_is_docker() {
+os::is_docker() {
   if [ -f "/.dockerenv" ]; then
     echo "true"
     return
@@ -212,11 +212,11 @@ os_is_docker() {
   echo "false"
 }
 
-os_top() {
+os::top() {
   htop -t
 }
 
-os_is_command_exist() {
+os::is_command_exist() {
   local command=$1
   command -v $command >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
@@ -226,7 +226,7 @@ os_is_command_exist() {
   fi
 }
 
-os_is_support_color() {
+os::is_support_color() {
   # if [ "$(echo $PS1)" != "" ]; then
   if [ "$TERM" = "xterm-256color" ]; then
     echo "true"
@@ -235,11 +235,11 @@ os_is_support_color() {
   fi
 }
 
-os_cpu_usage() {
+os::cpu_usage() {
   top -bn1 | grep Cpu | head -n 1 | awk '{printf "%.2f", $2}'
 }
 
-os_memory_usage() {
+os::memory_usage() {
   # unit: MB
   # used total percent
 
@@ -262,7 +262,7 @@ os_memory_usage() {
   esac
 }
 
-os_disk_usage() {
+os::disk_usage() {
   # unit: GB
   # used total percent
 
@@ -285,18 +285,18 @@ os_disk_usage() {
   esac
 }
 
-os_system_usage() {
-  echo "cpu: $(os_cpu_usage)
-memory: $(os_memory_usage)
-disk: $(os_disk_usage)"
+os::system_usage() {
+  echo "cpu: $(os::cpu_usage)
+memory: $(os::memory_usage)
+disk: $(os::disk_usage)"
 }
 
-os_network_ip() {
+os::network_ip() {
   dig +short myip.opendns.com @resolver1.opendns.com
 }
 
-os_machine_id() {
-  if [ "$(os_is_linux)" = "true" ]; then
+os::machine_id() {
+  if [ "$(os::is_linux)" = "true" ]; then
     local machine_id0=/var/lib/dbus/machine-id
     local machine_id1=/etc/machine-id
     if [ -f $machine_id0 ]; then
@@ -304,18 +304,18 @@ os_machine_id() {
     elif [ -f $machine_id1 ]; then
       cat $machine_id1
     else
-      log_error "Cannot get machine id in linux"
+      log::error "Cannot get machine id in linux"
       exit 1
     fi
-  elif [ "$(os_is_macos)" = "true" ]; then
+  elif [ "$(os::is_macos)" = "true" ]; then
     echo $(ioreg -rd1 -c IOPlatformExpertDevice | grep "IOPlatformUUID" | awk -F '"' '{print $4}')
   else
-    log_error "Cannot get machine id by unknown system"
+    log::error "Cannot get machine id by unknown system"
     exit 1
   fi
 }
 
-os_rw_permission() {
+os::rw_permission() {
   local path=$1
   # if [ -f $path ]; then
   #   if  [ ! -r $path ] || [ ! -w $path ]; then
@@ -325,7 +325,7 @@ os_rw_permission() {
 
   # if [ -d $path ]; then
   #   if [ ! -w $path ]; then
-  #     sudo chown -R $(os_username) $path
+  #     sudo chown -R $(os::username) $path
   #   fi
   # fi
 
@@ -337,27 +337,27 @@ os_rw_permission() {
   if [ ! -r $path ] || [ ! -w $path ]; then
     sudo chmod a+rw $path
 
-    log_debug "add rw permission: $path"
+    log::debug "add rw permission: $path"
   fi
 }
 
-os_ensure_permission() {
-  os_rw_permission $@
+os::ensure_permission() {
+  os::rw_permission $@
 }
 
 # @TODO
-os_ensure_logs_permission() {
-  os_ensure_permission $ZMICRO_LOG_PATH
+os::ensure_logs_permission() {
+  os::ensure_permission $ZMICRO_LOG_PATH
 
-  os_ensure_permission $ZMICRO_LOG_COMMON_PATH
-  os_ensure_permission $ZMICRO_LOG_DEBUG_PATH
-  os_ensure_permission $ZMICRO_LOG_ERROR_PATH
-  os_ensure_permission $ZMICRO_LOG_UPDATE_PATH
-  os_ensure_permission $ZMICRO_LOG_VERSION_PATH
-  os_ensure_permission $ZMICRO_LOG_NOTIFY_PATH
+  os::ensure_permission $ZMICRO_LOG_COMMON_PATH
+  os::ensure_permission $ZMICRO_LOG_DEBUG_PATH
+  os::ensure_permission $ZMICRO_LOG_ERROR_PATH
+  os::ensure_permission $ZMICRO_LOG_UPDATE_PATH
+  os::ensure_permission $ZMICRO_LOG_VERSION_PATH
+  os::ensure_permission $ZMICRO_LOG_NOTIFY_PATH
 }
 
-os_is_pid_valid() {
+os::is_pid_valid() {
   local pid=$1
   local pid_file=/proc/$pid/status
   if [ -f $pid_file ]; then
@@ -367,7 +367,7 @@ os_is_pid_valid() {
   fi
 }
 
-os_get_pid_memory() {
+os::get_pid_memory() {
   local pid=$1
   local pid_file=/proc/$pid/status
   if [ ! -f $pid_file ]; then
@@ -384,55 +384,55 @@ os_get_pid_memory() {
   echo $memory
 }
 
-os_kill_pid() {
+os::kill_pid() {
   local pid=$1
-  if [ "$(os_is_pid_valid $pid)" = "true" ]; then
+  if [ "$(os::is_pid_valid $pid)" = "true" ]; then
     # log "kill pid: $pid"
     kill -9 $pid
   fi
 }
 
-export -f os_homedir
-export -f os_username
-export -f os_shell
-export -f os_shell_profile
-export -f os_hostname
-export -f os_uptime
-export -f os_kernel
+export -f os::homedir
+export -f os::username
+export -f os::shell
+export -f os::shell_profile
+export -f os::hostname
+export -f os::uptime
+export -f os::kernel
 
-export -f os_pwd
-export -f os_tmp
+export -f os::pwd
+export -f os::tmp
 
-export -f os_is_bash
-export -f os_is_zsh
-export -f os_is_linux
-export -f os_is_macos
+export -f os::is_bash
+export -f os::is_zsh
+export -f os::is_linux
+export -f os::is_macos
 
-export -f os_is_centos
-export -f os_is_ubuntu
-export -f os_is_alpine
-export -f os_is_archlinux
-export -f os_is_federa
+export -f os::is_centos
+export -f os::is_ubuntu
+export -f os::is_alpine
+export -f os::is_archlinux
+export -f os::is_federa
 
-export -f os_is_docker
+export -f os::is_docker
 
-export -f os_top
-export -f os_is_command_exist
-export -f os_is_support_color
+export -f os::top
+export -f os::is_command_exist
+export -f os::is_support_color
 
-export -f os_cpu_usage
-export -f os_memory_usage
-export -f os_disk_usage
-export -f os_system_usage
+export -f os::cpu_usage
+export -f os::memory_usage
+export -f os::disk_usage
+export -f os::system_usage
 
-export -f os_network_ip
+export -f os::network_ip
 
-export -f os_machine_id
+export -f os::machine_id
 
-export -f os_rw_permission
-export -f os_ensure_permission
-export -f os_ensure_logs_permission
+export -f os::rw_permission
+export -f os::ensure_permission
+export -f os::ensure_logs_permission
 
-export -f os_is_pid_valid
-export -f os_get_pid_memory
-export -f os_kill_pid
+export -f os::is_pid_valid
+export -f os::get_pid_memory
+export -f os::kill_pid

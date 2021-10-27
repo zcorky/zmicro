@@ -4,7 +4,7 @@
 
 update_zmicro() {
   local origin_version=$(get_current_version)
-  # log_update PREV
+  # log::update PREV
 
   cd $ZMICRO_HOME
   git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
@@ -14,18 +14,18 @@ update_zmicro() {
     exit -1
   fi
 
-  # log_update LATEST
+  # log::update LATEST
   local new_version=$(get_current_version)
 
-  log_version $origin_version $new_version
+  log::version $origin_version $new_version
 
-  # log_timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
+  # log::timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
 
   # update depdendencies
-  require_core_mod -u
+  require::core_mod -u
 
   # Auto Register After Update
-  plugin_register_all $ZMICRO_PLUGINS_PATH
+  plugin::register_all $ZMICRO_PLUGINS_PATH
 }
 
 help() {
@@ -54,20 +54,20 @@ core() {
         ;;
       # -p | --plugin)
       #   if [ -z "$value" ]; then
-      #     log_error "plugin name is required"
+      #     log::error "plugin name is required"
       #     exit 1
       #   fi
 
-      #   set_var plugin_name $value
+      #   os::set_var plugin_name $value
       #   shift
       #   shift
       #   ;;
       -a | --all)
-        set_var update_all true
+        os::set_var update_all true
         shift
         ;;
       *)
-        if [ "$(string_match $key ^-)" = "true" ]; then
+        if [ "$(string::match $key ^-)" = "true" ]; then
           echo "ERROR: unknown parameter \"$key\""
           help
           exit 1

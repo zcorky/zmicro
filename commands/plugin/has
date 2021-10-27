@@ -30,11 +30,11 @@ core() {
   local plugin_name=$1
 
   if [ "$plugin_name" = "" ]; then
-    log_error "[$(timestamp)][plugin] plugin name is required"
+    log::error "[$(timestamp)][plugin] plugin name is required"
     exit 1
   fi
 
-  plugin_exist $plugin_name
+  plugin::exist $plugin_name
 }
 
 run() {

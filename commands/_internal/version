@@ -2,7 +2,7 @@
 
 version() {
   local version=$(get_current_version)
-  echo $(color_green $version)
+  echo $(color::green $version)
 }
 
 version

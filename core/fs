@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Usage:
-#   default mode: echo "$var" | os_fs_write $file_path
-#   append mode: echo "$var" | os_fs_write -a $file_path
+#   default mode: echo "$var" | fs::write $file_path
+#   append mode: echo "$var" | fs::write -a $file_path
 #
 # Example:
-#   echo "hi" | os_fs_write /tmp/hi
-#   echo "$HOME" | os_fs_write /tmp/hi
+#   echo "hi" | fs::write /tmp/hi
+#   echo "$HOME" | fs::write /tmp/hi
 #
 #   @NOTICE 当写入多行数据的时候，必须加引号，否则换行将消失
 #     text=$(cat <<-END
@@ -15,28 +15,28 @@
 #     line3
 #     END
 #     )
-#     GOOD: echo "$text" | os_fs_write /tmp/hi
-#     BAD: echo $text | os_fs_write /tmp/hi
+#     GOOD: echo "$text" | fs::write /tmp/hi
+#     BAD: echo $text | fs::write /tmp/hi
 #
-os_fs_write() {
+fs::write() {
   local path=$1
   local is_append_mode=false
   local text=$(</dev/stdin)
 
   # @TODO
-  # os_fs_write -a /tmp/path
+  # fs::write -a /tmp/path
   if [ "$path" = "-a" ]; then
     path=$2
     is_append_mode=true
   fi
 
   if [ -z "$path" ] || [ -z "$text" ]; then
-    log_error "[$(timestamp)][os_fs_write] path and text is required"
+    log::error "[$(timestamp)][fs::write] path and text is required"
     exit 1
   fi
 
   # if [ ! -f $path ]; then
-  #   log_error "[$(timestamp)][os_fs_write] path $path not found"
+  #   log::error "[$(timestamp)][fs::write] path $path not found"
   #   exit 1
   # fi
 
@@ -65,31 +65,31 @@ EOF
   # EOF
 }
 
-os_fs_read() {
+fs::read() {
   local path=$1
 
   if [ -z "$path" ]; then
-    log_error "[$(timestamp)][os_fs_read] path and text is required"
+    log::error "[$(timestamp)][fs::read] path and text is required"
     exit 1
   fi
 
   if [ ! -f $path ]; then
-    log_error "[$(timestamp)][os_fs_read] path $path not found"
+    log::error "[$(timestamp)][fs::read] path $path not found"
     exit 1
   fi
 
   if [ ! -r $path ]; then
-    log_error "[$(timestamp)][os_fs_read] path $path permission denied"
+    log::error "[$(timestamp)][fs::read] path $path permission denied"
     exit 1
   fi
 
   cat $path
 }
 
-os_fs_remove_empty_line() {
+fs::remove_empty_line() {
   local file_path=$1
   if [ -z "$file_path" ]; then
-    log_error "[$(timestamp)][os_fs_remove_empty_line] file_path is required"
+    log::error "[$(timestamp)][fs::remove_empty_line] file_path is required"
     exit 1
   fi
 
@@ -98,20 +98,20 @@ os_fs_remove_empty_line() {
   awk NF $file_path >$file_path
 }
 
-os_fs_remove_line_has_str() {
+os::fs_remove_line_has_str() {
   local file_path=$1
   local match_str=$2
 
   if [ -z "$file_path" ] || [ -z "$match_str" ]; then
-    log_error "[$(timestamp)][os_fs_remove_line_has_str] file_path and match_str is required"
+    log::error "[$(timestamp)][os::fs_remove_line_has_str] file_path and match_str is required"
     exit 1
   fi
 
   sed -i -e "s%.*${match_str}.*%%g" $file_path
 }
 
-export -f os_fs_write
-export -f os_fs_read
+export -f fs::write
+export -f fs::read
 
-export -f os_fs_remove_line_has_str
-export -f os_fs_remove_empty_line
+export -f os::fs_remove_line_has_str
+export -f fs::remove_empty_line

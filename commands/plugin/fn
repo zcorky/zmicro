@@ -20,22 +20,22 @@ core() {
   local args=${@:3}
 
   if [ -z "$plugin_name" ]; then
-    log_error "[plugin][fn] plugin_name is required"
+    log::error "[plugin][fn] plugin_name is required"
     exit 1
   fi
 
   if [ -z "$fn" ]; then
-    log_error "[plugin][fn] fn_name is required"
+    log::error "[plugin][fn] fn_name is required"
     exit 1
   fi
 
-  plugin_load_core $plugin_name
+  plugin::load_core $plugin_name
 
   type $fn >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     eval "$fn $args"
   else
-    log_error "$fn method is not not found"
+    log::error "$fn method is not not found"
   fi
 }
 

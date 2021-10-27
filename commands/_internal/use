@@ -26,7 +26,7 @@ checkout_git() {
 use_version() {
   version=$1
   if [ "$version" = "" ]; then
-    log_error "Version is required"
+    log::error "Version is required"
     log "Usage: zmicro use <version>"
     exit 1
   fi
@@ -42,7 +42,7 @@ use_version() {
     exit 1
   fi
 
-  log_success "[$(timestamp)] change to version: ${version}"
+  log::success "[$(timestamp)] change to version: ${version}"
 }
 
 use_version $@

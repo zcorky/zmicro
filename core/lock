@@ -1,13 +1,13 @@
 #!/bin/bash
 
-get_plugin_update_lock() {
+plugin::get_plugin_update_lock() {
   echo "xxx"
 }
 
-is_plugin_need_update() {
+plugin::is_plugin_need_update() {
   local plugin_name=$1
   if [ -z $plugin_name ]; then
-    log_error "[is_plugin_need_update] plugin name is required"
+    log::error "[plugin::is_plugin_need_update] plugin name is required"
     exit 1
   fi
 
@@ -25,8 +25,8 @@ is_plugin_need_update() {
   ls /tmp | grep "${format_prefix}" >> /dev/null 2>&1
   if [ "$?" = "0" ]; then
     local last_update_timestamp=$(ls /tmp | grep "${format_prefix}" | tail -n 1 | awk -F '.' '{print $4}')
-    # echo "xxx: $last_update_timestamp $(timestamp_recently $last_update_timestamp)"
-    if [ "$(timestamp_recently $last_update_timestamp)" = "true" ]; then
+    # echo "xxx: $last_update_timestamp $(timestamp::recently $last_update_timestamp)"
+    if [ "$(timestamp::recently $last_update_timestamp)" = "true" ]; then
       echo "false"
     else
       # local origin_lock_filename=$(ls /tmp | grep "${format_prefix}" | tail -n 1)
@@ -43,5 +43,5 @@ is_plugin_need_update() {
   fi
 }
 
-export -f get_plugin_update_lock
-export -f is_plugin_need_update
+export -f plugin::get_plugin_update_lock
+export -f plugin::is_plugin_need_update
