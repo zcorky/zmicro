@@ -4,10 +4,24 @@ help() {
   echo "Usage:"
   echo "  zmicro plugin update <plugin_name>"
   echo ""
+  echo "Options"
+  echo "  -f, --force   Force update"
 }
 
 update_one() {
   local plugin_name=$1
+  local is_force_update=false
+
+  if [ "$2" = "-f" ] || [ "$2" = "--force" ]; then
+    is_force_update=true
+  elif [ -n "$PLUGIN_FORCE_UPDATE" ]; then
+    is_force_update=true
+  fi
+
+  if [ "$is_force_update" = "true" ]; then
+    plugin::clean_lock $plugin_name
+  fi
+
   local plugin_old_version=$(plugin::get_version $plugin_name)
 
   if [ "$(plugin::is_plugin_need_update $plugin_name)" = "false" ]; then

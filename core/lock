@@ -43,5 +43,12 @@ plugin::is_plugin_need_update() {
   fi
 }
 
+plugin::clean_lock() {
+  local name=$name
+  local path="/tmp/zmicro.${name}.lock.*"
+  sudo rm -f $path
+}
+
 export -f plugin::get_plugin_update_lock
 export -f plugin::is_plugin_need_update
+export -f plugin::clean_lock
