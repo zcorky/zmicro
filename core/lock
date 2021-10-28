@@ -32,7 +32,7 @@ plugin::is_plugin_need_update() {
       # local origin_lock_filename=$(ls /tmp | grep "${format_prefix}" | tail -n 1)
       # echo "remove /tmp/$origin_lock_filename"
 
-      rm -f /tmp/${format_prefix}*
+      sudo rm -f /tmp/${format_prefix}*
       sleep 1
       touch $new_update_lock_file
       echo "true"
