@@ -16,15 +16,21 @@ config_git() {
   if [ "$USERNAME" != "" ]; then
     git config --global user.name "${USERNAME}"
   else
-    # Default
-    git config --global user.name "${DEFAULT_GIT_USERNAME}"
+    local origin=$(git config --global user.name)
+    if [ -z "$origin" ]; then
+      # Default
+      git config --global user.name "${DEFAULT_GIT_USERNAME}"
+    fi
   fi
 
   # local origin_email=$(git config --get user.name)
   if [ "$EMAIL" != "" ]; then
     git config --global user.email "${EMAIL}"
   else
-    git config --global user.email "${DEFAULT_GIT_EMAIL}"
+    local origin=$(git config --global user.email)
+    if [ -z "$origin" ]; then
+      git config --global user.email "${DEFAULT_GIT_EMAIL}"
+    fi
   fi
 
   # pull strategies
