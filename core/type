@@ -312,6 +312,27 @@ array::last_element() {
   array::find_by_index $(($length - 1)) $@
 }
 
+array::slice() {
+  local start=$1
+  local end=$2
+  local arr=${@:3}
+  local _arr=()
+
+  slice() {
+    local index=$1
+    local value=$2
+    if (( index < start )) || (( index >= end )); then
+      return
+    fi
+
+    _arr+=("$value")
+  }
+
+  array::each slice $arr
+
+  echo ${_arr[@]}
+}
+
 os::set_var() {
   local name=$1
   local value=$2
@@ -342,6 +363,7 @@ export -f array::find_by_index
 export -f array::nth_element
 export -f array::first_element
 export -f array::last_element
+export -f array::slice
 
 export -f array::join_line
 
