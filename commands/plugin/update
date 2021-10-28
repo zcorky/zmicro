@@ -11,7 +11,7 @@ update_one() {
   local plugin_old_version=$(plugin::get_version $plugin_name)
 
   if [ "$(plugin::is_plugin_need_update $plugin_name)" = "false" ]; then
-    # log::info "[$(timestamp)][plugin][update] ignore $plugin_name updated in recently"
+    log::info "[$(timestamp)][plugin][update] $plugin_name updated recently"
     # log::info "[$(timestamp)][plugin][$(color::yellow "recently")] $plugin_name($plugin_old_version)"
     # echo ""
     # log::update plugin $plugin_name END
