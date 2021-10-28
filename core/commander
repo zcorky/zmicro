@@ -88,9 +88,12 @@ commander::has_command_path() {
   fi
 
   # 1.1 internal sub
-  local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
-  if commander::has_command_path_internal $internal_sub_base_path $command; then
-    return 0
+  #   only for zmicro core, not plugin
+  if [ "$base_command_path" = "$ZMICRO_COMMANDS_PATH" ]; then
+    local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
+    if commander::has_command_path_internal $internal_sub_base_path $command; then
+      return 0
+    fi
   fi
 
   # 2. normal
@@ -174,10 +177,13 @@ commander::get_command_path() {
   fi
 
   # 1.1 internal sub
-  local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
-  if commander::has_command_path_internal $internal_sub_base_path $command; then
-    echo $(commander::get_command_path_internal $internal_sub_base_path $command)
-    return 0
+  #   only for zmicro core, not plugin
+  if [ "$base_command_path" = "$ZMICRO_COMMANDS_PATH" ]; then
+    local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
+    if commander::has_command_path_internal $internal_sub_base_path $command; then
+      echo $(commander::get_command_path_internal $internal_sub_base_path $command)
+      return 0
+    fi
   fi
 
   # 2. normal
