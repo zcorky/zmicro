@@ -137,20 +137,37 @@ log::command() {
 }
 
 log::update() {
-  local type=$1
+  local type=$1 # CORE | PLUGIN
   local name=$2
   local stage=$3 # START | END | ERROR
-  local current_version=$(get_current_version)
-  log::info "[$(timestamp)][${type}: ${name}][${current_version}][${stage}]" >> $ZMICRO_LOG_UPDATE_PATH
- 
-  if [ "$type" = "core" ]; then
+  local origin_version=$4
+  local current_version=$5
+
+  # local current_version=$(get_current_version)
+  if [ "$stage" = "START" ]; then
+    if [ "$type" = "CORE" ]; then
+      current_version=$(get_current_version)
+    else
+      current_version=$origin_version
+    fi
+
+    log::info "[$(timestamp)][${type}: ${name}][${stage}] ${current_version}" >> $ZMICRO_LOG_UPDATE_PATH
+  else
+    if [ "$origin_version" = "$current_version" ]; then
+      log::info "[$(timestamp)][${type}: ${name}][${stage}][version] ${origin_version} => ${current_version}" >> $ZMICRO_LOG_UPDATE_PATH
+    else
+      log::info "[$(timestamp)][${type}: ${name}][${stage}][version] ${origin_version} => $(color_green ${current_version})" >> $ZMICRO_LOG_UPDATE_PATH
+    fi
+  fi
+
+  if [ "$type" = "CORE" ]; then
     echo "====== DETAIL LOG ${stage} ======" >> $ZMICRO_LOG_UPDATE_PATH
   else
     echo "  ====== DETAIL LOG ${stage} ======" >> $ZMICRO_LOG_UPDATE_PATH
   fi
 
   if [ "$stage" = "END" ] || [ "$stage" = "ERROR" ]; then
-    if [ "$type" = "core" ] && [ "$name" = "zmicro" ]; then
+    if [ "$type" = "CORE" ] && [ "$name" = "zmicro" ]; then
       echo "" >> $ZMICRO_LOG_UPDATE_PATH
       echo "" >> $ZMICRO_LOG_UPDATE_PATH
     fi

@@ -24,7 +24,8 @@ update_one() {
     exit 0
   fi
 
-  log::update plugin $plugin_name START
+  local plugin_origin_version=$(plugin::get_version $plugin_name)
+  log::update plugin $plugin_name START $plugin_origin_version
   log::info "[$(timestamp)][plugin] updating $plugin_name ..."
 
   # Update @TODO
@@ -53,7 +54,7 @@ update_one() {
     echo ""
   fi
 
-  log::update plugin $plugin_name END
+  log::update plugin $plugin_name END $plugin_origin_version $plugin_new_version
 }
 
 core() {

@@ -9,7 +9,7 @@ update_zmicro() {
   # @TODO add auto update
   zmicro auto update 
 
-  log::update core zmicro START
+  log::update CORE zmicro START
 
   cd $ZMICRO_HOME
   git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
@@ -32,7 +32,7 @@ update_zmicro() {
   # Auto Register After Update
   plugin::register_all $ZMICRO_PLUGINS_PATH
 
-  log::update core zmicro END
+  log::update CORE zmicro END
 }
 
 help() {
