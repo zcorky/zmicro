@@ -1,8 +1,24 @@
 #!/bin/bash
 
-version() {
-  local version=$(get_current_version)
-  echo $(color::green $version)
+help() {
+  echo "Usage:"
+  echo "  zmicro version [options...]"
 }
 
-version
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local version=$(version::get)
+  local git_info=$(version::timestamp)
+
+  echo "$(color::green $version) (${git_info})"
+}
+
+run() {
+  core $@
+}
+
+run $@

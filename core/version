@@ -1,6 +1,6 @@
 #!/bin/bash
 
-update_version() {
+version::update() {
   PREV=$ZMICRO_VERSION
 
   config::load_core_mod
@@ -14,16 +14,18 @@ update_version() {
   echo $LATEST
 }
 
-get_current_version() {
+version::timestamp() {
+  cd $ZMICRO_HOME
+  git show -s --format=%cI
+}
+
+version::get() {
   config::load_core_mod
-  
+
   echo $ZMICRO_VERSION
 }
 
-get_version() {
-  get_current_version
-}
+export -f version::get
+export -f version::timestamp
 
-export -f update_version
-export -f get_version
-export -f get_current_version
+export -f version::update

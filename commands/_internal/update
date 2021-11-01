@@ -3,16 +3,16 @@
 . $ZMICRO_HOME/core/env
 
 update_zmicro() {
-  local origin_version=$(get_current_version)
+  local origin_version=$(version::get)
   # log::update PREV
 
   # @TODO add auto update
-  zmicro auto update 
+  zmicro auto update
 
   log::update CORE zmicro START
 
   cd $ZMICRO_HOME
-  git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
+  git pull origin master >>$ZMICRO_LOG_UPDATE_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
   if [ "$?" != "0" ]; then
     echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
     tail -n 50 $ZMICRO_LOG_ERROR_PATH
@@ -20,7 +20,7 @@ update_zmicro() {
   fi
 
   # log::update LATEST
-  local new_version=$(get_current_version)
+  local new_version=$(version::get)
 
   log::version $origin_version $new_version
 
@@ -55,36 +55,36 @@ core() {
     local key=$1
     local value=$2
     case $key in
-      -h | --help)
+    -h | --help)
+      help
+      exit 0
+      ;;
+    # -p | --plugin)
+    #   if [ -z "$value" ]; then
+    #     log::error "plugin name is required"
+    #     exit 1
+    #   fi
+
+    #   os::set_var plugin_name $value
+    #   shift
+    #   shift
+    #   ;;
+    -a | --all)
+      os::set_var update_all true
+      shift
+      ;;
+    *)
+      if [ "$(string::match $key ^-)" = "true" ]; then
+        echo "ERROR: unknown parameter \"$key\""
         help
-        exit 0
-        ;;
-      # -p | --plugin)
-      #   if [ -z "$value" ]; then
-      #     log::error "plugin name is required"
-      #     exit 1
-      #   fi
+        exit 1
+      fi
 
-      #   os::set_var plugin_name $value
-      #   shift
-      #   shift
-      #   ;;
-      -a | --all)
-        os::set_var update_all true
-        shift
-        ;;
-      *)
-        if [ "$(string::match $key ^-)" = "true" ]; then
-          echo "ERROR: unknown parameter \"$key\""
-          help
-          exit 1
-        fi
-
-        if [ -z $plugin_name ]; then
-          plugin_name=$key
-        fi
-        shift
-        ;;
+      if [ -z $plugin_name ]; then
+        plugin_name=$key
+      fi
+      shift
+      ;;
     esac
   done
 
@@ -107,4 +107,3 @@ run() {
 }
 
 run $@
-

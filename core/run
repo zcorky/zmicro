@@ -32,7 +32,7 @@ run() {
     if [ "$command" != "" ]; then
       # zmicro -v
       if [ "$command" = "-v" ]; then
-        get_current_version
+        zmicro version
         exit 0
       fi
 
@@ -71,7 +71,7 @@ run::js() {
   is_nodejs_installed() {
     load_nvm
 
-    which node >> /dev/null 2>&1
+    which node >>/dev/null 2>&1
     if [ "$?" = "0" ]; then
       echo "true"
     else
