@@ -7,7 +7,7 @@ update_zmicro() {
   # log::update PREV
 
   # @TODO add auto update
-  zmicro auto update
+  # zmicro auto update
 
   log::update CORE zmicro START
 
