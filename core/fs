@@ -30,6 +30,10 @@ fs::write() {
     is_append_mode=true
   fi
 
+  if [ "$2" = "true" ]; then
+    is_append_mode=true
+  fi
+
   if [ -z "$path" ] || [ -z "$text" ]; then
     log::error "[$(timestamp)][fs::write] path and text is required"
     exit 1
@@ -86,6 +90,13 @@ fs::read() {
   cat $path
 }
 
+fs::append() {
+  local path=$1
+  local is_append_mode=true
+  #
+  fs::write $path $is_append_mode
+}
+
 fs::remove_empty_line() {
   local file_path=$1
   if [ -z "$file_path" ]; then
@@ -112,6 +123,8 @@ fs::remove_line_has_str() {
 
 export -f fs::write
 export -f fs::read
+
+export -f fs::append
 
 export -f fs::remove_line_has_str
 export -f fs::remove_empty_line
