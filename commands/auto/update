@@ -17,18 +17,18 @@ core() {
   local name=zmicro_auto_update
 
   if [ "$(zmicro cron has $name)" = "true" ]; then
-    zmicro cron status $name >> /dev/null 2>&1
+    zmicro cron status $name >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
-       zmicro cron enable $name
-       log::success "zmicro auto update enabled"
-       exit 0
+      zmicro cron enable $name
+      log::success "zmicro auto update enabled"
+      exit 0
     fi
 
     log::success "zmicro auto update is running"
-    return 
+    return
   fi
 
-  zmicro cron create $name 0 10 _/1 _ _ zmicro update -a >> /dev/null
+  zmicro cron create $name 0 10 _/1 _ _ zmicro update -a >>/dev/null
   if [ "$?" != "0" ]; then
     log::error "[$(timestamp)] zmicro create auto update error"
     exit 1
