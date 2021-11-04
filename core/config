@@ -102,16 +102,24 @@ config::get() {
 config::set() {
   local key=$1
   local value=$2
+  local filepath=$3
+
+  if [ -z "$filepath" ]; then
+    filepath=$ZMICRO_RC
+  elif [ ! -f "$filepath" ]; then
+    log::error "[config::set] file(${filepath}) not found"
+    exit 1
+  fi
 
   local line=""
   # If not found, return empty string
-  if [ -f $ZMICRO_RC ]; then
-    line=$(cat $ZMICRO_RC | grep "${key}=")
+  if [ -f $filepath ]; then
+    line=$(cat $filepath | grep "${key}=")
   fi
 
   # New Key
   if [ "$line" = "" ]; then
-    echo "${key}=${value}" >>$ZMICRO_RC
+    echo "${key}=${value}" >>$filepath
     return
   fi
 
