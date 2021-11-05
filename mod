@@ -7,7 +7,5 @@ DEPENDENCIES=(
   "package@latest"
   "machine@latest"
   "daemon@latest"
-  "swarm@latest"
-  "compose@latest"
   "cron@latest"
 )
