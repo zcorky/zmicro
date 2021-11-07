@@ -139,6 +139,30 @@ config_zshrc() {
 #   config_profile /etc/profile
 # fi
 
+disable_oh_my_zsh_update() {
+  local profile=$HOME/.zshrc
+
+  # if not found, ignore
+  if [ ! -f $profile ]; then
+    log::error "[$(timestamp)][config_global_rc] profile $profile not found"
+    exit 1
+  fi
+
+  cat $profile | grep "ZMICRO_DISABLE_AUTO_UPDATE" >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    local text=$(
+      cat <<-END
+      
+# ZMICRO_DISABLE_AUTO_UPDATE
+export DISABLE_AUTO_UPDATE="true"
+END
+    )
+    echo "$text" | fs::write -a $profile
+  fi
+}
+
 config_common
 config_bashrc
 config_zshrc
+
+disable_oh_my_zsh_update
