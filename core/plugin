@@ -433,7 +433,7 @@ plugin::run() {
   fi
 
   # internal commands
-  if [ "$plugin_command" = "version" ]; then
+  if [ "$plugin_command" = "version" ] || [ "$plugin_command" = "-v" ]; then
     zmicro plugin version $plugin_name
   elif [ "$plugin_command" = "description" ]; then
     zmicro plugin description $plugin_name
