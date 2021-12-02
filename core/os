@@ -392,6 +392,10 @@ os::kill_pid() {
   fi
 }
 
+os::random_id() {
+  openssl rand -hex 32
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -436,3 +440,5 @@ export -f os::ensure_logs_permission
 export -f os::is_pid_valid
 export -f os::get_pid_memory
 export -f os::kill_pid
+
+export -f os::random_id
