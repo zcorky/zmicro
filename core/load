@@ -46,6 +46,7 @@ load color
 load path
 load timestamp
 load delay
+load uuid
 load permission
 load help
 load version
