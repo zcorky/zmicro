@@ -56,6 +56,7 @@ run() {
 
 run::js() {
   local script=$1
+  local args=${@:2}
   if [ -z "$script" ]; then
     log::error "js script is required"
     exit 1
@@ -90,7 +91,8 @@ run::js() {
     export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
   fi
 
-  node $@
+  # node $script $args
+  node "$@"
 }
 
 export -f run
