@@ -464,6 +464,14 @@ plugin::run() {
   fi
 }
 
+plugin::postinstall() {
+  local name=$1
+  local postinstall_file=$(plugin::get_path $name)/postinstall
+  if [ -f "$postinstall_file" ]; then
+    bash $postinstall_file
+  fi
+}
+
 export -f plugin::register_all
 export -f plugin::register
 export -f plugin::unregister
@@ -503,3 +511,5 @@ export -f plugin::get_description
 export -f plugin::get_dependencies
 
 export -f plugin::run
+
+export -f plugin::postinstall

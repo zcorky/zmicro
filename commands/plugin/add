@@ -60,6 +60,9 @@ core() {
     exit 1
   fi
 
+  # @TODO postinstall
+  plugin::postinstall $plugin_name
+
   # install depdendencies
   require::plugin_mod $plugin_name
 
