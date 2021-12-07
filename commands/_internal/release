@@ -22,6 +22,12 @@ core() {
     exit 0
   fi
 
+  # is plugin release
+  if [ "$1" != "" ]; then
+    zmicro plugin release "$@"
+    return
+  fi
+
   local origin_version=$(version::get)
   inquirer::text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
 
