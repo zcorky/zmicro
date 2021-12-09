@@ -56,7 +56,7 @@ core() {
         exit 1
       fi
 
-      local path=$ZMICRO_HOME/plugins/$where/${$where}s/$name
+      local path=$ZMICRO_HOME/plugins/${where}/${where}s/$name
       if [ ! -d $path ]; then
         log::error "unknown ${where} ${name}"
         exit 1
@@ -71,7 +71,7 @@ core() {
         exit 1
       fi
 
-      local path=$ZMICRO_HOME/plugins/$where/${$where}s/$name
+      local path=$ZMICRO_HOME/plugins/${where}/${where}s/$name
       if [ ! -d $path ]; then
         log::error "unknown ${where} ${name}"
         exit 1
