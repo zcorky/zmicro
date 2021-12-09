@@ -396,6 +396,16 @@ os::random_id() {
   openssl rand -hex 32
 }
 
+# it is useful for hold on situations
+#   such as dockerfile CMD
+os::sleep_infinity() {
+  sleep infinity
+}
+
+os::hold_on() {
+  os::sleep_infinity
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -442,3 +452,6 @@ export -f os::get_pid_memory
 export -f os::kill_pid
 
 export -f os::random_id
+
+export -f os::sleep_infinity
+export -f os::hold_on
