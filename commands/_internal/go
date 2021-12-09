@@ -22,7 +22,7 @@ core() {
   # where => default plugin when name exist
   # zmicro go package
   #   => zmicro go plugin package
-  if [ -n "$where" ] && [ "$where" != "plugin" ] && [ "$where" != "service" ] && [ "$where" != "package" ]; then
+  if [ -n "$where" ] && [ "$where" != "home" ] && [ "$where" != "plugin" ] && [ "$where" != "service" ] && [ "$where" != "package" ]; then
     where="plugin"
     name=$1
   fi
