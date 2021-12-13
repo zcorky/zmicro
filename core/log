@@ -50,7 +50,9 @@ log::info() {
 }
 
 log::debug() {
-  echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
+  if [ -w $ZMICRO_LOG_DEBUG_PATH ]; then
+    echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
+  fi
 }
 
 log::success() {
