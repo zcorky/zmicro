@@ -16,7 +16,7 @@ version::update() {
 
 version::timestamp() {
   cd $ZMICRO_HOME
-  git show -s --format=%cI
+  git show -s --format=%cd --date="format:%Y-%m-%d"
 }
 
 version::get() {
@@ -25,7 +25,14 @@ version::get() {
   echo $ZMICRO_VERSION
 }
 
+version::git_hash() {
+  cd $ZMICRO_HOME
+
+  git rev-parse --short=9 HEAD
+}
+
 export -f version::get
+export -f version::git_hash
 export -f version::timestamp
 
 export -f version::update

@@ -12,9 +12,10 @@ core() {
   fi
 
   local version=$(version::get)
-  local git_info=$(version::timestamp)
+  local git_hash=$(version::git_hash)
+  local timestamp=$(version::timestamp)
 
-  echo "$(color::green $version) (${git_info})"
+  echo "$(color::green $version) (${git_hash} ${timestamp})"
 }
 
 run() {
