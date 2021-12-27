@@ -7,3 +7,5 @@ plugins/
 *.swp
 code
 .env
+
+*.snap
