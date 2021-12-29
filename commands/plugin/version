@@ -12,13 +12,14 @@ core() {
     exit 0
   fi
 
-  local plugin_name=$1
-  if [ "$name" != "" ]; then
+  local name=$1
+  if [ -z "$name" ]; then
     log::error "plugin name is required"
     exit 1
   fi
 
-  plugin::get_version $plugin_name
+  # plugin::get_version $name
+  plugin::version_echo $name
 }
 
 run() {

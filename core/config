@@ -72,12 +72,12 @@ config::load_mod() {
 
   config::load_file $mod_path
 
-  # @TODO REMOVE next version
-  if [ -z $VERSION ]; then
+  if [ -z $VERSION ] && [ -z $PLUGIN_VERSION ]; then
     log::error "[config::load_mod] VERSION is required"
     exit 1
   fi
 
+  # @TODO REMOVE next version
   export ZMICRO_VERSION=$VERSION
   export ZMICRO_DESCRIPTION=$DESCRIPTION
 }

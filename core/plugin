@@ -296,7 +296,7 @@ plugin::load_mod() {
 
   plugin::load_configs $plugin_name $plugin_mod_path
 
-  if [ -z "$VERSION" ]; then
+  if [ -z "$VERSION" ] && [ -z "$PLUGIN_VERSION" ]; then
     log::error "[$(timestamp)][plugin::load_mod] VERSION is required in mod ($plugin_mod_path)"
     exit 1
   fi
@@ -477,6 +477,16 @@ plugin::postinstall() {
   fi
 }
 
+plugin::version_echo() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][plugin][version_echo] plugin name is required"
+    exit 1
+  fi
+
+  version::plugin $name
+}
+
 export -f plugin::register_all
 export -f plugin::register
 export -f plugin::unregister
@@ -518,3 +528,5 @@ export -f plugin::get_dependencies
 export -f plugin::run
 
 export -f plugin::postinstall
+
+export -f plugin::version_echo

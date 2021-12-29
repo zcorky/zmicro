@@ -27,6 +27,11 @@ version::get() {
 
   config::load_mod $path
 
+  # @TODO REMOVE patch next version
+  if [ "$PLUGIN_VERSION" ]; then
+    export VERSION=$PLUGIN_VERSION
+  fi
+
   echo $VERSION
 }
 
