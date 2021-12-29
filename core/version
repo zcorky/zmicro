@@ -15,24 +15,109 @@ version::update() {
 }
 
 version::timestamp() {
-  cd $ZMICRO_HOME
+  local path=$1
+  cd $path
+
   git show -s --format=%cd --date="format:%Y-%m-%d"
 }
 
 version::get() {
-  config::load_core_mod
+  local path=$1
+  cd $path
 
-  echo $ZMICRO_VERSION
+  config::load_mod $path
+
+  echo $VERSION
 }
 
 version::git_hash() {
-  cd $ZMICRO_HOME
+  local path=$1
+  cd $path
 
   git rev-parse --short=9 HEAD
+}
+
+version::echo() {
+  local path=$1
+  local version=$(version::get $path)
+  local git_hash=$(version::git_hash $path)
+  local timestamp=$(version::timestamp $path)
+
+  echo "$(color::green $version) (${git_hash} ${timestamp})"
+}
+
+version::main() {
+  version::echo $ZMICRO_HOME
+}
+
+version::plugin() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][version::plugin] plugin name is required"
+    exit 1
+  fi
+
+  local path=$(plugin::get_path $name)
+  version::echo $path
+}
+
+version::package() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][version::package] package name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_HOME/plugins/package/packages/$name
+  if [ ! -d "$path" ]; then
+    log::error "[$(timestamp)][version::package] package(${name}) does not exist"
+    exit 1
+  fi
+
+  version::echo $path
+}
+
+version::service() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][version::service] service name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_HOME/plugins/service/services/$name
+  if [ ! -d "$path" ]; then
+    log::error "[$(timestamp)][version::service] service(${name}) does not exist"
+    exit 1
+  fi
+
+  version::echo $path
+}
+
+version::swarm() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][version::swarm] swarm name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_HOME/plugins/swarm/swarms/$name
+  if [ ! -d "$path" ]; then
+    log::error "[$(timestamp)][version::swarm] swarm(${name}) does not exist"
+    exit 1
+  fi
+
+  version::echo $path
 }
 
 export -f version::get
 export -f version::git_hash
 export -f version::timestamp
+
+export -f version::echo
+
+export -f version::main
+export -f version::plugin
+export -f version::service
+export -f version::swarm
 
 export -f version::update

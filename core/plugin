@@ -295,6 +295,11 @@ plugin::load_mod() {
   local plugin_mod_path=$(plugin::get_mod_path $plugin_name)
 
   plugin::load_configs $plugin_name $plugin_mod_path
+
+  if [ -z "$VERSION" ]; then
+    log::error "[$(timestamp)][plugin::load_mod] VERSION is required in mod ($plugin_mod_path)"
+    exit 1
+  fi
 }
 
 plugin::load_core() {

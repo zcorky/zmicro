@@ -63,24 +63,27 @@ config::load_dir() {
 }
 
 config::load_mod() {
+  local path=$1
+  local mod_path=$path/mod
+  if [ ! -f "$mod_path" ]; then
+    log::error "[config::load_mod] path is required"
+    exit 1
+  fi
+
+  config::load_file $mod_path
+
+  # @TODO REMOVE next version
   if [ -z $VERSION ]; then
-    log::error "VERSION is required"
+    log::error "[config::load_mod] VERSION is required"
     exit 1
   fi
 
   export ZMICRO_VERSION=$VERSION
   export ZMICRO_DESCRIPTION=$DESCRIPTION
-
-  # if [ -n $DEPENDENCIES ]; then
-  #   echo "load mod config found depdencies: $DEPENDENCIES"
-  #   array::each require $DEPENDENCIES
-  # fi
 }
 
 config::load_core_mod() {
-  config::load_file $ZMICRO_MOD
-
-  config::load_mod
+  config::load_mod $ZMICRO_HOME
 }
 
 config::load_user_config() {
