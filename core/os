@@ -388,7 +388,9 @@ os::kill_pid() {
   local pid=$1
   if [ "$(os::is_pid_valid $pid)" = "true" ]; then
     # log "kill pid: $pid"
-    kill -9 $pid
+    # -9 may cause child processes not killed
+    # kill -9 $pid
+    kill $pid
   fi
 }
 
