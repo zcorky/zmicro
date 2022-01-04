@@ -77,6 +77,7 @@ core() {
       # @TODO
       sudo rm -rf /tmp/zmicro.*.lock.*
       shift
+      ;;
     *)
       if [ "$(string::match $key ^-)" = "true" ]; then
         echo "ERROR: unknown parameter \"$key\""
