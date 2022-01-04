@@ -3,7 +3,7 @@
 . $ZMICRO_HOME/core/env
 
 update_zmicro() {
-  local origin_version=$(version::get)
+  local origin_version=$(version::zmicro)
   # log::update PREV
 
   # @TODO add auto update
@@ -20,7 +20,7 @@ update_zmicro() {
   fi
 
   # log::update LATEST
-  local new_version=$(version::get)
+  local new_version=$(version::zmicro)
 
   log::version $origin_version $new_version
 

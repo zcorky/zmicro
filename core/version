@@ -51,6 +51,10 @@ version::echo() {
   echo "$(color::green $version) (${git_hash} ${timestamp})"
 }
 
+version::zmicro() {
+  version::get $ZMICRO_HOME
+}
+
 version::main() {
   version::echo $ZMICRO_HOME
 }
@@ -117,6 +121,8 @@ version::swarm() {
 export -f version::get
 export -f version::git_hash
 export -f version::timestamp
+
+export -f version::zmicro
 
 export -f version::echo
 
