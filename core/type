@@ -175,6 +175,16 @@ number::add() {
   echo $res
 }
 
+number::to_int() {
+  local float="$1"
+  if [ "$float" = "" ]; then
+    echo "0"
+    return
+  fi
+
+  echo $float | awk -F '.' '{print $1}'
+}
+
 array::join() {
   local seperator=$1
   local args=${@:2}
@@ -353,6 +363,7 @@ export -f string::match
 export -f number::increase
 export -f number::step
 export -f number::add
+export -f number::to_int
 
 export -f array::join
 export -f array::each
