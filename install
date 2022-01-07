@@ -19,6 +19,10 @@ fi
 # Create
 if [ ! -d $ZMICRO_HOME ]; then
   sudo git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
+  if [ "$?" != "0" ]; then
+    echo "error: failed to install zmicro (1)"
+    return
+  fi
 fi
 
 # Permission
