@@ -3,42 +3,24 @@
 
 # store the current set options
 OLD_SET=$-
-set -e
+# set -e
 
 arrow="$(echo -e '\xe2\x9d\xaf')"
 checked="$(echo -e '\xe2\x97\x89')"
 unchecked="$(echo -e '\xe2\x97\xaf')"
 
-black=""
-red=""
-green=""
-yellow=""
-blue=""
-magenta=""
-cyan=""
-white=""
-bold=""
-normal=""
+black="$(tput setaf 0)"
+red="$(tput setaf 1)"
+green="$(tput setaf 2)"
+yellow="$(tput setaf 3)"
+blue="$(tput setaf 4)"
+magenta="$(tput setaf 5)"
+cyan="$(tput setaf 6)"
+white="$(tput setaf 7)"
+bold="$(tput bold)"
+normal="$(tput sgr0)"
 gray="\033[1;30m"
 dim=$'\e[2m'
-
-if [ "$TERM" != "" ]; then
-  black="$(tput setaf 0)"
-  red="$(tput setaf 1)"
-  green="$(tput setaf 2)"
-  yellow="$(tput setaf 3)"
-  blue="$(tput setaf 4)"
-  magenta="$(tput setaf 5)"
-  cyan="$(tput setaf 6)"
-  white="$(tput setaf 7)"
-  bold="$(tput bold)"
-  normal="$(tput sgr0)"
-else
-  # fix background: No value for $TERM and no -T specified
-  tput() {
-    return
-  }
-fi
 
 print() {
   echo "$1"
@@ -319,7 +301,7 @@ _list_input() {
 #   cleanup
 # }
 
-inquirer_select() {
+inquirer::select() {
   _list_input "$1" "$2"
   local var_name=$3
   eval $var_name=\'"${_list_options[$_list_selected_index]}"\'
@@ -331,7 +313,7 @@ inquirer_select() {
   cleanup
 }
 
-inquirer_select_index() {
+inquirer::select_index() {
   _list_input "$1" "$2"
   local var_name=$3
   eval $var_name=\'"$_list_selected_index"\'
@@ -343,4 +325,4 @@ inquirer_select_index() {
   cleanup
 }
 
-export -f inquirer_select
+export -f inquirer::select

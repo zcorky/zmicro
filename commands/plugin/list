@@ -12,8 +12,8 @@ core() {
     exit 0
   fi
 
-  local plugins=$(plugin_list_names)
-  local plugin_count=$(array_length $plugins)
+  local plugins=$(plugin::list_names)
+  local plugin_count=$(array::length $plugins)
 
   if [ $plugin_count -eq 0 ]; then
     log "    (no avaliable plugins)"
@@ -27,10 +27,10 @@ core() {
     local index=$1
     local plugin_name=${@:2}
 
-    log "    $index $(color_success "$plugin_name")($(plugin_get_version $plugin_name)) - $(plugin_get_description $plugin_name)"
+    log "    $index $(color::success "$plugin_name")($(plugin::get_version $plugin_name)) - $(plugin::get_description $plugin_name)"
   }
 
-  array_each print $plugins
+  array::each print $plugins
 }
 
 run() {

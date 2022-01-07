@@ -3,42 +3,24 @@
 
 # store the current set options
 OLD_SET=$-
-set -e
+# set -e
 
 arrow="$(echo -e '\xe2\x9d\xaf')"
 checked="$(echo -e '\xe2\x97\x89')"
 unchecked="$(echo -e '\xe2\x97\xaf')"
 
-black=""
-red=""
-green=""
-yellow=""
-blue=""
-magenta=""
-cyan=""
-white=""
-bold=""
-normal=""
+black="$(tput setaf 0)"
+red="$(tput setaf 1)"
+green="$(tput setaf 2)"
+yellow="$(tput setaf 3)"
+blue="$(tput setaf 4)"
+magenta="$(tput setaf 5)"
+cyan="$(tput setaf 6)"
+white="$(tput setaf 7)"
+bold="$(tput bold)"
+normal="$(tput sgr0)"
 gray="\033[1;30m"
 dim=$'\e[2m'
-
-if [ "$TERM" != "" ]; then
-  black="$(tput setaf 0)"
-  red="$(tput setaf 1)"
-  green="$(tput setaf 2)"
-  yellow="$(tput setaf 3)"
-  blue="$(tput setaf 4)"
-  magenta="$(tput setaf 5)"
-  cyan="$(tput setaf 6)"
-  white="$(tput setaf 7)"
-  bold="$(tput bold)"
-  normal="$(tput sgr0)"
-else
-  # fix background: No value for $TERM and no -T specified
-  tput() {
-    return
-  }
-fi
 
 print() {
   echo "$1"
@@ -301,7 +283,7 @@ text_input_default_validator() {
 #   cleanup
 # }
 
-inquirer_text() {
+inquirer::text() {
   local prompt=$1
   local var_name=$2
   local _text_default_value=$3
@@ -329,4 +311,4 @@ inquirer_text() {
   cleanup
 }
 
-export -f inquirer_text
+export -f inquirer::text

@@ -1,12 +1,16 @@
 #!/bin/bash
 
+export BLACK="\e[30m"
 export RED="\e[31m"
 export GREEN="\e[32m"
 export YELLOW="\e[33m"
+export BLUE="\e[34m"
+export PURPLE="\e[35m"
+export CYAN="\e[36m"
 export GRAY="\e[37m"
 export ENDCOLOR="\e[0m"
 
-if [ "$(os_is_macos)" = "true" ]; then
+if [ "$(os::is_macos)" = "true" ]; then
   RED="\033[31m"
   GREEN="\033[32m"
   YELLOW="\033[33m"
@@ -14,8 +18,24 @@ if [ "$(os_is_macos)" = "true" ]; then
   ENDCOLOR="\033[0m"
 fi
 
-color_success() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::success() {
+  color::green $@
+}
+
+color::error() {
+  color::red $@
+}
+
+color::warn() {
+  color::yellow $@
+}
+
+color::disable() {
+  color::gray $@
+}
+
+color::green() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -23,8 +43,8 @@ color_success() {
   echo -e "${GREEN}${@}${ENDCOLOR}"
 }
 
-color_error() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::red() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -32,8 +52,8 @@ color_error() {
   echo -e "${RED}${@}${ENDCOLOR}"
 }
 
-color_warn() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::yellow() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -41,8 +61,8 @@ color_warn() {
   echo -e "${YELLOW}${@}${ENDCOLOR}"
 }
 
-color_disable() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::gray() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
@@ -50,38 +70,52 @@ color_disable() {
   echo -e "${GRAY}${@}${ENDCOLOR}"
 }
 
-color_green() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::cyan() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
 
-  echo -e "${GREEN}${@}${ENDCOLOR}"
+  echo -e "${CYAN}${@}${ENDCOLOR}"
 }
 
-color_red() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::blue() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
 
-  echo -e "${RED}${@}${ENDCOLOR}"
+  echo -e "${BLUE}${@}${ENDCOLOR}"
 }
 
-color_yellow() {
-  if [ "$(os_is_support_color)" = "false" ]; then
+color::purple() {
+  if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
   fi
 
-  echo -e "${YELLOW}${@}${ENDCOLOR}"
+  echo -e "${PURPLE}${@}${ENDCOLOR}"
 }
 
-export -f color_success
-export -f color_error
-export -f color_warn
-export -f color_disable
+color::black() {
+  if [ "$(os::is_support_color)" = "false" ]; then
+    echo $@
+    return
+  fi
 
-export -f color_green
-export -f color_red
-export -f color_yellow
+  echo -e "${BLACK}${@}${ENDCOLOR}"
+}
+
+export -f color::success
+export -f color::error
+export -f color::warn
+export -f color::disable
+
+export -f color::green
+export -f color::red
+export -f color::yellow
+export -f color::gray
+export -f color::cyan
+export -f color::blue
+export -f color::purple
+export -f color::black

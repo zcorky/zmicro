@@ -31,23 +31,31 @@ export ZMICRO_LOG_UPDATE_PATH=$ZMICRO_LOG_PATH/update.log
 export ZMICRO_LOG_VERSION_PATH=$ZMICRO_LOG_PATH/version.log
 export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
 
+# Data
+export ZMICRO_APP_DATA_PATH=/data
+# Logs
+export ZMICRO_APP_LOGS_PATH=/logs
+# Configs
+export ZMICRO_APP_CONFIGS_PATH=/configs
+
+# @TODO MAC
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_LOGS_PATH=/opt/logs
+[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_CONFIGS_PATH=/opt/configs
+
 # Plugin
 export ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
 
 export ZMICRO_PLUGIN_GITHUB="https://github.com/zmicro-design"
 export ZMICRO_PLUGIN_REPO_PREFIX="$ZMICRO_PLUGIN_GITHUB/plugin-"
 
-# Data
-export ZMICRO_APP_DATA_PATH=/data
-# Logs
-export ZMICRO_APP_LOGS_PATH=/logs
-
-# @TODO MAC
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_LOGS_PATH=/opt/logs
+export ZMICRO_PLUGINS_DATA_PATH=$ZMICRO_APP_DATA_PATH/plugins
+export ZMICRO_PLUGINS_LOGS_PATH=$ZMICRO_APP_LOGS_PATH/plugins
+export ZMICRO_PLUGINS_CONFIGS_PATH=$ZMICRO_APP_CONFIGS_PATH/plugins
 
 # PATHS
 export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin #$(realpath $(dirname "$0"))
+export ZMICRO_SUB_BIN_PATH=$ZMICRO_BIN_PATH/sub
 export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
 export ZMICRO_CONFIGS_PATH=$ZMICRO_HOME/config
 export ZMICRO_COMMANDS_PATH=$ZMICRO_HOME/commands
@@ -57,6 +65,6 @@ export ZMICRO_SERVICES_PATH=$ZMICRO_HOME/services
 # export DATA_POSTGRES_PATH=$ZMICRO_APP_DATA_PATH/postgres
 
 # DEFAULT GIT
-export DEFAULT_GIT_USERNAME=$USER
-export DEFAULT_GIT_PASSWORD=
-export DEFAULT_GIT_EMAIL=$USER@local
+export DEFAULT_GIT_USERNAME=${GIT_USER:-$USER}
+export DEFAULT_GIT_PASSWORD=${GIT_PASSWORD}
+export DEFAULT_GIT_EMAIL=${GIT_EMAIL:-$USER@local}

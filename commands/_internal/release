@@ -22,8 +22,14 @@ core() {
     exit 0
   fi
 
-  local origin_version=$(get_current_version)
-  inquirer_text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
+  # is plugin release
+  if [ "$1" != "" ]; then
+    zmicro plugin release "$@"
+    return
+  fi
+
+  local origin_version=$(version::get $ZMICRO_HOME)
+  inquirer::text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
 
   sed -i -e "s/${origin_version}/$new_version/" mod >>/dev/null 2>&1
 
@@ -38,7 +44,7 @@ core() {
   git push origin ${new_version}
   git push origin master
 
-  log_success "[release] ${plugin_name} ${new_version}"
+  log::success "[release] ${plugin_name} ${new_version}"
 }
 
 run() {

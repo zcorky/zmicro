@@ -1,8 +1,21 @@
 #!/bin/bash
 
-version() {
-  local version=$(get_current_version)
-  echo $(color_green $version)
+help() {
+  echo "Usage:"
+  echo "  zmicro version [options...]"
 }
 
-version
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  version::main
+}
+
+run() {
+  core $@
+}
+
+run $@

@@ -21,8 +21,8 @@ parser_options() {
   )
 
   parser_one_options() {
-    local flags=$(string_split , $(echo $@ | awk '{print $1}'))
-    local var=$(string_split , $(echo $@ | awk '{print $2}'))
+    local flags=$(string::split , $(echo $@ | awk '{print $1}'))
+    local var=$(string::split , $(echo $@ | awk '{print $2}'))
   }
 
   local index=0
@@ -43,11 +43,11 @@ parser_options() {
   #       exit 0
   #       ;;
   #     -u | --update)
-  #       set_var is_plugin_update true
+  #       os::set_var is_plugin_update true
   #       shift
   #       ;;
   #     *)
-  #       if [ "$(string_match $key ^-)" = "true" ]; then
+  #       if [ "$(string::match $key ^-)" = "true" ]; then
   #         echo "ERROR: unknown parameter \"$key\""
   #         help
   #         exit 1

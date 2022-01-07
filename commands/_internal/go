@@ -9,6 +9,7 @@ help() {
 
 core() {
   local where=$1
+  local name=$2
   if [ "$where" = "-h" ] || [ "$where" = "--help" ]; then
     help
     exit 1
@@ -18,29 +19,69 @@ core() {
     where="home"
   fi
 
+  # where => default plugin when name exist
+  # zmicro go package
+  #   => zmicro go plugin package
+  if [ -n "$where" ] && [ "$where" != "home" ] && [ "$where" != "plugin" ] && [ "$where" != "service" ] && [ "$where" != "package" ]; then
+    where="plugin"
+    name=$1
+  fi
+
+  # echo "where: $where"
+  # echo "name: $name"
+
   case $where in
     home)
       cd $ZMICRO_HOME
       exec $SHELL
       ;;
     plugin)
-      local plugin_name=$2
-      if [ -z "$plugin_name" ]; then
-        log_error "plugin name is required"
+      if [ -z "$name" ]; then
+        log::error "plugin name is required"
         exit 1
       fi
 
-      local plugin_path=$ZMICRO_HOME/plugins/$plugin_name
+      local plugin_path=$ZMICRO_HOME/plugins/$name
       if [ ! -d $plugin_path ]; then
-        log_error "unknown plugin ${plugin_name}"
+        log::error "unknown plugin ${name}"
         exit 1
       fi
 
       cd $plugin_path
       exec $SHELL
       ;;
+    service)
+      if [ -z "$name" ]; then
+        log::error "${where} name is required"
+        exit 1
+      fi
+
+      local path=$ZMICRO_HOME/plugins/${where}/${where}s/$name
+      if [ ! -d $path ]; then
+        log::error "unknown ${where} ${name}"
+        exit 1
+      fi
+
+      cd $path
+      exec $SHELL
+      ;;
+    package)
+      if [ -z "$name" ]; then
+        log::error "${where} name is required"
+        exit 1
+      fi
+
+      local path=$ZMICRO_HOME/plugins/${where}/${where}s/$name
+      if [ ! -d $path ]; then
+        log::error "unknown ${where} ${name}"
+        exit 1
+      fi
+
+      cd $path
+      exec $SHELL
+      ;;
     *)
-      log_error "unknown go where: $where"
+      log::error "unknown go where: $where"
       ;;
   esac
 }

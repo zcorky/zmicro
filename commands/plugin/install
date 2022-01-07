@@ -12,7 +12,7 @@ check_plugin() {
 
   local status_code=$(curl -o /dev/null -s -w "%{http_code}\n" $plugin_url)
   if [ "$status_code" != "200" ]; then
-    log_error "plugin $plugin_name not found"
+    log::error "plugin $plugin_name not found"
     exit 1
   fi
 }
@@ -29,14 +29,14 @@ core() {
 
   # compatible no version provided, like `zmicro plugin add` command
   #   such as: zmicro install $plugin_name $plugin_url [$plugin_version]
-  if [ "$(string_match $plugin_version ^http)" = "true" ] || [ "$(string_match $plugin_version ^git)" = "true" ]; then
+  if [ "$(string::match $plugin_version ^http)" = "true" ] || [ "$(string::match $plugin_version ^git)" = "true" ]; then
     plugin_url=$plugin_version
     plugin_version=$3
   fi
 
   if [ -z "$plugin_url" ]; then
     # @TODO check github
-    if [ "$(net_is_github_visitable)" = "false" ]; then
+    if [ "$(net::is_github_visitable)" = "false" ]; then
       export ZMICRO_PLUGIN_GITHUB="https://gitee.com/zmicro-design"
       export ZMICRO_PLUGIN_REPO_PREFIX="$ZMICRO_PLUGIN_GITHUB/plugin-"
     fi

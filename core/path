@@ -4,7 +4,7 @@ get_current_path() {
   echo $(realpath $(dirname "$0"))
 }
 
-is_file() {
+path::is_file() {
   path=$1
   if [ -f $path ]; then
     return 0
@@ -13,7 +13,7 @@ is_file() {
   return 1
 }
 
-is_dir() {
+path::is_dir() {
   path=$1
   if [ -d $path ]; then
     return 0
@@ -22,32 +22,32 @@ is_dir() {
   return 1
 }
 
-path_basename() {
+path::basename() {
   local path=$1
 
   if [ "$path" = "" ]; then
-    log_error "path is required"
+    log::error "path is required"
     exit 1
   fi
 
-  echo $(string_split_last_element '/' $path)
+  echo $(string::split_last_element '/' $path)
 }
 
-path_dirname() {
+path::dirname() {
   local path=$1
 
   if [ "$path" = "" ]; then
-    log_error "path is required"
+    log::error "path is required"
     exit 1
   fi
 
   echo "/$(string_split_slice '/' $path 0 -1)"
 }
 
-path_join() {
-  local str=$(array_join '/' $@)
+path::join() {
+  local str=$(array::join '/' $@)
   # echo $str
-  echo $(string_replace $str '/\{2,\}' '/')
+  echo $(string::replace $str '/\{2,\}' '/')
 }
 
 realpath() {
@@ -65,11 +65,11 @@ realpath() {
 
 
 export -f get_current_path
-export -f is_file
-export -f is_dir
+export -f path::is_file
+export -f path::is_dir
 
-export -f path_basename
-export -f path_dirname
-export -f path_join
+export -f path::basename
+export -f path::dirname
+export -f path::join
 
 export -f realpath

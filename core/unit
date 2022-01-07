@@ -2,7 +2,7 @@
 
 unit_kb_2_mb() {
   if [ -z "$1" ]; then
-    log_error "[unit_kb_2_mb] value is required"
+    log::error "[unit_kb_2_mb] value is required"
     exit 1
   fi
 

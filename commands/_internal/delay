@@ -18,7 +18,7 @@ core() {
   local fn=$1
   local args=${@:2}
 
-  delay $fn $args
+  os::delay $fn $args
 }
 
 run() {

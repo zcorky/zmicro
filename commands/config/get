@@ -22,13 +22,13 @@ core() {
 
   local key=$1
   if [ "$key" = "" ]; then
-    log_error "key is required"
+    log::error "key is required"
     
     help
     exit 1
   fi
 
-  zmicro_config_get $key
+  config::get $key
 }
 
 run() {

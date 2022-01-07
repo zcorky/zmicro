@@ -13,14 +13,14 @@ core() {
 
   local key=$1
   if [ "$key" = "" ]; then
-    log_error "key is required"
-    log_error ""
+    log::error "key is required"
+    log::error ""
     
     help
     exit 1
   fi
 
-  zmicro_config_remove $key
+  config::remove $key
 }
 
 run() {

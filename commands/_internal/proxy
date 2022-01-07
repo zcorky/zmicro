@@ -1,0 +1,45 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro proxy <ip>"
+  echo ""
+  echo "Example:"
+  echo "    zmicro proxy 127.0.0.1:17890"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local ip=$1
+  local port=$2
+  if [ -z "$ip" ]; then
+    log::error "proxy ip is required"
+    exit 1
+  fi
+
+  if [ -z "$port" ]; then
+    log::error "proxy port is required"
+    exit 1
+  fi
+
+  export https_proxy=http://$ip:$port http_proxy=http://$ip:$port all_proxy=socks5://$ip:$port
+
+  # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
+  export LC_CTYPE=en_US.UTF-8
+  export LC_ALL=en_US.UTF-8
+  export LANG=en_US.UTF-8
+
+  # @TODO apply in new shell
+  #   @TODO can apply current shell ???
+  exec $SHELL
+}
+
+run() {
+  core $@
+}
+
+run $@

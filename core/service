@@ -1,35 +1,35 @@
 #!/bin/bash
 
-get_service_dirs() {
+service::get_dirs() {
   # echo $ZMICRO_SERVICES_PATH | awk -F ':' '{out=""; for(i=1;i<=NF;i++){out=out" "$i}; print out}'
 
   # echo "override: ZMICRO_SERVICES_PATH=$ZMICRO_SERVICES_PATH"
-  string_split : $ZMICRO_SERVICES_PATH
+  string::split : $ZMICRO_SERVICES_PATH
 }
 
-get_service_path() {
+service::get_path() {
   local service_name=$1
-  local avaliable_service_dirs=$(get_service_dirs)
+  local avaliable_service_dirs=$(service::get_dirs)
 
   for service_dir in $avaliable_service_dirs; do
-    log_debug "[$(timestamp)][service] try service dir: $service_dir"
+    log::debug "[$(timestamp)][service] try service dir: $service_dir"
     local service_path=$service_dir/$service_name
     if [ -d $service_path ]; then
-      log_debug "[$(timestamp)]$(color_success "[service] found service($service_name) in $service_dir")"
+      log::debug "[$(timestamp)]$(color::success "[service] found service($service_name) in $service_dir")"
       echo $service_path
       return 0
     fi
   done
 }
 
-zmicro_service_list() {
-  local avaliable_service_dirs=$(get_service_dirs)
+service::list() {
+  local avaliable_service_dirs=$(service::get_dirs)
   log "List all available services"
   log ""
 
   for service_dir in $avaliable_service_dirs; do
     # local namespace=$(echo $service_dir | awk -F '/' '{print $(NF-0)}')
-    local namespace=$(string_split_last_element '/' $service_dir)
+    local namespace=$(string::split_last_element '/' $service_dir)
     if [ ! -d $service_dir ]; then
       log "  namespace: $namespace ($service_dir)"
       log "    (no avaliable services)"
@@ -56,8 +56,8 @@ zmicro_service_list() {
 
       # Check is a real service
       if [ -f $service_path/docker-compose.yml ]; then
-        index=$(number_step index)
-        log "    $(color_success "$index $service_name")"
+        index=$(number::step index)
+        log "    $(color::success "$index $service_name")"
       fi
     done
 
@@ -69,60 +69,60 @@ zmicro_service_list() {
   done
 }
 
-zmicro_service_run() {
+service::run() {
   local service_name=$1
   local commands=${@:2}
 
-  log_debug "[$(timestamp)][service] ZMICRO_SERVICES_PATH: $ZMICRO_SERVICES_PATH"
-  log_debug "[$(timestamp)][service] service name: $service_name"
-  log_debug "[$(timestamp)][service] service command: $commands"
+  log::debug "[$(timestamp)][service] ZMICRO_SERVICES_PATH: $ZMICRO_SERVICES_PATH"
+  log::debug "[$(timestamp)][service] service name: $service_name"
+  log::debug "[$(timestamp)][service] service command: $commands"
 
-  local service_path=$(get_service_path $service_name)
+  local service_path=$(service::get_path $service_name)
   if [ "$service_path" = "" ]; then
-    log_error "[$(timestamp)][service] service($service_name) not found"
+    log::error "[$(timestamp)][service] service($service_name) not found"
     exit 1
   fi
 
-  log_debug ""
+  log::debug ""
   cd $service_path
   docker-compose -f docker-compose.yml $commands
 }
 
-zmicro_service_get_config() {
+service::get_config() {
   local service_name=$1
 
-  local service_path=$(get_service_path $service_name)
+  local service_path=$(service::get_path $service_name)
   if [ "$service_path" = "" ]; then
-    log_error "[$(timestamp)][service] service($service_name) not found"
+    log::error "[$(timestamp)][service] service($service_name) not found"
     exit 1
   fi
 
   local service_config=$service_path/docker-compose.yml
   if [ ! -f $service_config ]; then
-    log_error "[$(timestamp)][service] service($service_name) config(docker-compose.yml) not found"
+    log::error "[$(timestamp)][service] service($service_name) config(docker-compose.yml) not found"
   fi
 
   echo $service_config
 }
 
-zmicro_service_detect_service_path() {
+service::detect_path() {
   local custom_service_path=$(zmicro config get ZMICRO_SERVICES_PATH)
   if [ "$custom_service_path" = "" ]; then
-    log_error "Please your service path first."
+    log::error "Please your service path first."
     log "Run the following command to config:"
     log ""
-    log "$ $(color_success "zmicro config service <service_path>")"
+    log "$ $(color::success "zmicro config service <service_path>")"
     log ""
 
     exit 1
   fi
 }
 
-export -f get_service_dirs
-export -f get_service_path
+export -f service::get_dirs
+export -f service::get_path
 
-export -f zmicro_service_run
-export -f zmicro_service_list
-export -f zmicro_service_get_config
+export -f service::run
+export -f service::list
+export -f service::get_config
 
-export -f zmicro_service_detect_service_path
+export -f service::detect_path

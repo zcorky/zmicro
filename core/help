@@ -7,7 +7,7 @@ help() {
   local command_prefix=zmicro
   # @TODO
   local plugin_name=$(echo $base_command_path | grep -oe "plugins/([^\/]+)/commands" | cut -d "/" -f 2)
-  local is_mac_os=$(os_is_macos)
+  local is_mac_os=$(os::is_macos)
   if [ "$is_mac_os" != "true" ]; then
     plugin_name=$(echo $base_command_path | grep -oP "plugins/([^\/]+)/commands" | cut -d "/" -f 2)
   fi
@@ -30,7 +30,7 @@ help() {
   fi
 
   if [ ! -d $help_commands_path ]; then
-    log_debug "Cannot found command path: $help_commands_path"
+    log::debug "Cannot found command path: $help_commands_path"
     return
   fi
 

@@ -8,7 +8,7 @@ config_git() {
   git config --global core.editor "vim"
 
   # if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
-  #   log_warn "Config Git: USERNAME and EMAIL is required"
+  #   log::warn "Config Git: USERNAME and EMAIL is required"
   #   exit 0
   # fi
 
@@ -16,16 +16,37 @@ config_git() {
   if [ "$USERNAME" != "" ]; then
     git config --global user.name "${USERNAME}"
   else
-    # Default
-    git config --global user.name "${DEFAULT_GIT_USERNAME}"
+    local origin=$(git config --global user.name)
+    if [ -z "$origin" ]; then
+      # Default
+      git config --global user.name "${DEFAULT_GIT_USERNAME}"
+    fi
   fi
 
   # local origin_email=$(git config --get user.name)
   if [ "$EMAIL" != "" ]; then
     git config --global user.email "${EMAIL}"
   else
-    git config --global user.email "${DEFAULT_GIT_EMAIL}"
+    local origin=$(git config --global user.email)
+    if [ -z "$origin" ]; then
+      git config --global user.email "${DEFAULT_GIT_EMAIL}"
+    fi
   fi
+
+  # pull strategies
+  #   hint: Pulling without specifying how to reconcile divergent branches is
+  #   hint: discouraged. You can squelch this message by running one of the following
+  #   hint: commands sometime before your next pull:
+  #   hint:
+  #   hint:   git config pull.rebase false  # merge (the default strategy)
+  #   hint:   git config pull.rebase true   # rebase
+  #   hint:   git config pull.ff only       # fast-forward only
+  #   hint:
+  #   hint: You can replace "git config" with "git config --global" to set a default
+  #   hint: preference for all repositories. You can also pass --rebase, --no-rebase,
+  #   hint: or --ff-only on the command line to override the configured default per
+  #   hint: invocation.
+  git config --global pull.rebase false
 }
 
 config_git $@

@@ -50,18 +50,33 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: Docker meta
+      # - name: Docker meta
+      #   id: meta
+      #   uses: docker/metadata-action@v3
+      #   with:
+      #     # Custom Image: https://github.com/docker/metadata-action#inputs
+      #     # images: whatwewant/zmicro,ghcr.io/whatwewant/zmicro
+      #     images: whatwewant/zmicro
+      #     tags: |
+      #       type=ref,event=branch
+      #       type=semver,pattern=v{{version}}
+      #       type=semver,pattern=v{{major}}
+      #       type=semver,pattern=v{{major}}.{{minor}}
+
+      - name: Docker Meta
         id: meta
-        uses: docker/metadata-action@v3
-        with:
-          # Custom Image: https://github.com/docker/metadata-action#inputs
-          # images: whatwewant/zmicro,ghcr.io/whatwewant/zmicro
-          images: whatwewant/zmicro
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern=v{{version}}
-            type=semver,pattern=v{{major}}
-            type=semver,pattern=v{{major}}.{{minor}}
+        run: |
+          IMAGE_VERSION=$(echo ${GITHUB_REF} | sed -e "s%refs/tags/%%g")
+          IMAGE_NAME=${ACTION_IMAGE_NAMESPACE}/${ACTION_IMAGE_NAME}
+          IMAGE_TAGS=${IMAGE_NAME}:${IMAGE_VERSION}
+          echo "IMAGE_TAGS: ${IMAGE_TAGS}"
+          echo "::set-output name=version::${IMAGE_VERSION}"
+          echo "::set-output name=name::${IMAGE_NAME}"
+          echo "::set-output name=tags::${IMAGE_TAGS}"
+        shell: bash
+        env:
+          ACTION_IMAGE_NAMESPACE: whatwewant
+          ACTION_IMAGE_NAME: zmicro
 
       - name: Show Docker Tags
         run: |
@@ -91,8 +106,12 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
+          build-args: |
+            VERSION=${{ steps.meta.outputs.version }}
           context: .
           push: ${{ github.event_name != 'pull_request' }}
+          cache-from: type=registry,ref=${{ steps.meta.outputs.name }}:buildcache
+          cache-to: type=registry,ref=${{ steps.meta.outputs.name }}:buildcache,mode=max
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7

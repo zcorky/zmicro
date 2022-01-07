@@ -1,4 +1,4 @@
-VERSION=v1.2.26
+VERSION=v1.6.19
 
 DESCRIPTION="Zero's Service Manager"
 
@@ -7,6 +7,5 @@ DEPENDENCIES=(
   "package@latest"
   "machine@latest"
   "daemon@latest"
-  "swarm@latest"
-  "compose@latest"
+  "cron@latest"
 )

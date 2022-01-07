@@ -1,25 +1,25 @@
 #!/bin/bash
 
 # @TODO
-command -v os_ensure_permission >>/dev/null
+command -v os::ensure_permission >>/dev/null
 if [ "$?" != "0" ]; then
-  # echo "load os_ensure_permission"
+  # echo "load os::ensure_permission"
   . $ZMICRO_HOME/core/os
 fi
 
-command -v log_init >>/dev/null
+command -v log::init >>/dev/null
 if [ "$?" != "0" ]; then
   . $ZMICRO_CORE_PATH/log
-  log_init
+  log::init
 fi
 
-os_ensure_logs_permission
+os::ensure_logs_permission
 
 load() {
   # ensure_permission() {
   #   local path=$1
   #   if [ -f $path ] && [ ! -w $path ]; then
-  #     sudo chown -R $(os_username) $path
+  #     sudo chown -R $(os::username) $path
   #   fi
   # }
 
@@ -46,6 +46,7 @@ load color
 load path
 load timestamp
 load delay
+load uuid
 load permission
 load help
 load version
@@ -55,6 +56,8 @@ load commander
 load plugin
 load pm
 load service
+
+load repl
 
 # Cause Bug
 #   1. tput: No value for $TERM and no -T specified

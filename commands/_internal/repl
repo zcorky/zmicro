@@ -1,10 +1,8 @@
 #!/bin/bash
 
-. $ZMICRO_HOME/core/env
-
 help() {
   echo "Usage:"
-  echo "  zmicro load"
+  echo "  zmicro repl"
 }
 
 core() {
@@ -12,6 +10,13 @@ core() {
     help
     exit 0
   fi
+
+  # @TODO override help
+  help() {
+    zmicro help
+  }
+
+  os::repl
 }
 
 run() {

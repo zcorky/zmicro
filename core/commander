@@ -3,16 +3,16 @@
 HAS_FILE_LOG_SILIENT="false"
 
 # Has
-has_file_path() {
+commander::has_file_path() {
   path=$1
 
   if [ "$HAS_FILE_LOG_SILIENT" = "false" ]; then
-    log_debug "[$(timestamp)][command] try path: $path"
+    log::debug "[$(timestamp)][command] try path: $path"
   fi
 
-  if is_file $path; then
+  if path::is_file $path; then
     if [ "$HAS_FILE_LOG_SILIENT" = "false" ]; then
-      log_debug [$(timestamp)]$(color_success "[command] find path: ${path}")
+      log::debug [$(timestamp)]$(color::success "[command] find path: ${path}")
     fi
 
     return 0
@@ -21,10 +21,10 @@ has_file_path() {
   return 1
 }
 
-has_file_path_quiet() {
+commander::has_file_path_quiet() {
   path=$1
 
-  if is_file $path; then
+  if path::is_file $path; then
     return 0
   fi
 
@@ -32,7 +32,7 @@ has_file_path_quiet() {
 }
 
 #
-has_command_path_internal() {
+commander::has_command_path_internal() {
   local base_command_path=$1
   local commands=${@:2}
 
@@ -43,7 +43,7 @@ has_command_path_internal() {
   local command_fragments=""
 
   # _run
-  if has_file_path $command_run_path; then
+  if commander::has_file_path $command_run_path; then
     return 0
   fi
 
@@ -61,11 +61,11 @@ has_command_path_internal() {
       command_fragments="$command_fragments $command"
     fi
 
-    if has_file_path $command_path; then
+    if commander::has_file_path $command_path; then
       return 0
     fi
 
-    if has_file_path $command_run_path; then
+    if commander::has_file_path $command_run_path; then
       return 0
     fi
 
@@ -76,33 +76,42 @@ has_command_path_internal() {
   return 1
 }
 
-has_command_path() {
+commander::has_command_path() {
   local base_command_path=$1
   local base_plugin_get_path=$2
   local command=${@:3}
 
   # 1. internal
   local internal_base_path=$base_command_path/_internal
-  if has_command_path_internal $internal_base_path $command; then
+  if commander::has_command_path_internal $internal_base_path $command; then
     return 0
+  fi
+
+  # 1.1 internal sub
+  #   only for zmicro core, not plugin
+  if [ "$base_command_path" = "$ZMICRO_COMMANDS_PATH" ]; then
+    local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
+    if commander::has_command_path_internal $internal_sub_base_path $command; then
+      return 0
+    fi
   fi
 
   # 2. normal
   #   2.1 _run: take over run when _run exist
   #   2.2 normal
   local normal_base_path=$base_command_path
-  if has_command_path_internal $normal_base_path $command; then
+  if commander::has_command_path_internal $normal_base_path $command; then
     return 0
   fi
 
   # *. not found
-  log_debug [$(timestamp)]$(color_error "[command] 404 not found ($command $args)")
+  log::debug [$(timestamp)]$(color::error "[command] 404 not found ($command $args)")
   return 1
 }
 
 # Has End
 
-get_command_path_internal() {
+commander::get_command_path_internal() {
   local base_command_path=$1
   local commands=${@:2}
 
@@ -114,7 +123,7 @@ get_command_path_internal() {
   local command_args=$commands
 
   # _run
-  if has_file_path $command_run_path; then
+  if commander::has_file_path $command_run_path; then
     command_fragments="_run"
     echo "${base_command_path}#${command_fragments}#${command_args}"
     return 0
@@ -134,13 +143,13 @@ get_command_path_internal() {
       command_fragments="$command_fragments $command"
     fi
 
-    if has_file_path $command_path; then
+    if commander::has_file_path $command_path; then
       # echo $(get_path $command_dir $command $command_args)
       echo "${base_command_path}#${command_fragments}#${command_args}"
       return 0
     fi
 
-    if has_file_path $command_run_path; then
+    if commander::has_file_path $command_run_path; then
       # echo $(get_path $command_run_path $command $command_args)
       command_fragments="$command_fragments _run"
       echo "${base_command_path}#${command_fragments}#${command_args}"
@@ -152,7 +161,7 @@ get_command_path_internal() {
   done
 }
 
-get_command_path() {
+commander::get_command_path() {
   local base_command_path=$1
   local base_plugin_get_path=$2
   local command=${@:3}
@@ -162,30 +171,40 @@ get_command_path() {
 
   # 1. internal
   local internal_base_path=$base_command_path/_internal
-  if has_command_path_internal $internal_base_path $command; then
-    echo $(get_command_path_internal $internal_base_path $command)
+  if commander::has_command_path_internal $internal_base_path $command; then
+    echo $(commander::get_command_path_internal $internal_base_path $command)
     return 0
+  fi
+
+  # 1.1 internal sub
+  #   only for zmicro core, not plugin
+  if [ "$base_command_path" = "$ZMICRO_COMMANDS_PATH" ]; then
+    local internal_sub_base_path=$ZMICRO_SUB_BIN_PATH
+    if commander::has_command_path_internal $internal_sub_base_path $command; then
+      echo $(commander::get_command_path_internal $internal_sub_base_path $command)
+      return 0
+    fi
   fi
 
   # 2. normal
   #   2.1 _run: take over run when _run exist
   #   2.2 normal
   local normal_base_path=$base_command_path
-  if has_command_path_internal $normal_base_path $command; then
-    echo $(get_command_path_internal $normal_base_path $command)
+  if commander::has_command_path_internal $normal_base_path $command; then
+    echo $(commander::get_command_path_internal $normal_base_path $command)
     return 0
   fi
 
   HAS_FILE_LOG_SILIENT="false"
 
-  _path="[get_command_path]"
+  _path="[commander::get_command_path]"
   _command="unknown"
   _args="command: ${command}"
   echo "$_path $_command $_args"
   return 0
 }
 
-get_command_path_with_fragments() {
+commander::get_command_path_with_fragments() {
   local base_command_path=$1
   local command_fragments=${@:2}
 
@@ -202,12 +221,12 @@ get_command_path_with_fragments() {
 }
 
 # Has
-export -f has_file_path
-export -f has_file_path_quiet
-export -f has_command_path_internal
-export -f has_command_path
+export -f commander::has_file_path
+export -f commander::has_file_path_quiet
+export -f commander::has_command_path_internal
+export -f commander::has_command_path
 
 # Get
-export -f get_command_path_internal
-export -f get_command_path
-export -f get_command_path_with_fragments
+export -f commander::get_command_path_internal
+export -f commander::get_command_path
+export -f commander::get_command_path_with_fragments

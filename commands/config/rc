@@ -3,22 +3,26 @@
 config_clear() {
   local profile=$1
 
-  if [ -z "$(os_username)" ]; then
-    log_error "cannot get username"
+  if [ -z "$(os::username)" ]; then
+    log::error "cannot get username"
     exit 1
   fi
 
-  # # ZMICRO_BIN_PATH: /home/$(os_username)/.zmicro/bin
-  # export ZMICRO_HOME=/home/$(os_username)/.zmicro
-  # export ZMICRO_BIN_PATH=/home/$(os_username)/.zmicro/bin
+  # # ZMICRO_BIN_PATH: /home/$(os::username)/.zmicro/bin
+  # export ZMICRO_HOME=/home/$(os::username)/.zmicro
+  # export ZMICRO_BIN_PATH=/home/$(os::username)/.zmicro/bin
   # export PATH=$ZMICRO_BIN_PATH:$PATH
+
+  if [ ! -f "$profile" ]; then
+    return
+  fi
 
   # remove .zmicro version
   cat $profile | grep "# ZMICRO_BIN_PATH" >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
-    sed -i "/^# ZMICRO_BIN_PATH: \/home\/$(os_username)\/.zmicro\/bin$/d" $profile
-    sed -i "/^export ZMICRO_HOME=\/home\/$(os_username)\/.zmicro$/d" $profile
-    sed -i "/^export ZMICRO_BIN_PATH=\/home\/$(os_username)\/.zmicro\/bin$/d" $profile
+    sed -i "/^# ZMICRO_BIN_PATH: \/home\/$(os::username)\/.zmicro\/bin$/d" $profile
+    sed -i "/^export ZMICRO_HOME=\/home\/$(os::username)\/.zmicro$/d" $profile
+    sed -i "/^export ZMICRO_BIN_PATH=\/home\/$(os::username)\/.zmicro\/bin$/d" $profile
     sed -i "/^export PATH=\$ZMICRO_BIN_PATH:\$PATH$/d" $profile
   fi
 }
@@ -38,7 +42,7 @@ export ZMICRO_HOME=${ZMICRO_HOME}
 export PATH=\$ZMICRO_HOME/bin:\$PATH 
 END
     )
-    echo "$text" | os_fs_write -a $profile
+    echo "$text" | fs::write -a $profile
   fi
 }
 
@@ -48,7 +52,7 @@ config_global_rc() {
 
   # if not found, ignore
   if [ ! -f $profile ]; then
-    log_error "[$(timestamp)][config_global_rc] profile $profile not found"
+    log::error "[$(timestamp)][config_global_rc] profile $profile not found"
     exit 1
   fi
 
@@ -61,7 +65,7 @@ export ZMICRO_HOME=${ZMICRO_HOME}
 export PATH=\$ZMICRO_HOME/bin:\$PATH 
 END
     )
-    echo "$text" | os_fs_write -a $profile
+    echo "$text" | fs::write -a $profile
   fi
 }
 
@@ -97,6 +101,11 @@ config_bashrc() {
   # HOME
   config_profile $HOME/.bashrc
 
+  # Global
+  if [ -f "/etc/bash.bashrc" ]; then
+    config_global_rc /etc/bash.bashrc
+  fi
+
   # # GLOBAL
   # #   ubuntu  20
   # config_global_rc_ignore_if_not_found /etc/bashrc
@@ -110,6 +119,11 @@ config_zshrc() {
 
   # HOME
   config_profile $HOME/.zshrc
+
+  # Global
+  if [ -f "/etc/zsh/zshrc" ]; then
+    config_global_rc /etc/zsh/zshrc
+  fi
 
   # # GLOBAL
   # #   ubuntu 20
@@ -125,6 +139,30 @@ config_zshrc() {
 #   config_profile /etc/profile
 # fi
 
+disable_oh_my_zsh_update() {
+  local profile=$HOME/.zshrc
+
+  # if not found, ignore
+  if [ ! -f $profile ]; then
+    log::error "[$(timestamp)][config_global_rc] profile $profile not found"
+    exit 1
+  fi
+
+  cat $profile | grep "ZMICRO_DISABLE_AUTO_UPDATE" >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    local text=$(
+      cat <<-END
+      
+# ZMICRO_DISABLE_AUTO_UPDATE
+export DISABLE_AUTO_UPDATE="true"
+END
+    )
+    echo "$text" | fs::write -a $profile
+  fi
+}
+
 config_common
 config_bashrc
 config_zshrc
+
+disable_oh_my_zsh_update

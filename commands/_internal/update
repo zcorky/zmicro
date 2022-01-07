@@ -3,29 +3,36 @@
 . $ZMICRO_HOME/core/env
 
 update_zmicro() {
-  local origin_version=$(get_current_version)
-  # log_update PREV
+  local origin_version=$(version::zmicro)
+  # log::update PREV
+
+  # @TODO add auto update
+  # zmicro auto update
+
+  log::update CORE zmicro START
 
   cd $ZMICRO_HOME
-  git pull origin master >> $ZMICRO_LOG_UPDATE_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
+  git pull origin master >>$ZMICRO_LOG_UPDATE_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
   if [ "$?" != "0" ]; then
     echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
     tail -n 50 $ZMICRO_LOG_ERROR_PATH
     exit -1
   fi
 
-  # log_update LATEST
-  local new_version=$(get_current_version)
+  # log::update LATEST
+  local new_version=$(version::zmicro)
 
-  log_version $origin_version $new_version
+  log::version $origin_version $new_version
 
-  # log_timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
+  # log::timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
 
   # update depdendencies
-  require_core_mod -u
+  require::core_mod -u
 
   # Auto Register After Update
-  plugin_register_all $ZMICRO_PLUGINS_PATH
+  plugin::register_all $ZMICRO_PLUGINS_PATH
+
+  log::update CORE zmicro END
 }
 
 help() {
@@ -48,36 +55,41 @@ core() {
     local key=$1
     local value=$2
     case $key in
-      -h | --help)
+    -h | --help)
+      help
+      exit 0
+      ;;
+    # -p | --plugin)
+    #   if [ -z "$value" ]; then
+    #     log::error "plugin name is required"
+    #     exit 1
+    #   fi
+
+    #   os::set_var plugin_name $value
+    #   shift
+    #   shift
+    #   ;;
+    -a | --all)
+      os::set_var update_all true
+      shift
+      ;;
+    -f | --force)
+      # @TODO
+      sudo rm -rf /tmp/zmicro.*.lock.*
+      shift
+      ;;
+    *)
+      if [ "$(string::match $key ^-)" = "true" ]; then
+        echo "ERROR: unknown parameter \"$key\""
         help
-        exit 0
-        ;;
-      # -p | --plugin)
-      #   if [ -z "$value" ]; then
-      #     log_error "plugin name is required"
-      #     exit 1
-      #   fi
+        exit 1
+      fi
 
-      #   set_var plugin_name $value
-      #   shift
-      #   shift
-      #   ;;
-      -a | --all)
-        set_var update_all true
-        shift
-        ;;
-      *)
-        if [ "$(string_match $key ^-)" = "true" ]; then
-          echo "ERROR: unknown parameter \"$key\""
-          help
-          exit 1
-        fi
-
-        if [ -z $plugin_name ]; then
-          plugin_name=$key
-        fi
-        shift
-        ;;
+      if [ -z $plugin_name ]; then
+        plugin_name=$key
+      fi
+      shift
+      ;;
     esac
   done
 
@@ -100,4 +112,3 @@ run() {
 }
 
 run $@
-

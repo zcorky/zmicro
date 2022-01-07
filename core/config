@@ -1,16 +1,15 @@
 #!/bin/bash
-set -e
 
 load_config() {
   # @TOREMOVE
   # Fix Old ZMICRORC
-  local old_home=$(zmicro_config_get HOME)
+  local old_home=$(config::get HOME)
   if [ "$old_home" != "" ]; then
-    log_debug "remove old config .zmicrorc"
-    
-    zmicro_config_remove HOME
-    zmicro_config_remove BIN
-    zmicro_config_remove VERSION
+    log::debug "remove old config .zmicrorc"
+
+    config::remove HOME
+    config::remove BIN
+    config::remove VERSION
   fi
 
   CONFIG_PATH=$1
@@ -24,66 +23,74 @@ load_config() {
     exit 1
   fi
 
-  # load_core_mod
+  # config::load_core_mod
 
   if [ -f $CONFIG_PATH ]; then
-    load_config_file $CONFIG_PATH
+    config::load_file $CONFIG_PATH
   elif [ -d $CONFIG_PATH ]; then
-    load_config_dir $CONFIG_PATH
+    config::load_dir $CONFIG_PATH
   else
     log "load_config: Invalid Config Path(${CONFIG_PATH})"
     exit 1
   fi
 }
 
-load_config_file() {
+config::load_file() {
   local CONFIG_FILE=$1
-  
+
+  if [ -z "$CONFIG_FILE" ]; then
+    log::error "[config::load_file] config file path is required"
+    exit 1
+  fi
+
   if [ -f $CONFIG_FILE ]; then
-    log_debug "[$(timestamp)][load_config_file]: $CONFIG_FILE"
+    log::debug "[$(timestamp)][config::load_file]: $CONFIG_FILE"
 
     # \. $CONFIG_FILE
     . $CONFIG_FILE
   fi
 }
 
-load_config_dir() {
+config::load_dir() {
   CONFIG_DIR=$1
   CONFIG_FILES=$(ls $CONFIG_DIR)
 
   for CONFIG_FILE in $CONFIG_FILES; do
     # echo "load config: $CONFIG_FILE"
 
-    load_config_file $CONFIG_DIR/$CONFIG_FILE
+    config::load_file $CONFIG_DIR/$CONFIG_FILE
   done
 }
 
-load_mod_config() {
-  if [ -z $VERSION ]; then
-    log_error "VERSION is required"
+config::load_mod() {
+  local path=$1
+  local mod_path=$path/mod
+  if [ ! -f "$mod_path" ]; then
+    log::error "[config::load_mod] path is required"
     exit 1
   fi
 
+  config::load_file $mod_path
+
+  if [ -z $VERSION ] && [ -z $PLUGIN_VERSION ]; then
+    log::error "[config::load_mod] VERSION is required"
+    exit 1
+  fi
+
+  # @TODO REMOVE next version
   export ZMICRO_VERSION=$VERSION
   export ZMICRO_DESCRIPTION=$DESCRIPTION
-
-  # if [ -n $DEPENDENCIES ]; then
-  #   echo "load mod config found depdencies: $DEPENDENCIES"
-  #   array_each require $DEPENDENCIES
-  # fi
 }
 
-load_core_mod() {
-  load_config_file $ZMICRO_MOD
-  
-  load_mod_config
+config::load_core_mod() {
+  config::load_mod $ZMICRO_HOME
 }
 
-load_user_config() {
+config::load_user_config() {
   [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
 }
 
-zmicro_config_get() {
+config::get() {
   # If not found, return empty string
   if [ ! -f $ZMICRO_RC ]; then
     echo ""
@@ -95,19 +102,27 @@ zmicro_config_get() {
   echo $value
 }
 
-zmicro_config_set() {
+config::set() {
   local key=$1
   local value=$2
+  local filepath=$3
+
+  if [ -z "$filepath" ]; then
+    filepath=$ZMICRO_RC
+  elif [ ! -f "$filepath" ]; then
+    log::error "[config::set] file(${filepath}) not found"
+    exit 1
+  fi
 
   local line=""
   # If not found, return empty string
-  if [ -f $ZMICRO_RC ]; then
-    line=$(cat $ZMICRO_RC | grep "${key}=")
+  if [ -f $filepath ]; then
+    line=$(cat $filepath | grep "${key}=")
   fi
 
   # New Key
   if [ "$line" = "" ]; then
-    echo "${key}=${value}" >> $ZMICRO_RC
+    echo "${key}=${value}" >>$filepath
     return
   fi
 
@@ -117,7 +132,7 @@ zmicro_config_set() {
   sed -i -e "s%${line}%${newLine}%g" $ZMICRO_RC
 }
 
-zmicro_config_remove() {
+config::remove() {
   local key=$1
   local line=$(cat $ZMICRO_RC | grep "${key}=")
 
@@ -128,20 +143,20 @@ zmicro_config_remove() {
   fi
 }
 
-zmicro_config_list() {
+config::list() {
   less $ZMICRO_RC
 }
 
-export -f load_config_file
-export -f load_config_dir
+export -f config::load_file
+export -f config::load_dir
 
 export -f load_config
 
-export -f load_mod_config
-export -f load_core_mod
-export -f load_user_config
+export -f config::load_mod
+export -f config::load_core_mod
+export -f config::load_user_config
 
-export -f zmicro_config_list
-export -f zmicro_config_get
-export -f zmicro_config_set
-export -f zmicro_config_remove
+export -f config::list
+export -f config::get
+export -f config::set
+export -f config::remove

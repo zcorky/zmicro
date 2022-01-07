@@ -1,0 +1,44 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro auto update"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  # @TODO make sure update
+  # zmicro update -a >> /dev/null 2>&1
+
+  local name=zmicro_auto_update
+
+  if [ "$(zmicro cron has $name)" = "true" ]; then
+    zmicro cron status $name >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      zmicro cron enable $name
+      log::success "zmicro auto update enabled"
+      exit 0
+    fi
+
+    log::success "zmicro auto update is running"
+    return
+  fi
+
+  zmicro cron create $name 0 10 _/1 _ _ zmicro update -a >>/dev/null
+  if [ "$?" != "0" ]; then
+    log::error "[$(timestamp)] zmicro create auto update error"
+    exit 1
+  else
+    log::success "zmicro will auto update ok at 10:00 AM every day"
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@

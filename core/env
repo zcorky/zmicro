@@ -25,14 +25,14 @@ env() {
 
   # 配置加载顺序
   # 1. mod
-  load_core_mod
+  config::load_core_mod
   # 2. Load Config config/*
   load_config $ZMICRO_CONFIG_PATH
   # 3. Load User Config .zmicrorc
   [[ -f $ZMICRO_RC ]] && load_config $ZMICRO_RC
 
   # Do for mac os
-  if [ "$(os_is_macos)" = "true" ]; then
+  if [ "$(os::is_macos)" = "true" ]; then
     export ZMICRO_APP_LOGS_PATH=$HOME/.local/zmicro/logs
     export ZMICRO_APP_DATA_PATH=$HOME/.local/zmicro/data
   fi

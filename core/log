@@ -2,14 +2,14 @@
 
 DAYS_SECONDS_90=$((90 * 24 * 60 * 60))
 
-log_init() {
+log::init() {
   . $ZMICRO_CORE_PATH/os
   . $ZMICRO_CORE_PATH/color
 
-  local current_user=$(os_username)
+  local current_user=$(os::username)
 
   if [ "$current_user" = "" ]; then
-    log_error "log_init can not get current user."
+    log::error "log::init can not get current user."
     exit 1
   fi
 
@@ -24,14 +24,14 @@ log_init() {
     sudo chown -R $current_user $ZMICRO_LOG_PATH
 
     # @TODO load core os utils
-    log_debug "[log_init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
+    log::debug "[log::init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
 
   if [ ! -d $ZMICRO_APP_LOGS_PATH ]; then
     sudo mkdir -p $ZMICRO_APP_LOGS_PATH
     sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
 
-    log_debug "[log_init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
+    log::debug "[log::init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
 
   if [ ! -w $ZMICRO_LOG_PATH ]; then
@@ -42,40 +42,42 @@ log_init() {
     sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
   fi
 
-  log_debug "logs config done"
+  log::debug "logs config done"
 }
 
-log_info() {
-  echo -e "$(color_green ℹ) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+log::info() {
+  echo -e "$(color::green ℹ) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
-log_debug() {
-  echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
+log::debug() {
+  if [ -w $ZMICRO_LOG_DEBUG_PATH ]; then
+    echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
+  fi
 }
 
-log_success() {
-  echo "$(color_green ✔) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+log::success() {
+  echo "$(color::green ✔) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
-log_error() {
-  echo "$(color_red ✖) ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
+log::error() {
+  echo "$(color::red ✖) ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
 }
 
-log_warn() {
-  echo -e "$(color_yellow ⚠) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
+log::warn() {
+  echo -e "$(color::yellow ⚠) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log() {
   # @TODO will remove custum blanks
   echo -e $@ | tee -a $ZMICRO_LOG_COMMON_PATH
-  # log_info $@
+  # log::info $@
 }
 
-log_timestamp() {
+log::timestamp() {
   echo -e "[$(timestamp)] $@"
 }
 
-log_command() {
+log::command() {
   local command_path_with_seperator=$1
 
   # Run Command with log
@@ -85,38 +87,35 @@ log_command() {
   # Init Script Path
   local init_path=$base_command_path/_init
 
-  log_debug "[$(timestamp)]$(color_success [command] command path: $base_command_path $command_fragments $command_args)"
-  log_debug "[$(timestamp)][command]"
+  log::debug "[$(timestamp)]$(color::success [command] command path: $base_command_path $command_fragments $command_args)"
+  log::debug "[$(timestamp)][command]"
 
-  # log_debug "origin: $@"
-  log_debug "[$(timestamp)][command] base_command_path: $base_command_path"
-  log_debug "[$(timestamp)][command] command_fragments: $command_fragments"
-  log_debug "[$(timestamp)][command] command_args: $command_args"
-  log_debug "[$(timestamp)][command] init_path: $init_path"
-  log_debug "[$(timestamp)][command]"
+  # log::debug "origin: $@"
+  log::debug "[$(timestamp)][command] base_command_path: $base_command_path"
+  log::debug "[$(timestamp)][command] command_fragments: $command_fragments"
+  log::debug "[$(timestamp)][command] command_args: $command_args"
+  log::debug "[$(timestamp)][command] init_path: $init_path"
+  log::debug "[$(timestamp)][command]"
 
   # @TODO
   if [ "$command_fragments" = "unknown" ]; then
-    echo "[error] found, but get_command_path error"
+    echo "[error] found, but commander::get_command_path error"
     exit 1
   fi
 
-  command_path=$(get_command_path_with_fragments $base_command_path $command_fragments)
+  command_path=$(commander::get_command_path_with_fragments $base_command_path $command_fragments)
 
   echo -e "${GREEN}[$(timestamp)] $command_fragments start ...${ENDCOLOR}" >>$ZMICRO_LOG_COMMON_PATH
 
-  log_debug [$(timestamp)]$(color_success "[command] final command path: $command_path")
-  log_debug ""
-
-  # @TODO why should +e
-  set +e
+  log::debug [$(timestamp)]$(color::success "[command] final command path: $command_path")
+  log::debug ""
 
   # Load Init
   if [ -f "$init_path" ]; then
-    log_debug "[$(timestamp)][command] load init in $init_path"
+    log::debug "[$(timestamp)][command] load init in $init_path"
 
     # . $init_path
-    load_config_file $init_path
+    config::load_file $init_path
   fi
 
   # @TODO if use log command, donot record log, caused bug
@@ -131,38 +130,69 @@ log_command() {
   fi
 
   if [ "$exit_code" = "0" ]; then
-    log_success "[$(timestamp)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
+    log::success "[$(timestamp)] $command_fragments done." >>/dev/null # >> $ZMICRO_LOG_COMMON_PATH
   else
-    log_error "[$(timestamp)] $command_fragments error." >>$ZMICRO_LOG_COMMON_PATH
+    log::error "[$(timestamp)] $command_fragments error." >>$ZMICRO_LOG_COMMON_PATH
   fi
 
   exit $exit_code
-  set -e
 }
 
-log_update() {
-  stage=$1 # START | END
-  current_version=$(get_current_version)
-  log_info "[$(timestamp)] ${stage} ${current_version} "
+log::update() {
+  local type=$1 # CORE | PLUGIN
+  local name=$2
+  local stage=$3 # START | END | ERROR
+  local origin_version=$4
+  local current_version=$5
+
+  # local current_version=$(version::get)
+  if [ "$stage" = "START" ]; then
+    if [ "$type" = "CORE" ]; then
+      current_version=$(version::get)
+    else
+      current_version=$origin_version
+    fi
+
+    log::info "[$(timestamp)][${type}: ${name}][${stage}] ${current_version}" >>$ZMICRO_LOG_UPDATE_PATH
+  else
+    if [ "$origin_version" = "$current_version" ]; then
+      log::info "[$(timestamp)][${type}: ${name}][${stage}][version] ${origin_version} => ${current_version}" >>$ZMICRO_LOG_UPDATE_PATH
+    else
+      log::info "[$(timestamp)][${type}: ${name}][${stage}][version] ${origin_version} => $(color::green ${current_version})" >>$ZMICRO_LOG_UPDATE_PATH
+    fi
+  fi
+
+  if [ "$type" = "CORE" ]; then
+    echo "====== DETAIL LOG ${stage} ======" >>$ZMICRO_LOG_UPDATE_PATH
+  else
+    echo "  ====== DETAIL LOG ${stage} ======" >>$ZMICRO_LOG_UPDATE_PATH
+  fi
+
+  if [ "$stage" = "END" ] || [ "$stage" = "ERROR" ]; then
+    if [ "$type" = "CORE" ] && [ "$name" = "zmicro" ]; then
+      echo "" >>$ZMICRO_LOG_UPDATE_PATH
+      echo "" >>$ZMICRO_LOG_UPDATE_PATH
+    fi
+  fi
 }
 
-log_version() {
+log::version() {
   local PREV=$1
   local CURRENT=$2
 
   if [ "$PREV" != "$CURRENT" ]; then
-    log_info "[$(timestamp)][$CURRENT] ${PREV} => ${CURRENT}"
-    log_success "update success: $CURRENT"
+    log::info "[$(timestamp)][$CURRENT] ${PREV} => ${CURRENT}"
+    log::success "update success: $CURRENT"
   else
-    log_success "no changes: $CURRENT"
+    log::success "no changes: $CURRENT"
   fi
 }
 
-log_plugin_update_lock() {
+log::plugin_update_lock() {
   # format: plugin_name#timestamps
   # example: daemon#timestamps
   if [ -z "$plugin_name" ]; then
-    log_error "[log_plugin_update_lock] plugin_name is required"
+    log::error "[log::plugin_update_lock] plugin_name is required"
     exit 1
   fi
 
@@ -173,7 +203,7 @@ log_plugin_update_lock() {
 }
 
 # keep in 90d
-log_clean_check() {
+log::clean_check() {
   local log_last_check=$ZMICRO_LOG_PATH/.last_clean
 
   # initialize
@@ -181,7 +211,7 @@ log_clean_check() {
     echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
 
     # clean
-    log_clean &
+    log::clean &
     >>/dev/null 2>&1
     return
   fi
@@ -192,7 +222,7 @@ log_clean_check() {
     return
   fi
 
-  local lcts=$(timestamp_to_seconds $last_check_timestamp)
+  local lcts=$(timestamp::to_seconds $last_check_timestamp)
   if [ "$?" != "0" ]; then
     echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
     return
@@ -204,13 +234,13 @@ log_clean_check() {
   # echo "delta: $delta"
   if [ $delta -gt $DAYS_SECONDS_90 ]; then
     # do clean
-    log_clean # & >> /dev/null 2>&1
+    log::clean # & >> /dev/null 2>&1
     # else
-    # echo "[log_clean_check] no need clean"
+    # echo "[log::clean_check] no need clean"
   fi
 }
 
-log_clean() {
+log::clean() {
   # if [ ! -d $ZMICRO_LOG_PATH ]; then
   #   export ZMICRO_LOG_PATH=${LOG_CLEAN_DIR}
   # fi
@@ -220,7 +250,7 @@ log_clean() {
   #   LOG_CLEAN_DIR=/var/log/zmicro
   # fi
 
-  # if [ "$(string_match $LOG_CLEAN_DIR ^${/var/log/zmicro})"]; then
+  # if [ "$(string::match $LOG_CLEAN_DIR ^${/var/log/zmicro})"]; then
   #   LOG_CLEAN_DIR=/var/log/zmicro
   # fi
 
@@ -230,10 +260,10 @@ log_clean() {
   fi
 
   local LOG_CLEAN_BACKUP_FILE=${LOG_CLEAN_DIR}/backup.$(date +%Y-%m-%d_%H_%M_%S).gz
-  log_debug "[timestamps][log_clean] clean logs dir: ${ZMICRO_LOG_PATH}"
+  log::debug "[timestamps][log::clean] clean logs dir: ${ZMICRO_LOG_PATH}"
 
   # backup
-  log_debug "[timestamps][log_clean] backup ${LOG_CLEAN_BACKUP_FILE}"
+  log::debug "[timestamps][log::clean] backup ${LOG_CLEAN_BACKUP_FILE}"
   sudo tar -zcvf ${LOG_CLEAN_BACKUP_FILE} --exclude '*.gz' ${LOG_CLEAN_DIR} >>/dev/null 2>&1
   if [ -f "$LOG_CLEAN_BACKUP_FILE" ]; then
     # @TODO safe
@@ -246,22 +276,22 @@ log_clean() {
   echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
 }
 
-export -f log_init
+export -f log::init
 
-export -f log_clean_check
-export -f log_clean
+export -f log::clean_check
+export -f log::clean
 
 export -f log
-export -f log_success
-export -f log_debug
-export -f log_error
-export -f log_info
-export -f log_warn
+export -f log::success
+export -f log::debug
+export -f log::error
+export -f log::info
+export -f log::warn
 
-export -f log_timestamp
+export -f log::timestamp
 
-export -f log_command
-export -f log_update
-export -f log_version
+export -f log::command
+export -f log::update
+export -f log::version
 
-export -f log_plugin_update_lock
+export -f log::plugin_update_lock
