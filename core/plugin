@@ -412,6 +412,7 @@ plugin::run() {
 
   # Set Env
   export PLUGIN_NAME=$plugin_name
+  export PLUGIN_DIR=$(plugin::get_path $plugin_name)
   export PLUGIN_DATA=$(plugin::get_app_data_path $plugin_name)
   export PLUGIN_LOGS=$(plugin::get_app_logs_path $plugin_name)
   export PLUGIN_CONFIGS=$(plugin::get_app_configs_path $plugin_name)
