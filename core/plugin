@@ -401,9 +401,30 @@ plugin::run() {
     exit 1
   fi
 
+  if [ "$(plugin::exist $plugin_name)" != "true" ]; then
+    log::error "[$(timestamp)][plugin::run] plugin ($plugin_name) not found"
+    exit 1
+  fi
+
   # @TODO
   export ZMICRO_PLUGIN_GLOBAL_PARENT=$ZMICRO_PLUGIN_GLOBAL_CURRENT
   export ZMICRO_PLUGIN_GLOBAL_CURRENT=$plugin_name
+
+  # Set Env
+  export PLUGIN_NAME=$plugin_name
+  export PLUGIN_DATA=$(plugin::get_app_data_path $plugin_name)
+  export PLUGIN_LOGS=$(plugin::get_app_logs_path $plugin_name)
+  export PLUGIN_CONFIGS=$(plugin::get_app_configs_path $plugin_name)
+  export PLUGIN_CONFIG=$PLUGIN_CONFIGS/config
+  if [ ! -d "$PLUGIN_DATA" ]; then
+    mkdir -p $PLUGIN_DATA
+  fi
+  if [ ! -d "$PLUGIN_LOGS" ]; then
+    mkdir -p $PLUGIN_LOGS
+  fi
+  if [ ! -d "$PLUGIN_CONFIGS" ]; then
+    mkdir -p $PLUGIN_CONFIGS
+  fi
 
   log::debug "[$(timestamp)][plugin::run] PARENT: $ZMICRO_PLUGIN_GLOBAL_PARENT, CURRENT: $ZMICRO_PLUGIN_GLOBAL_CURRENT"
 
