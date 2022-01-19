@@ -251,7 +251,17 @@ plugin::list_bins() {
   if [ "$(plugin::exist $plugin_name)" != "true" ]; then
     echo ""
   else
-    ls $(plugin::get_bin_path $plugin_name)
+    local _all=$(ls $(plugin::get_bin_path $plugin_name))
+    local base_path=$(plugin::get_bin_path $plugin_name)
+
+    fn() {
+      local element=$1
+      if [ -f "$base_path/$element" ]; then
+        echo "true"
+      fi
+    }
+
+    array::filter fn $_all
   fi
 }
 
