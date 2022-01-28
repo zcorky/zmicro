@@ -117,7 +117,9 @@ config::set() {
   local line=""
   # If not found, return empty string
   if [ -f $filepath ]; then
+    set +e
     line=$(cat $filepath | grep "${key}=")
+    set -e
   fi
 
   # New Key
