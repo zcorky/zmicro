@@ -22,7 +22,8 @@ core() {
   sed -i "s/<VERSION>/${version}/" $control_path
   # files
   mkdir -p $lib_dir
-  cp -rf $ZMICRO_HOME/* $lib_dir
+  # stackoverflow: https://askubuntu.com/questions/942352/how-do-i-copy-a-directory-into-itself
+  rsync -Rr $ZMICRO_HOME/* $lib_dir
   # pack
   dpkg -b $deb_dir $package_name
   # clean
