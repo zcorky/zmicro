@@ -24,7 +24,7 @@ core() {
   mkdir -p $lib_dir
   # stackoverflow: https://askubuntu.com/questions/942352/how-do-i-copy-a-directory-into-itself
   rsync -Rr $ZMICRO_HOME/* $deb_dir
-  
+
   # pack
   dpkg -b $deb_dir $package_name
   # clean
