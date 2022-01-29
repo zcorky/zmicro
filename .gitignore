@@ -11,3 +11,5 @@ code
 *.snap
 
 config/deb/usr/local/lib/zmicro/*
+
+*.deb

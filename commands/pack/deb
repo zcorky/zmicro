@@ -29,7 +29,7 @@ core() {
   git checkout $control_path
   rm -rf $lib_dir
 
-  log::success "[$(timestamp)][plugin] pack deb($(color::success $)) done"
+  log::success "[$(timestamp)][plugin] pack deb($(color::success $package_name)) done"
 }
 
 run() {
