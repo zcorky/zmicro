@@ -9,3 +9,5 @@ code
 .env
 
 *.snap
+
+config/deb/usr/local/lib/zmicro/*

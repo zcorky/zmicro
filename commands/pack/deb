@@ -1,0 +1,39 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro package deb"
+  echo ""
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local deb_dir=$ZMICRO_HOME/config/deb
+  local control_path=${deb_dir}/DEBIAN/control
+  local lib_dir=${deb_dir}/usr/local/lib/zmicro
+  local version=$(version::zmicro_num)
+  local package_name=zmicro_${version}_amd64.deb
+
+  # info
+  sed -i "s/<VERSION>/${version}/" $control_path
+  # files
+  mkdir -p $lib_dir
+  cp -rf $ZMICRO_HOME/* $lib_dir
+  # pack
+  dpkg -b $package_name $deb_dir
+  # clean
+  git checkout $control_path
+  rm -rf $lib_dir
+
+  log::success "[$(timestamp)][plugin] pack deb($(color $)) done"
+}
+
+run() {
+  core $@
+}
+
+run $@

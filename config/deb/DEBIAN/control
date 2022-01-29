@@ -1,0 +1,5 @@
+Package: zmicro
+Version: <VERSION>
+Maintainer: Zero <tobewhatwewant@gmail.com>
+Architecture: any
+Description: Zero's Service Manager

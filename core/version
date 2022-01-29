@@ -55,6 +55,10 @@ version::zmicro() {
   version::get $ZMICRO_HOME
 }
 
+version::zmicro_num() {
+  version::get $ZMICRO_HOME | awk -F 'v' '{print $2}'
+}
+
 version::main() {
   version::echo $ZMICRO_HOME
 }
@@ -123,6 +127,7 @@ export -f version::git_hash
 export -f version::timestamp
 
 export -f version::zmicro
+export -f version::zmicro_num
 
 export -f version::echo
 
