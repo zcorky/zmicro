@@ -267,20 +267,43 @@ os::disk_usage() {
   # used total percent
 
   local type=$1
-  local all=$(df -h | awk '$NF=="/"{printf "%d/%dGB (%s)", $3,$2,$5}')
+  # @TODO var will broken \n
+  # local devices=$(df -h | grep "^/dev/")
+
+  function get_used() {
+    local value=0
+    local lines=$(df -h | grep "^/dev/" | awk '{print $3}' | grep "G" | awk -F 'G' '{print $1}')
+    for line in ${lines[@]}; do
+      value=$(($value + $line))
+    done
+
+    echo $value
+  }
+
+  function get_total() {
+    local value=0
+    local lines=$(df -h | grep "^/dev/" | awk '{print $2}' | grep "G" | awk -F 'G' '{print $1}')
+    for line in ${lines[@]}; do
+      value=$(($value + $line))
+    done
+
+    echo $value
+  }
 
   case $type in
   used)
-    echo $all | awk -F '/' '{print $1}'
+    get_used
     ;;
   total)
-    echo $all | awk -F '[/G]' '{print $2}'
+    get_total
     ;;
   percent)
-    echo $all | awk -F '[(%]' '{print $2}'
+    local used=$(get_used)
+    local total=$(get_total)
+    echo $(expr $used \* 100 / $total)
     ;;
   *)
-    echo $all
+    echo $lines | awk '{printf "%s - %d %d GB (%s)\n", $1, $3,$2,$5}'
     ;;
   esac
 }
