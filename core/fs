@@ -123,10 +123,11 @@ fs::remove_line_has_str() {
     exit 1
   fi
 
-  sed -i -e "s%.*${match_str}.*%%g" $file_path
+  # sed -i -e "s%.*${match_str}.*%%g" $file_path
+  sed -i "/${match_str}/d" $file_path
 
-  # fix emtpy line
-  fs::remove_empty_line $file_path
+  # # fix emtpy line
+  # fs::remove_empty_line $file_path
 }
 
 export -f fs::write
