@@ -111,6 +111,10 @@ os::tmp() {
   echo /tmp
 }
 
+os::tmp_file() {
+  mktemp
+}
+
 #
 os::is_bash() {
   echo $(os::shell) | grep -o bash >>/dev/null 2>&1
@@ -441,6 +445,7 @@ export -f os::kernel
 
 export -f os::pwd
 export -f os::tmp
+export -f os::tmp_file
 
 export -f os::is_bash
 export -f os::is_zsh

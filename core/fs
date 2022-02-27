@@ -99,14 +99,19 @@ fs::append() {
 
 fs::remove_empty_line() {
   local file_path=$1
+  local tmp_file_path=$(os::tmp_file)
   if [ -z "$file_path" ]; then
     log::error "[$(timestamp)][fs::remove_empty_line] file_path is required"
     exit 1
   fi
 
+  # copy tmp
+  log::debug "[$(timestamp)][fs::remove_empty_line] cp $file_path $tmp_file_path"
+  cp $file_path $tmp_file_path
+
   # remove empty line
   #   reference: https://stackoverflow.com/questions/10347653/awk-remove-blank-lines
-  awk NF $file_path >$file_path
+  awk NF $tmp_file_path >$file_path
 }
 
 fs::remove_line_has_str() {
@@ -119,6 +124,9 @@ fs::remove_line_has_str() {
   fi
 
   sed -i -e "s%.*${match_str}.*%%g" $file_path
+
+  # fix emtpy line
+  fs::remove_empty_line $file_path
 }
 
 export -f fs::write
