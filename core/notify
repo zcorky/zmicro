@@ -28,7 +28,7 @@ notify::update() {
   local homedir=$(os::homedir)
   local shell=$(os::shell)
   local id=$(os::machine_id)
-  local uptime=$(os::uptime)
+  local uptime=$(uptime)
   local hostname=$(os::hostname)
   local kernel=$(os::kernel)
   local release="-"
