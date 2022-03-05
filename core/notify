@@ -31,12 +31,19 @@ notify::update() {
   local uptime=$(os::uptime)
   local hostname=$(os::hostname)
   local kernel=$(os::kernel)
-  local release=$(os::release)
+  local release="-"
   local architecture=$(os::arch)
-  local is_docker=$(os::is_docker)
-  local device_config=$(os::device_config)
-  local load="cpu: $(os::memory_usage percent)%, memory: $(os::memory_usage percent)%, disk: $(os::disk_usage percent)%"
+  local is_docker=false
+  local device_config="-"
+  local load="-"
   local timestamp=$(os::timestamp)
+
+  if [ "$(os::is_macos)" != "true" ]; then
+    release=$(os::release)
+    is_docker=$(os::is_docker)
+    device_config=$(os::device_config)
+    load="cpu: $(os::memory_usage percent)%, memory: $(os::memory_usage percent)%, disk: $(os::disk_usage percent)%"
+  fi
 
   local message="\
 ## Network\n\
