@@ -43,7 +43,8 @@ os::shell_profile() {
 }
 
 os::hostname() {
-  echo $HOST
+  # echo $HOST
+  hostname
 }
 
 os::uptime() {
@@ -239,6 +240,14 @@ os::is_support_color() {
   fi
 }
 
+os::device_config() {
+  local cpus=$(cat /proc/cpuinfo | grep processor | wc -l)
+  local memory=$(((($(cat /proc/meminfo | grep MemTotal | awk '{print $2}') / 1024 / 1024)) + 1))
+  local disk=$(os::disk_usage total)
+
+  echo "${cpus}C${memory}G - ${disk}G"
+}
+
 os::cpu_usage() {
   top -bn1 | grep Cpu | head -n 1 | awk '{printf "%.2f", $2}'
 }
@@ -319,7 +328,8 @@ disk: $(os::disk_usage)"
 }
 
 os::network_ip() {
-  dig +short myip.opendns.com @resolver1.opendns.com
+  # dig +short myip.opendns.com @resolver1.opendns.com
+  curl https://ip.zcorky.com
 }
 
 os::machine_id() {
@@ -435,6 +445,10 @@ os::hold_on() {
   os::sleep_infinity
 }
 
+os::timestamp() {
+  timestamp
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -464,6 +478,8 @@ export -f os::top
 export -f os::is_command_exist
 export -f os::is_support_color
 
+export -f os::device_config
+
 export -f os::cpu_usage
 export -f os::memory_usage
 export -f os::disk_usage
@@ -485,3 +501,5 @@ export -f os::random_id
 
 export -f os::sleep_infinity
 export -f os::hold_on
+
+export -f os::timestamp

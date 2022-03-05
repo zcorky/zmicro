@@ -33,6 +33,13 @@ update_zmicro() {
   plugin::register_all $ZMICRO_PLUGINS_PATH
 
   log::update CORE zmicro END
+
+  # send notification
+  if [ "$origin_version" = "$new_version" ]; then
+    notify::update "no change: $new_version"
+  else
+    notify::update "$origin_version => $new_version"
+  fi
 }
 
 help() {

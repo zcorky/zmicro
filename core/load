@@ -57,6 +57,8 @@ load plugin
 load pm
 load service
 
+load notify
+
 load repl
 
 # Cause Bug
