@@ -23,7 +23,7 @@ notify::update() {
   local version_change=$@
 
   local url="https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07"
-  local ip=$(zmicro machine ip)
+  local ip=$(os::network_ip)
   local user=$(os::username)
   local homedir=$(os::homedir)
   local shell=$(os::shell)
