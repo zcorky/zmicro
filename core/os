@@ -329,7 +329,8 @@ disk: $(os::disk_usage)"
 
 os::network_ip() {
   # dig +short myip.opendns.com @resolver1.opendns.com
-  curl https://ip.zcorky.com
+  local ip=$(curl https://ip.zcorky.com 2>/dev/null)
+  echo $ip
 }
 
 os::machine_id() {

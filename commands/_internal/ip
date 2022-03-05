@@ -1,0 +1,16 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro ip"
+}
+
+core() {
+  os::network_ip
+}
+
+run() {
+  core $@
+}
+
+run $@
