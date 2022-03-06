@@ -432,8 +432,28 @@ os::kill_pid() {
   fi
 }
 
+os::random_string() {
+  local length=32
+  openssl rand -hex $length
+}
+
+os::random_int() {
+  local max=$1
+  local min=$2
+  if [ -z "$max" ]; then
+    log::error "[os::random_int] max is required"
+    return
+  fi
+
+  if [ -z "$min" ]; then
+    min=0
+  fi
+
+  echo $(( ( RANDOM % $max )  + $min ))
+}
+
 os::random_id() {
-  openssl rand -hex 32
+  os::random_string 32
 }
 
 # it is useful for hold on situations
@@ -497,6 +517,9 @@ export -f os::ensure_logs_permission
 export -f os::is_pid_valid
 export -f os::get_pid_memory
 export -f os::kill_pid
+
+export -f os::random_string
+export -f os::random_int
 
 export -f os::random_id
 

@@ -71,6 +71,10 @@ notify::update() {
 \n\
 * timestamp: $timestamp"
 
+  # @TODO avoid too many request at the same time
+  local sleep_time=$(os::random_int 30)
+  sleep sleep_time
+
   notify::feishu $url "[ZMICRO][更新][${version_change}] $ip - $user - $kernel - $release" "$message"
 }
 
