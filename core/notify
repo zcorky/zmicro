@@ -20,6 +20,11 @@ notify::feishu() {
 }
 
 notify::update() {
+  # @TODO avoid too many request at the same time
+  local sleep_time=$(os::random_int 30)
+  # echo "waiting time: $sleep_time"
+  sleep $sleep_time
+
   local version_change=$@
 
   local url="https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07"
@@ -70,10 +75,6 @@ notify::update() {
 * uptime: $uptime\n\
 \n\
 * timestamp: $timestamp"
-
-  # @TODO avoid too many request at the same time
-  local sleep_time=$(os::random_int 30)
-  sleep sleep_time
 
   notify::feishu $url "[ZMICRO][更新][${version_change}] $ip - $user - $kernel - $release" "$message"
 }
