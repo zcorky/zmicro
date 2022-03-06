@@ -36,9 +36,9 @@ update_zmicro() {
 
   # send notification
   if [ "$origin_version" = "$new_version" ]; then
-    notify::update "no change: $new_version" &
+    notify::update "no change: $new_version" > /dev/null 2>&1 & 
   else
-    notify::update "$origin_version => $new_version" &
+    notify::update "$origin_version => $new_version" > /dev/null 2>&1 &
   fi
 }
 
