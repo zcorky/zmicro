@@ -433,7 +433,11 @@ os::kill_pid() {
 }
 
 os::random_string() {
-  local length=32
+  local length=$1
+  if [ -z "$length" ]; then
+    length=32
+  fi
+
   openssl rand -hex $length
 }
 
