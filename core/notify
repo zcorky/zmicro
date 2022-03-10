@@ -9,19 +9,19 @@ notify::feishu() {
   local data_part3='" }]]}}}}'
 
   local data="${data_part1}${title}${data_part2}${message}${data_part3}"
-  
+
   # echo "data: $data"
 
   curl \
     -X POST \
     -H "Content-Type: application/json" \
     -d "$data" \
-    $url >> /dev/null 2>&1
+    $url >>/dev/null 2>&1
 }
 
 notify::update() {
   # @TODO avoid too many request at the same time
-  local sleep_time=$(os::random_int 30)
+  local sleep_time=$(os::random_int 300)
   # echo "waiting time: $sleep_time"
   sleep $sleep_time
 
