@@ -42,6 +42,11 @@ update_one() {
   log::update plugin $plugin_name START $plugin_origin_version
   log::info "[$(timestamp)][plugin] updating $plugin_name ..."
 
+  # Fix Git Pull Permission Denied
+  if [ ! -w "$plugin_path/.git/FETCH_HEAD" ]; then
+    sudo chown -R $USER $plugin_path
+  fi
+
   # Update @TODO
   cd $plugin_path
   git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
