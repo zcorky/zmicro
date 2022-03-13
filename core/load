@@ -40,6 +40,7 @@ load lock
 load type
 load unit
 load os
+load user
 load fs
 load net
 load color

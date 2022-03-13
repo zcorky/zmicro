@@ -1,0 +1,18 @@
+#!/bin/bash
+
+users::all() {
+  ls /home | tr '\n' ','
+}
+
+users::online() {
+  who | tr '\n' ','
+}
+
+users::login::histories() {
+  last | head -5 | tr '\n' ','
+}
+
+export -f users::all
+export -f users::online
+export -f users::login::histories
+

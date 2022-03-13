@@ -11,12 +11,40 @@ notify::feishu() {
   local data="${data_part1}${title}${data_part2}${message}${data_part3}"
 
   # echo "data: $data"
+  local tmp_file=/tmp/$(os::machine_id).json
+
+  echo $data > $tmp_file
+
+  if [ -n "$DEBUG" ]; then
+    curl \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -d @"${tmp_file}" \
+      $url
+
+    return
+  fi
 
   curl \
     -X POST \
     -H "Content-Type: application/json" \
-    -d "$data" \
+    -d @"${tmp_file}" \
     $url >>/dev/null 2>&1
+}
+
+notify::update::now() {
+  local version_change=$@
+  local ip=$(os::network_ip)
+  local user=$(os::username)
+  local release="-"
+  local message=$(os::info)
+  local url="https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07"
+
+  if [ "$(os::is_macos)" != "true" ]; then
+    release=$(os::release)
+  fi
+
+  notify::feishu $url "[更新][${version_change}] $ip - $user - $release" "$message"
 }
 
 notify::update() {
@@ -25,60 +53,10 @@ notify::update() {
   # echo "waiting time: $sleep_time"
   sleep $sleep_time
 
-  local version_change=$@
-
-  local url="https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07"
-  local ip=$(os::network_ip)
-  local user=$(os::username)
-  local homedir=$(os::homedir)
-  local shell=$(os::shell)
-  local id=$(os::machine_id)
-  local uptime=$(uptime)
-  local hostname=$(os::hostname)
-  local kernel=$(os::kernel)
-  local release="-"
-  local architecture=$(os::arch)
-  local is_docker=false
-  local device_config="-"
-  local load="-"
-  local timestamp=$(os::timestamp)
-
-  if [ "$(os::is_macos)" != "true" ]; then
-    release=$(os::release)
-    is_docker=$(os::is_docker)
-    device_config=$(os::device_config)
-    load="cpu: $(os::memory_usage percent)%, memory: $(os::memory_usage percent)%, disk: $(os::disk_usage percent)%"
-  fi
-
-  local message="\
-## Network\n\
-* ip: $ip\n\
-\n\
-## User\n\
-* user: $user\n\
-* homedir: $homedir\n\
-* shell: $shell\n\
-* hostname: $hostname\n\
-\n\
-## System\n\
-* kernel: $kernel\n\
-* release: $release\n\
-* arch: $architecture\n\
-* is_docker: $is_docker\n\
-\n\
-## Device\n\
-* id: $id\n\
-* device_config: $device_config\n\
-\n\
-## Load\n\
-* load: $load\n\
-* uptime: $uptime\n\
-\n\
-* timestamp: $timestamp"
-
-  notify::feishu $url "[ZMICRO][更新][${version_change}] $ip - $user - $kernel - $release" "$message"
+  notify::update::now "$@"
 }
 
 export -f notify::feishu
 
 export -f notify::update
+export -f notify::update::now

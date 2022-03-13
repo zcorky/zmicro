@@ -474,6 +474,61 @@ os::timestamp() {
   timestamp
 }
 
+os::info() {
+  local ip=$(os::network_ip)
+  local user=$(os::username)
+  local homedir=$(os::homedir)
+  local shell=$(os::shell)
+  local id=$(os::machine_id)
+  local uptime=$(uptime)
+  local hostname=$(os::hostname)
+  local kernel=$(os::kernel)
+  local release="-"
+  local architecture=$(os::arch)
+  local is_docker=false
+  local device_config="-"
+  local load="-"
+  local timestamp=$(os::timestamp)
+
+  if [ "$(os::is_macos)" != "true" ]; then
+    release=$(os::release)
+    is_docker=$(os::is_docker)
+    device_config=$(os::device_config)
+    load="cpu: $(os::memory_usage percent)%, memory: $(os::memory_usage percent)%, disk: $(os::disk_usage percent)%"
+  fi
+
+  local info="\
+## Network\n\
+* ip: $ip\n\
+\n\
+## User\n\
+* all: $(users::all)\n\
+* online: \n\
+$(users::online)\n\
+* histories: \n\
+$(users::login::histories)\n\
+\n\
+## System\n\
+* shell: $shell\n\
+* hostname: $hostname\n\
+* kernel: $kernel\n\
+* release: $release\n\
+* arch: $architecture\n\
+* is_docker: $is_docker\n\
+\n\
+## Device\n\
+* id: $id\n\
+* device_config: $device_config\n\
+\n\
+## Load\n\
+* load: $load\n\
+* uptime: $uptime\n\
+\n\
+* timestamp: $timestamp"
+
+  echo $info
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -531,3 +586,5 @@ export -f os::sleep_infinity
 export -f os::hold_on
 
 export -f os::timestamp
+
+export -f os::info
