@@ -35,6 +35,11 @@ color::disable() {
 }
 
 color::green() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
@@ -44,6 +49,11 @@ color::green() {
 }
 
 color::red() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
@@ -53,6 +63,11 @@ color::red() {
 }
 
 color::yellow() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
@@ -62,6 +77,11 @@ color::yellow() {
 }
 
 color::gray() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
@@ -71,6 +91,11 @@ color::gray() {
 }
 
 color::cyan() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
@@ -80,6 +105,11 @@ color::cyan() {
 }
 
 color::blue() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
@@ -89,6 +119,11 @@ color::blue() {
 }
 
 color::purple() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
@@ -98,6 +133,11 @@ color::purple() {
 }
 
 color::black() {
+  if [ "${NO_COLOR}" = "true" ]; then
+    echo "$@"
+    return
+  fi
+
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
     return
