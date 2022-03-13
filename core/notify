@@ -50,7 +50,9 @@ notify::update::now() {
 notify::update() {
   # @TODO avoid too many request at the same time
   local sleep_time=$(os::random_int 300)
-  # echo "waiting time: $sleep_time"
+  if [ -n "$DEBUG" ]; then
+    echo "waiting time: $sleep_time"
+  fi
   sleep $sleep_time
 
   notify::update::now "$@"

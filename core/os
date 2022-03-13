@@ -502,11 +502,13 @@ os::info() {
 * ip: $ip\n\
 \n\
 ## User\n\
-* all: $(users::all)\n\
+* all: $(users::all | tr '\n' ',')\n\
 * online: \n\
-$(users::online)\n\
+$(users::online | tr '\n' ',')\n\
 * histories: \n\
-$(users::login::histories)\n\
+$(users::login::histories | head -5 | tr '\n' ',')\n\
+* doing: \n\
+$(users::doing)\n\
 \n\
 ## System\n\
 * shell: $shell\n\
