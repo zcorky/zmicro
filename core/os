@@ -333,6 +333,16 @@ os::network_ip() {
   echo $ip
 }
 
+os::network_ip_internal() {
+  # reference: https://apple.stackexchange.com/questions/20547/how-do-i-find-my-ip-address-from-the-command-line
+  if [ "$(os::is_macos)" = "true" ]; then
+    ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}'
+    return
+  fi
+
+  echo $(hostname -I)
+}
+
 os::machine_id() {
   if [ "$(os::is_linux)" = "true" ]; then
     local machine_id0=/var/lib/dbus/machine-id
@@ -499,7 +509,8 @@ os::info() {
 
   local info="\
 ## Network\n\
-* ip: $ip\n\
+* public: $ip\n\
+* internal: $(os::network_ip_internal)\n\
 \n\
 ## User\n\
 * all: $(users::all | tr '\n' ',')\n\
@@ -568,6 +579,7 @@ export -f os::disk_usage
 export -f os::system_usage
 
 export -f os::network_ip
+export -f os::network_ip_internal
 
 export -f os::machine_id
 
