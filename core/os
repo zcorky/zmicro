@@ -484,6 +484,15 @@ os::timestamp() {
   timestamp
 }
 
+os::usage() {
+  if [ "$(os::is_macos)" = "true" ]; then
+    echo "-"
+    return
+  fi
+
+  echo "cpu: $(os::memory_usage percent)%, memory: $(os::memory_usage percent)%, disk: $(os::disk_usage percent)%"
+}
+
 os::info() {
   local ip=$(os::network_ip)
   local user=$(os::username)
@@ -504,7 +513,7 @@ os::info() {
     release=$(os::release)
     is_docker=$(os::is_docker)
     device_config=$(os::device_config)
-    load="cpu: $(os::memory_usage percent)%, memory: $(os::memory_usage percent)%, disk: $(os::disk_usage percent)%"
+    load="$(os::usage)"
   fi
 
   local info="\
@@ -601,4 +610,5 @@ export -f os::hold_on
 
 export -f os::timestamp
 
+export -f os::usage
 export -f os::info
