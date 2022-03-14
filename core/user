@@ -1,6 +1,11 @@
 #!/bin/bash
 
 users::all() {
+  if [ "$(os::is_macos)" = "true" ]; then
+    echo "-"
+    return
+  fi
+
   ls /home
 }
 
