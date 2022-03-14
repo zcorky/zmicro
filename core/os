@@ -48,7 +48,11 @@ os::hostname() {
 }
 
 os::uptime() {
-  echo $(uptime -p)
+  if [ "$(os::is_macos)" = "true" ]; then
+    uptime
+  else
+    echo $(uptime -p)
+  fi
 }
 
 os::arch() {
