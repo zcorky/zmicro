@@ -35,10 +35,10 @@ color::disable() {
 }
 
 color::green() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
@@ -49,10 +49,10 @@ color::green() {
 }
 
 color::red() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
@@ -63,10 +63,10 @@ color::red() {
 }
 
 color::yellow() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
@@ -77,10 +77,10 @@ color::yellow() {
 }
 
 color::gray() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
@@ -91,10 +91,10 @@ color::gray() {
 }
 
 color::cyan() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
@@ -105,10 +105,10 @@ color::cyan() {
 }
 
 color::blue() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
@@ -119,10 +119,10 @@ color::blue() {
 }
 
 color::purple() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
@@ -133,10 +133,10 @@ color::purple() {
 }
 
 color::black() {
-  if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
-    echo "$@"
-    return
-  fi
+  # if [ -n "${NO_COLOR}" ] && [ "${NO_COLOR}" = "true" ]; then
+  #   echo "$@"
+  #   return
+  # fi
 
   if [ "$(os::is_support_color)" = "false" ]; then
     echo $@
