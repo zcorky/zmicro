@@ -232,6 +232,18 @@ config::export() {
     local key=$(echo $line | awk -F '=' '{print $1}')
     local value=$(echo $line | awk -F '=' '{print $2}')
 
+    if [ -z "$key" ]; then
+      continue
+    fi
+
+    # @TODO remove quote
+    # value=${value#\"}
+    # value=${value%\"}
+    # value=${value#\'}
+    # value=${value%\'}
+    # trim quote
+    value=$(echo $value | sed -e 's/^"//' -e 's/"$//' | sed -e  "s/^'//" -e "s/'$//")
+
     # echo "export $key=$value"
     export $key=$value
   done < $filepath
