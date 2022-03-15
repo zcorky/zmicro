@@ -582,6 +582,61 @@ os::get_env() {
   env::get $1
 }
 
+os::inquirer() {
+  load inquirer
+  local key=$1
+  local type=$2
+  local description=$3
+  local required=$4
+
+  if [ -z "$key" ]; then
+    log::error "[os::inquirer] key is required"
+    return
+  fi
+
+  if [ -z "$type" ]; then
+    log::error "[os::inquirer] type is required, available: text, yesno"
+    return
+  fi
+
+  if [ -z "$description" ]; then
+    if [ "$type" = "text" ]; then
+      description="请输入 $key:"
+    elif [ "$type" = "yesno" ]; then
+      description="是否启用 $key?"
+    fi
+  fi
+
+  if [ -z "$required" ]; then
+    required=true
+  fi
+
+  if [ "$type" = "text" ]; then
+    inquirer::text "$description" value "" "value is required" inquirer::required 
+  elif [ "$type" = "yesno" ]; then
+    local choices=("Yes" "No")
+    inquirer::select "$description" choices value
+    if [ "$value" = "Yes" ]; then
+      value="true"
+    else
+      value="false"
+    fi
+  else 
+    log::error "[os::inquirer] invalid type($type), options: text, yesno"
+    exit 1
+  fi
+
+  # if [ "$required" = "true" ]; then
+  #   if [ -z "$value" ]; then
+  #     log::error "[os::inquirer] value is required"
+  #     exit 1
+  #   fi
+  # fi
+
+  # @TODO
+  export $key=$value
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -648,3 +703,5 @@ export -f os::usage
 export -f os::info
 
 export -f os::get_env
+
+export -f os::inquirer

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+inquirer::required() {
+  local value=$1
+  if [ "$value" = "" ]; then
+    echo "false"
+  else
+    echo "true"
+  fi
+}
+
+export -f inquirer::required

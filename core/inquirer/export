@@ -20,5 +20,9 @@ if [ "$TERM" = "" ] || [ "$TERM" = "dumb" ]; then
   export -f tput
 fi
 
+
 . $CURRENT_PATH/inquirer_text
 . $CURRENT_PATH/inquirer_select
+
+. $CURRENT_PATH/inquirer_validation
+
