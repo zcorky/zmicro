@@ -130,8 +130,13 @@ config::set() {
 
   # Old Key
   local newLine="${key}=${value}"
-  echo $newLine
-  sed -i -e "s%${line}%${newLine}%g" $ZMICRO_RC
+  # echo "old: $line"
+  # echo "new: $newLine"
+  sed -i -e "s%${line}%${newLine}%g" $filepath
+  if [ "$?" != "0" ]; then
+    log::error "[config::set] failed to set key(${key}) value(${value})"
+    exit 1
+  fi
 }
 
 config::remove() {
