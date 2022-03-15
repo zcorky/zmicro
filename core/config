@@ -91,14 +91,18 @@ config::load_user_config() {
 }
 
 config::get() {
-  # If not found, return empty string
-  if [ ! -f $ZMICRO_RC ]; then
-    echo ""
-    return
+  local key=$1
+  local filepath=$2
+  if [ -z "$filepath" ]; then
+    filepath=$ZMICRO_RC
   fi
 
-  local key=$1
-  local value=$(cat $ZMICRO_RC | grep "${key}=" | awk -F '=' '{print $2}')
+  if [ ! -f "$filepath" ]; then
+    log::error "[config::get] config file ($filepath) not found"
+    exit 1
+  fi
+
+  local value=$(cat $filepath | grep "${key}=" | awk -F '=' '{print $2}')
   echo $value
 }
 
@@ -154,6 +158,36 @@ config::list() {
   less $ZMICRO_RC
 }
 
+config::check_or_set() {
+  load inquirer
+  local key=$1
+  local filepath=$2
+  if [ -z "$key" ]; then
+    log::error "[config::check_or_set] key is required"
+    exit 1
+  fi
+  
+  if [ -z "$filepath" ]; then
+    log::error "[config::check_or_set] filepath is required"
+    exit 1
+  fi
+
+  if [ ! -f "$filepath" ]; then
+    log::error "[config::check_or_set] config file ($filepath) not found"
+    exit 1
+  fi
+
+  # local value=$(env::get $key)
+  local value=$(config::get $key $filepath)
+
+  if [ -z "$value" ]; then
+    inquirer::text "请输入 $key:" value
+    config::set $key $value $filepath
+  else
+    config::set $key $value $filepath
+  fi
+}
+
 export -f config::load_file
 export -f config::load_dir
 
@@ -167,3 +201,5 @@ export -f config::list
 export -f config::get
 export -f config::set
 export -f config::remove
+
+export -f config::check_or_set
