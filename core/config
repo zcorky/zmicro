@@ -186,6 +186,11 @@ config::check_or_set() {
   # local value=$(env::get $key)
   local value=$(config::get $key $filepath)
 
+  # apply env
+  if [ -z "$value" ]; then
+    value=$(env::get $key)
+  fi
+
   if [ -z "$value" ]; then
     if [ "$type" = "text" ]; then
       inquirer::text "请输入 $key:" value
@@ -203,6 +208,7 @@ config::check_or_set() {
     fi
   fi
 
+  # echo "key: $key, value: $value"
   config::set $key $value $filepath
 }
 
