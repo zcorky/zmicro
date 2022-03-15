@@ -575,6 +575,13 @@ os::top() {
   fi
 }
 
+# @EXAMPLE
+#  local key=$ZMICRO_HOME
+#  os::get_env $key
+os::get_env() {
+  env::get $1
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -639,3 +646,5 @@ export -f os::timestamp
 
 export -f os::usage
 export -f os::info
+
+export -f os::get_env

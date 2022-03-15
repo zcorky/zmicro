@@ -39,3 +39,15 @@ env() {
 }
 
 env
+
+# Get env by name
+# 
+# @Example:
+#   local key
+#   env::get $key
+env::get() {
+  local key=$1
+  echo ${!key}
+}
+
+export -f env::get
