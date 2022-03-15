@@ -161,9 +161,15 @@ config::list() {
 config::check_or_set() {
   load inquirer
   local key=$1
-  local filepath=$2
+  local type=$2
+  local filepath=$3
   if [ -z "$key" ]; then
     log::error "[config::check_or_set] key is required"
+    exit 1
+  fi
+
+  if [ -z "$type" ]; then
+    log::error "[config::check_or_set] type is required, options: text, yesno"
     exit 1
   fi
   
@@ -181,11 +187,48 @@ config::check_or_set() {
   local value=$(config::get $key $filepath)
 
   if [ -z "$value" ]; then
-    inquirer::text "请输入 $key:" value
-    config::set $key $value $filepath
-  else
-    config::set $key $value $filepath
+    if [ "$type" = "text" ]; then
+      inquirer::text "请输入 $key:" value
+    elif [ "$type" = "yesno" ]; then
+      local choices=("Yes" "No")
+      inquirer::select "是否启用 $key?" choices value
+      if [ "$value" = "Yes" ]; then
+        value="true"
+      else
+        value="false"
+      fi
+    else 
+      log::error "[config::check_or_set] invalid type($type), options: text, yesno"
+      exit 1
+    fi
   fi
+
+  config::set $key $value $filepath
+}
+
+config::export() {
+  local filepath=$1
+  if [ -z "$filepath" ]; then
+    log::error "[config::export] filepath is required"
+    exit 1
+  fi
+
+  if [ ! -f "$filepath" ]; then
+    log::error "[config::export] config file ($filepath) not found"
+    exit 1
+  fi
+
+  while read line; do
+    if [[ $line = "" ]]; then
+      continue
+    fi
+
+    local key=$(echo $line | awk -F '=' '{print $1}')
+    local value=$(echo $line | awk -F '=' '{print $2}')
+
+    # echo "export $key=$value"
+    export $key=$value
+  done < $filepath
 }
 
 export -f config::load_file
@@ -203,3 +246,4 @@ export -f config::set
 export -f config::remove
 
 export -f config::check_or_set
+export -f config::export
