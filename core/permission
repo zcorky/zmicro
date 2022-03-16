@@ -35,7 +35,18 @@ permission::has_permission() {
   fi
 }
 
+permission::add_docker() {
+  local user=$1
+  if [ "$user" = "" ]; then
+    user=$USER
+  fi
+
+  os::add_user_to_docker_group $user
+}
+
 export -f permission::has_permission
 export -f permission::has_read_permission
 export -f permission::has_write_permission
 export -f permission::has_execute_permission
+
+export -f permission::add_docker
