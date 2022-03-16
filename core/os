@@ -637,7 +637,7 @@ os::inquirer() {
   export $key=$value
 }
 
-export -f os::add_user_to_docker_group() {
+os::add_user_to_docker_group() {
   local user=$1
   if [ -z "$user" ]; then
     user=$USER
