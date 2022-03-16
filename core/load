@@ -57,6 +57,7 @@ load commander
 load plugin
 load pm
 load service
+load login
 
 load notify
 

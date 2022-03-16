@@ -1,0 +1,74 @@
+#!/bin/bash
+
+login::docker() {
+  local registry=$1
+  local username=$2
+  local password=$3
+
+  if [ "$registry" = "" ]; then
+    log::error "[core][login::docker] registry is required"
+    exit 1
+  fi
+
+  if [ "$username" = "" ]; then
+    log::error "[core][login::docker] username is required"
+    exit 1
+  fi
+
+  if [ "$password" = "" ]; then
+    log::error "[core][login::docker] password is required"
+    exit 1
+  fi
+
+  docker login $registry -u $username -p $password >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    log::error "Docker Login Failed"
+    exit -1
+  fi
+
+  log::success "Docker Login Success"
+}
+
+
+login::npm() {
+  local registry=$1
+  local username=$2
+  local password=$3
+  local email=$4
+
+  if [ "$registry" = "" ]; then
+    log::error "[core][login::npm] registry is required"
+    exit 1
+  fi
+
+  if [ "$username" = "" ]; then
+    log::error "[core][login::npm] username is required"
+    exit 1
+  fi
+
+  if [ "$password" = "" ]; then
+    log::error "[core][login::npm] password is required"
+    exit 1
+  fi
+
+  if [ "$email" = "" ]; then
+    log::error "[core][login::npm] email is required"
+    exit 1
+  fi
+
+  npm whoami --registry $registry >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    # auto input by-pass user interfactions in shell script
+    # stackoverflow: https://superuser.com/questions/380155/how-to-by-pass-user-interactions-in-a-script
+    (
+      echo $username;
+      echo $password;
+      echo $email
+    ) | npm login --registry $registry >> /dev/null 2>&1
+  fi
+
+  log::success "NPM Login Success"
+}
+
+export -f login::docker
+export -f login::npm
