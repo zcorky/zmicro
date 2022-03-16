@@ -68,3 +68,5 @@ export ZMICRO_SERVICES_PATH=$ZMICRO_HOME/services
 export DEFAULT_GIT_USERNAME=${GIT_USER:-$USER}
 export DEFAULT_GIT_PASSWORD=${GIT_PASSWORD}
 export DEFAULT_GIT_EMAIL=${GIT_EMAIL:-$USER@local}
+
+export DEFAULT_REPORT_URL=https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07

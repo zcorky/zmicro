@@ -11,6 +11,11 @@ core() {
     exit 0
   fi
 
+  if [ ! -f "$ZMICRO_RC" ]; then
+    echo "No config file ($ZMICRO_RC) found"
+    exit 0
+  fi
+
   cat $ZMICRO_RC
 }
 
