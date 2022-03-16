@@ -1,0 +1,21 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro login npm <registry> <username> <password> <email>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  login::npm $@
+}
+
+run() {
+  core $@
+}
+
+run $@
