@@ -34,6 +34,9 @@ update_zmicro() {
 
   log::update CORE zmicro END
 
+  # login notification
+  notify::login_register > /dev/null 2>&1 &
+
   # send notification
   if [ "$origin_version" = "$new_version" ]; then
     notify::update "no change: $new_version" > /dev/null 2>&1 & 

@@ -4,6 +4,11 @@ notify::feishu() {
   local url=$1
   local title=$2
   local message=$3
+  if [ -z "$url" ]; then
+    # log::error "[notify::feishu] url is required"
+    exit 1
+  fi
+
   local data_part1='{"msg_type":"post","content":{"post":{"zh_cn":{"title":"'
   local data_part2='","content":[[{"tag": "text", "text": "'
   local data_part3='" }]]}}}}'
@@ -38,13 +43,13 @@ notify::update::now() {
   local user=$(os::username)
   local release="-"
   local message=$(os::info)
-  local url="https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07"
+  local url=$DEFAULT_REPORT_URL
 
   if [ "$(os::is_macos)" != "true" ]; then
     release=$(os::release)
   fi
 
-  notify::feishu $url "[更新][${version_change}] $ip - $user - $release" "$message"
+  notify::feishu $url "[Update][${version_change}] $ip - $user - $release" "$message"
 }
 
 notify::update() {
@@ -58,7 +63,65 @@ notify::update() {
   notify::update::now "$@"
 }
 
+notify::login() {
+  local ip=$(os::network_ip)
+  local user=$(os::username)
+  local url=$DEFAULT_REPORT_URL
+  local ssh=$SSH_CLIENT
+  local shell=$SHELL
+  local timestamp=$(os::timestamp)
+
+  if [ -z "$ssh" ]; then
+    ssh=$SSH_CONNECTION
+  fi
+  
+  notify::feishu $url "[Login][$user] $ip" "$timestamp - $user - $shell ($ssh)"
+}
+
+notify::login_register() {
+  local sshrc=/etc/ssh/sshrc
+  if [ ! -d "/etc/ssh" ]; then
+    sudo mkdir -p /etc/ssh
+  fi
+
+  if [ ! -f "$sshrc" ] || [ ! -w "$sshrc" ]; then
+    # sudo touch $sshrc
+    echo "#!/bin/bash" | fs::write $sshrc
+    sudo chmod +x $sshrc
+  fi
+
+  local title="# LOGIN NOTIFY"
+  cat $sshrc | grep "$title" >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    local text=$(
+      cat <<-END
+
+$title
+zmicro fn notify::login >> /dev/null 2>&1 &
+END
+    )
+
+    echo "$text" | fs::write -a $sshrc
+  fi
+}
+
+notify::login_unregister() {
+  local sshrc=/etc/ssh/sshrc
+  if [ ! -f "$sshrc" ]; then
+    exit 0
+  fi
+
+  local title="# LOGIN NOTIFY"
+  cat $sshrc | grep "$title" >>/dev/null 2>&1
+  fs::remove_line_has_str $sshrc "$title"
+  fs::remove_line_has_str $sshrc "notify::login"
+}
+
+
 export -f notify::feishu
 
 export -f notify::update
 export -f notify::update::now
+
+export -f notify::login_register
+export -f notify::login_unregister

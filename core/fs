@@ -124,7 +124,12 @@ fs::remove_line_has_str() {
   fi
 
   # sed -i -e "s%.*${match_str}.*%%g" $file_path
-  sed -i "/${match_str}/d" $file_path
+  # sed -i "/${match_str}/d" $file_path
+  local tmp_file_path=$(os::tmp_file)
+  cp $file_path $tmp_file_path
+  cat $tmp_file_path \
+    | sed -e "/${match_str}/d" \
+    | sudo tee $file_path >>/dev/null 2>&1
 
   # # fix emtpy line
   # fs::remove_empty_line $file_path
