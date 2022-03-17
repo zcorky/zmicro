@@ -1,0 +1,33 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro user remove <username>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local username=$1
+  if [ "$username" = "" ]; then
+    log::error "username is required"
+    exit 1
+  fi
+
+  which deluser >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sudo deluser --remove-home $username
+    exit 0
+  fi
+
+  sudo userdel -r -f $username
+}
+
+run() {
+  core $@
+}
+
+run $@
