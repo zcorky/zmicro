@@ -18,7 +18,16 @@ version::timestamp() {
   local path=$1
   cd $path
 
-  git show -s --format=%cd --date="format:%Y-%m-%d"
+  local gitMainVersion=$(git --version | awk '{print $3}' | awk -F '.' '{print $1}')
+  local gitSubVersion=$(git --version | awk '{print $3}' | awk -F '.' '{print $2}')
+
+  if [ "$gitMainVersion" -ge "2" ] && [ "$gitSubVersion" -ge "7" ]; then
+    git show -s --format=%cd --date="format:%Y-%m-%d"
+  else
+    git show -s --format=%cd --date=local
+  fi
+
+
 }
 
 version::get() {
