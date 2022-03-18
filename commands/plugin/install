@@ -27,6 +27,13 @@ core() {
   local plugin_version=$2
   local plugin_url=$3
 
+  # @FEAT support: zmicro plugin install $plugin_name@$plugin_version
+  # @example zmicro plugin install name@version
+  if [ "$(string::match $plugin_name @)" ]; then
+    plugin_version=$(echo $plugin_name | awk -F@ '{print $2}')
+    plugin_name=$(echo $plugin_name | awk -F@ '{print $1}')
+  fi
+
   # compatible no version provided, like `zmicro plugin add` command
   #   such as: zmicro install $plugin_name $plugin_url [$plugin_version]
   if [ "$(string::match $plugin_version ^http)" = "true" ] || [ "$(string::match $plugin_version ^git)" = "true" ]; then
