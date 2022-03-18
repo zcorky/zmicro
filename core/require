@@ -1,31 +1,44 @@
 #!/bin/bash
 
 require() {
-  local plugin_name=$1
-  local plugin_version=$2
-  local plugin_repo=$3
+  local name=$1
+  local version=$2
+  local repo=$3
   local force_update=$IS_REQUIRE_MOD_UPDATE_TMP_GLOBAL
 
-  if [ "$(zmicro plugin has $plugin_name)" = "true" ]; then
-    log::debug "[$(timestamp)][require] installed before (2): ${plugin_name}"
+  if [ "$(zmicro plugin has $name)" = "true" ]; then
+    log::debug "[$(timestamp)][require] installed before (2): ${name}"
 
     if [ "$force_update" = "true" ]; then
-      log::info "[$(timestamp)][require] update: ${plugin_name}"
-      zmicro plugin update $plugin_name
+      log::info "[$(timestamp)][require] update: ${name}"
+      zmicro plugin update $name
     fi
     return
   fi
 
-  log::info "[$(timestamp)][require] install: $plugin_name ($plugin_version) ..."
+  #@PACKAGE ^package_name@version
+  if [ "$(string::match $name ^^)" = "true" ]; then
+    name=$(echo $name | awk -F '^' '{print $2}')
+    log::info "[$(timestamp)][require][package] install: $name ($version) ..."
+    #
+    zmicro package install $name $version $repo
+    if [ "$?" = "0" ]; then
+      log::success "[$(timestamp)][require][package] install success: ${name}"
+    else
+      log::error "[$(timestamp)][require][package] install failed: ${name}"
+    fi
+    return
+  fi
 
-  # log::info "[$(timestamp)][require] repo: ${plugin_repo}"
-
+  # @PLUGIN plugin_name@version
+  log::info "[$(timestamp)][require][plugin] install: $name ($version) ..."
+  # log::info "[$(timestamp)][require] repo: ${repo}"
   # @TODO
-  zmicro plugin install $plugin_name $plugin_version $plugin_repo
+  zmicro plugin install $name $version $repo
   if [ "$?" = "0" ]; then
-    log::success "[$(timestamp)][require] install success: ${plugin_name}"
+    log::success "[$(timestamp)][require][plugin] install success: ${name}"
   else
-    log::error "[$(timestamp)][require] install failed: ${plugin_name}"
+    log::error "[$(timestamp)][require][plugin] install failed: ${name}"
   fi
 
   # sleep 1
@@ -39,13 +52,13 @@ require::parse() {
   # echo "IS_REQUIRE_MOD_UPDATE_TMP_GLOBAL: $IS_REQUIRE_MOD_UPDATE_TMP_GLOBAL"
   # echo "is_require_mod_update: $is_require_mod_update"
 
-  local plugin_name=$(echo $text | awk -F '@' '{print $1}')
-  local plugin_version=$(echo $text | awk -F '@' '{print $2}' | awk -F '#' '{print $1}')
-  local plugin_repo=$(echo $text | awk -F '#' '{print $2}')
+  local name=$(echo $text | awk -F '@' '{print $1}')
+  local version=$(echo $text | awk -F '@' '{print $2}' | awk -F '#' '{print $1}')
+  local repo=$(echo $text | awk -F '#' '{print $2}')
 
-  # echo "[require::parse] ${plugin_name}(${plugin_version}) - ${plugin_repo}"
-  # log::info "[$(timestamp)][require] install plugin $plugin_name ($plugin_version) - ${plugin_repo} ..."
-  require $plugin_name $plugin_version $plugin_repo
+  # echo "[require::parse] ${name}(${version}) - ${repo}"
+  # log::info "[$(timestamp)][require] install plugin $name ($version) - ${repo} ..."
+  require $name $version $repo
 }
 
 require::mod() {

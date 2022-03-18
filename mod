@@ -8,4 +8,5 @@ DEPENDENCIES=(
   "machine@latest"
   "daemon@latest"
   "cron@latest"
+  # "^nodejs@latest" # ^ => package
 )
