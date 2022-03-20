@@ -226,9 +226,8 @@ os::top() {
 }
 
 os::is_command_exist() {
-  local command=$1
-  command -v $command >>/dev/null 2>&1
-  if [ "$?" = "0" ]; then
+  local cmd=$1
+  if command -v $cmd >>/dev/null 2>&1; then
     echo "true"
   else
     echo "false"
@@ -646,6 +645,10 @@ os::add_user_to_docker_group() {
   sudo usermod -aG docker $user
 }
 
+os::has_command() {
+  os::is_command_exist $1
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -677,6 +680,8 @@ export -f os::is_docker
 export -f os::top
 export -f os::is_command_exist
 export -f os::is_support_color
+
+export -f os::has_command
 
 export -f os::device_config
 
