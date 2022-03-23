@@ -12,6 +12,11 @@ core() {
   fi
 
   login::npm $@
+  if [ "$?" != "0" ]; then
+    log:error "failed to login npm"
+  else
+    log::success "success to login npm"
+  fi
 }
 
 run() {

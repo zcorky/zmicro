@@ -20,7 +20,7 @@ login::docker() {
     exit 1
   fi
 
-  docker login $registry -u $username -p $password >> /dev/null 2>&1
+  docker login $registry -u $username -p $password >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     log::error "Docker Login Failed"
     exit -1
@@ -28,7 +28,6 @@ login::docker() {
 
   log::success "Docker Login Success"
 }
-
 
 login::npm() {
   local registry=$1
@@ -56,19 +55,53 @@ login::npm() {
     exit 1
   fi
 
-  npm whoami --registry $registry >> /dev/null 2>&1
+  npm whoami --registry $registry >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     # auto input by-pass user interfactions in shell script
     # stackoverflow: https://superuser.com/questions/380155/how-to-by-pass-user-interactions-in-a-script
     (
-      echo $username;
-      echo $password;
+      echo $username
+      echo $password
       echo $email
-    ) | npm login --registry $registry >> /dev/null 2>&1
+    ) | npm login --registry $registry >>/dev/null 2>&1
   fi
 
   log::success "NPM Login Success"
 }
 
+login::git() {
+  local registry=$1
+  local username=$2
+  local password=$3
+
+  if [ "$registry" = "" ]; then
+    log::error "[core][login::git] registry is required"
+    exit 1
+  fi
+
+  if [ "$(string::match $registry ^http)" = "true" ]; then
+    registry=$(string::replace $registry "http://" "")
+    registry=$(string::replace $registry "https://" "")
+  fi
+
+  if [ "$username" = "" ]; then
+    log::error "[core][login::git] username is required"
+    exit 1
+  fi
+
+  if [ "$password" = "" ]; then
+    log::error "[core][login::git] password is required"
+    exit 1
+  fi
+
+  git config --global credential.helper store
+  git config --global credential.helper 'cache --timeout=604800'
+
+  local credential=https://$username:$password@$registry
+
+  echo $credential | fs::append $HOME/.git-credentials
+}
+
 export -f login::docker
 export -f login::npm
+export -f login::git

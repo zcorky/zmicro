@@ -2,7 +2,7 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro login docker <registry> <username> <password>"
+  echo "  zmicro login git <registry> <username> <password>"
 }
 
 core() {
@@ -11,11 +11,11 @@ core() {
     exit 0
   fi
 
-  login::docker $@
+  login::git $@
   if [ "$?" != "0" ]; then
-    log:error "failed to login docker"
+    log:error "failed to login git"
   else
-    log::success "success to login docker"
+    log::success "success to login git"
   fi
 }
 
