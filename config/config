@@ -69,4 +69,6 @@ export DEFAULT_GIT_USERNAME=${GIT_USER:-$USER}
 export DEFAULT_GIT_PASSWORD=${GIT_PASSWORD}
 export DEFAULT_GIT_EMAIL=${GIT_EMAIL:-$USER@local}
 
-export DEFAULT_REPORT_URL=https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07
+export ZMICRO_REPORT_URL=https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07
+export ZMICRO_UPDATE_REPORT_URL=$ZMICRO_REPORT_URL
+export ZMICRO_LOGIN_REPORT_URL=https://open.feishu.cn/open-apis/bot/v2/hook/569c3a71-a5ef-46c2-a98b-4c9b63893483
