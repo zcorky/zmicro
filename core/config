@@ -3,14 +3,14 @@
 load_config() {
   # @TOREMOVE
   # Fix Old ZMICRORC
-  local old_home=$(config::get HOME)
-  if [ "$old_home" != "" ]; then
-    log::debug "remove old config .zmicrorc"
+  # local old_home=$(config::get HOME)
+  # if [ "$old_home" != "" ]; then
+  #   log::debug "remove old config .zmicrorc"
 
-    config::remove HOME
-    config::remove BIN
-    config::remove VERSION
-  fi
+  #   config::remove HOME
+  #   config::remove BIN
+  #   config::remove VERSION
+  # fi
 
   CONFIG_PATH=$1
   if [ "$CONFIG_PATH" = "" ]; then
@@ -172,7 +172,7 @@ config::check_or_set() {
     log::error "[config::check_or_set] type is required, options: text, yesno"
     exit 1
   fi
-  
+
   if [ -z "$filepath" ]; then
     log::error "[config::check_or_set] filepath is required"
     exit 1
@@ -202,7 +202,7 @@ config::check_or_set() {
       else
         value="false"
       fi
-    else 
+    else
       log::error "[config::check_or_set] invalid type($type), options: text, yesno"
       exit 1
     fi
@@ -242,11 +242,11 @@ config::export() {
     # value=${value#\'}
     # value=${value%\'}
     # trim quote
-    value=$(echo $value | sed -e 's/^"//' -e 's/"$//' | sed -e  "s/^'//" -e "s/'$//")
+    value=$(echo $value | sed -e 's/^"//' -e 's/"$//' | sed -e "s/^'//" -e "s/'$//")
 
     # echo "export $key=$value"
     export $key=$value
-  done < $filepath
+  done <$filepath
 }
 
 export -f config::load_file
