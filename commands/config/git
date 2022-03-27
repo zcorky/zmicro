@@ -50,4 +50,22 @@ config_git() {
   git config --global pull.rebase false
 }
 
-config_git $@
+help() {
+  echo "Usage:"
+  echo "  zmicro config git [git_user] [git_email]"
+}
+
+core() {
+  config_git $@
+}
+
+run() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  core $@
+}
+
+run $@
