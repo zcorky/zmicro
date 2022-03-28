@@ -81,9 +81,14 @@ timestamp::recently() {
   timestamp::in_x_minutes 5 $@
 }
 
+timestamp::now() {
+  date +%s
+}
+
 export -f timestamp
 export -f timestamp::to_seconds
 export -f timestamp::gt
 export -f timestamp::lt
 export -f timestamp::in_x_minutes
 export -f timestamp::recently
+export -f timestamp::now

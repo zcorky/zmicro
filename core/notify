@@ -16,7 +16,7 @@ notify::feishu() {
   local data="${data_part1}${title}${data_part2}${message}${data_part3}"
 
   # echo "data: $data"
-  local tmp_file=/tmp/$(os::machine_id).json
+  local tmp_file=/tmp/$(os::random_string).json
 
   echo $data > $tmp_file
 
@@ -27,6 +27,7 @@ notify::feishu() {
       -d @"${tmp_file}" \
       $url
 
+    rm -rf $tmp_file
     return
   fi
 
@@ -35,6 +36,8 @@ notify::feishu() {
     -H "Content-Type: application/json" \
     -d @"${tmp_file}" \
     $url >>/dev/null 2>&1
+
+  rm -rf $tmp_file
 }
 
 notify::update::now() {

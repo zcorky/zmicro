@@ -451,6 +451,11 @@ os::random_string() {
     length=32
   fi
 
+  if [ "$(os::is_command_exist openssl)" = "false" ]; then
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $length | head -n 1 
+    return
+  fi
+
   openssl rand -hex $length
 }
 
