@@ -93,14 +93,14 @@ notify::login_register() {
     sudo chmod +x $sshrc
   fi
 
-  local title="# LOGIN NOTIFY"
+  local title="LOGIN NOTIFY"
   cat $sshrc | grep "$title" >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     local text=$(
       cat <<-END
 
-$title
-zmicro fn notify::login >> /dev/null 2>&1 &
+# $title
+NO_LOG=true zmicro fn notify::login >> /dev/null 2>&1 &
 END
     )
 
@@ -114,7 +114,7 @@ notify::login_unregister() {
     exit 0
   fi
 
-  local title="# LOGIN NOTIFY"
+  local title="LOGIN NOTIFY"
   cat $sshrc | grep "$title" >>/dev/null 2>&1
   fs::remove_line_has_str $sshrc "$title"
   fs::remove_line_has_str $sshrc "notify::login"
