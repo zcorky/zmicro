@@ -29,7 +29,9 @@ env() {
   # 2. Load Config config/*
   load_config $ZMICRO_CONFIG_PATH
   # 3. Load User Config .zmicrorc
-  [[ ! -f $ZMICRO_RC ]] && sudo touch $ZMICRO_RC && sudo chmod 666 $ZMICRO_RC
+  [[ ! -f $ZMICRO_RC ]] && touch $ZMICRO_RC
+  [[ ! -w $ZMICRO_RC ]] && sudo chown $USER $ZMICRO_RC
+
   load_config $ZMICRO_RC
 
   # Do for mac os

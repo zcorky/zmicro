@@ -6,6 +6,10 @@ log::init() {
   . $ZMICRO_CORE_PATH/os
   . $ZMICRO_CORE_PATH/color
 
+  if [ "$NO_LOG" = "true" ]; then
+    return
+  fi
+
   local current_user=$(os::username)
 
   if [ "$current_user" = "" ]; then
@@ -46,28 +50,57 @@ log::init() {
 }
 
 log::info() {
+  if [ "$NO_LOG" = "true" ]; then
+    echo -e "$(color::green ℹ) ${@}"
+    return
+  fi
+
   echo -e "$(color::green ℹ) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log::debug() {
+  if [ "$NO_LOG" = "true" ]; then
+    return
+  fi
+
   if [ -w $ZMICRO_LOG_DEBUG_PATH ]; then
     echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
   fi
 }
 
 log::success() {
+  if [ "$NO_LOG" = "true" ]; then
+    echo "$(color::green ✔) ${@}"
+    return
+  fi
+
   echo "$(color::green ✔) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log::error() {
+  if [ "$NO_LOG" = "true" ]; then
+    echo "$(color::red ✖) ${@}"
+    return
+  fi
+
   echo "$(color::red ✖) ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
 }
 
 log::warn() {
+  if [ "$NO_LOG" = "true" ]; then
+    echo -e "$(color::yellow ⚠) ${@}"
+    return
+  fi
+
   echo -e "$(color::yellow ⚠) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
 log() {
+  if [ "$NO_LOG" = "true" ]; then
+    echo -e $@
+    return
+  fi
+
   # @TODO will remove custum blanks
   echo -e $@ | tee -a $ZMICRO_LOG_COMMON_PATH
   # log::info $@
