@@ -5,6 +5,11 @@ os::homedir() {
 }
 
 os::username() {
+  if [ "$GIT_USER" != "" ]; then
+    echo $GIT_USER
+    return
+  fi
+
   if [ "$USER" != "" ]; then
     echo $USER
     return
