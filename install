@@ -42,6 +42,13 @@ if [ ! -w $ZMICRO_LOG_DIR ]; then
   sudo chown -R $USER $ZMICRO_LOG_DIR
 fi
 # fi
+# GLOBAL RC
+if [ ! -d "$ZMICRO_GLOBAL_RC_DIR" ]; then
+  sudo mkdir -p $ZMICRO_GLOBAL_RC_DIR
+fi
+if [ ! -w "$ZMICRO_GLOBAL_RC_DIR" ]; then
+  sudo chown -R $USER $ZMICRO_GLOBAL_RC_DIR
+fi
 
 # Bin
 if [ -f $ZMICRO_LOCAL_BIN ]; then

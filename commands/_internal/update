@@ -34,6 +34,9 @@ update_zmicro() {
 
   log::update CORE zmicro END
 
+  # @TODO Ensure Global RC Created
+  config::ensure_global_rc
+
   # login notification
   notify::login_register > /dev/null 2>&1 &
 

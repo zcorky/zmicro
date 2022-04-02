@@ -12,6 +12,8 @@ export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
 export ZMICRO_GIT=https://github.com/zcorky/zmicro
 
 # RC
+export ZMICRO_GLOBAL_RC_DIR=/etc/zmicro
+export ZMICRO_GLOBAL_RC=$ZMICRO_GLOBAL_RC_DIR/.zmicrorc
 export ZMICRO_RC=$HOME/.zmicrorc
 
 # Mod

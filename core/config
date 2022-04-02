@@ -145,12 +145,21 @@ config::set() {
 
 config::remove() {
   local key=$1
-  local line=$(cat $ZMICRO_RC | grep "${key}=")
+  local filepath=$2
+
+  if [ -z "$filepath" ]; then
+    filepath=$ZMICRO_RC
+  elif [ ! -f "$filepath" ]; then
+    log::error "[config::set] file(${filepath}) not found"
+    exit 1
+  fi
+
+  local line=$(cat $filepath | grep "${key}=")
 
   # New Key
   if [ "$line" != "" ]; then
-    sed -i -e "s%${line}%%g" $ZMICRO_RC
-    sed -i "/^\s*$/d" $ZMICRO_RC
+    sed -i -e "s%${line}%%g" $filepath
+    sed -i "/^\s*$/d" $filepath
   fi
 }
 
@@ -249,6 +258,83 @@ config::export() {
   done <$filepath
 }
 
+config::ensure_global_rc() {
+  if [ ! -d "$ZMICRO_GLOBAL_RC_DIR" ]; then
+    sudo mkdir -p $ZMICRO_GLOBAL_RC_DIR
+  fi
+  if [ ! -w "$ZMICRO_GLOBAL_RC_DIR" ]; then
+    sudo chown -R $USER $ZMICRO_GLOBAL_RC_DIR
+  fi
+
+  if [ ! -f "$ZMICRO_GLOBAL_RC" ]; then
+    sudo touch $ZMICRO_GLOBAL_RC
+  fi
+  if [ ! -w "$ZMICRO_GLOBAL_RC" ]; then
+    sudo chown $USER $ZMICRO_GLOBAL_RC
+  fi
+}
+
+config::global:set() {
+  local filepath=$ZMICRO_GLOBAL_RC
+  local key=$1
+  local value=$2
+
+  if [ -z "$key" ]; then
+    log::error "[config::global:set] key is required"
+    exit 1
+  fi
+
+  if [ -z "$value" ]; then
+    log::error "[config::global:set] value is required"
+    exit 1
+  fi
+
+  if [ ! -f "$filepath" ]; then
+    log::error "[config::global:set] config file ($filepath) not found"
+    exit 1
+  fi
+
+  config::set $key $value $filepath
+}
+
+config::global:get() {
+  local key=$1
+  local filepath=$ZMICRO_GLOBAL_RC
+
+  if [ -z "$key" ]; then
+    log::error "[config::global:get] key is required"
+    exit 1
+  fi
+
+  if [ ! -f "$filepath" ]; then
+    log::error "[config::global:get] config file ($filepath) not found"
+    exit 1
+  fi
+
+  config::get $key $filepath
+}
+
+config::global:remove() {
+  local key=$1
+  local filepath=$ZMICRO_GLOBAL_RC
+
+  if [ -z "$key" ]; then
+    log::error "[config::global:remove] key is required"
+    exit 1
+  fi
+
+  if [ ! -f "$filepath" ]; then
+    log::error "[config::global:remove] config file ($filepath) not found"
+    exit 1
+  fi
+
+  config::remove $key $filepath
+}
+
+config::global:list() {
+  less $ZMICRO_GLOBAL_RC
+}
+
 export -f config::load_file
 export -f config::load_dir
 
@@ -265,3 +351,9 @@ export -f config::remove
 
 export -f config::check_or_set
 export -f config::export
+
+export -f config::ensure_global_rc
+export -f config::global:set
+export -f config::global:get
+export -f config::global:remove
+export -f config::global:list
