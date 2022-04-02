@@ -290,8 +290,12 @@ config::global:set() {
   fi
 
   if [ ! -f "$filepath" ]; then
-    log::error "[config::global:set] config file ($filepath) not found"
-    exit 1
+    sudo mkdir -p $ZMICRO_GLOBAL_RC_DIR
+    sudo touch $ZMICRO_GLOBAL_RC
+  fi
+
+  if [ ! -w "$filepath" ]; then
+    sudo chown $USER $filepath
   fi
 
   config::set $key $value $filepath
@@ -307,8 +311,11 @@ config::global:get() {
   fi
 
   if [ ! -f "$filepath" ]; then
-    log::error "[config::global:get] config file ($filepath) not found"
-    exit 1
+    sudo mkdir -p $ZMICRO_GLOBAL_RC_DIR
+    sudo touch $ZMICRO_GLOBAL_RC
+    if [ ! -w "$ZMICRO_GLOBAL_RC" ]; then
+      sudo chown $USER $ZMICRO_GLOBAL_RC
+    fi
   fi
 
   config::get $key $filepath
@@ -324,14 +331,27 @@ config::global:remove() {
   fi
 
   if [ ! -f "$filepath" ]; then
-    log::error "[config::global:remove] config file ($filepath) not found"
-    exit 1
+    sudo mkdir -p $ZMICRO_GLOBAL_RC_DIR
+    sudo touch $ZMICRO_GLOBAL_RC
+  fi
+
+  if [ ! -w "$filepath" ]; then
+    sudo chown $USER $filepath
   fi
 
   config::remove $key $filepath
 }
 
 config::global:list() {
+  if [ ! -f "$ZMICRO_GLOBAL_RC" ]; then
+    sudo mkdir -p $ZMICRO_GLOBAL_RC_DIR
+    sudo touch $ZMICRO_GLOBAL_RC
+  fi
+
+  if [ ! -w "$ZMICRO_GLOBAL_RC" ]; then
+    sudo chown $USER $ZMICRO_GLOBAL_RC
+  fi
+
   less $ZMICRO_GLOBAL_RC
 }
 
