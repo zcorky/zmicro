@@ -37,15 +37,11 @@ update_zmicro() {
   # @TODO Ensure Global RC Created
   config::ensure_global_rc
 
-  # login notification
-  notify::login_register > /dev/null 2>&1 &
-
-  # send notification
-  if [ "$origin_version" = "$new_version" ]; then
-    notify::update "no change: $new_version" > /dev/null 2>&1 & 
-  else
-    notify::update "$origin_version => $new_version" > /dev/null 2>&1 &
-  fi
+  # login notify check
+  notify::login_register_check > /dev/null 2>&1 &
+  
+  # update notify check
+  notify::update_check $origin_version $new_version > /dev/null 2>&1 & 
 }
 
 help() {

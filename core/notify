@@ -120,6 +120,91 @@ notify::login_unregister() {
   fs::remove_line_has_str $sshrc "notify::login"
 }
 
+notify::check_enable() {
+  local type=$1
+  if [ -z "$type" ]; then
+    log::error "[notify::check_enable] type is required"
+    exit 1
+  fi
+
+  local full_env_name=NOTIFY_${type}
+  if [ "$(config::global:get $full_env_name)" == "false" ]; then
+    echo "false"
+  else 
+    echo "true"
+  fi
+}
+
+notify::if_not_enable_then_turn_off() {
+  local type=$1
+  local fn=$2
+  if [ -z "$type" ]; then
+    log::error "[notify::if_not_enable_then_turn_off] type is required"
+    exit 1
+  fi
+
+  if [ -z "$fn" ]; then
+    log::error "[notify::if_not_enable_then_turn_off] fn is required"
+    exit 1
+  fi
+
+  if [ "$(notify::check_enable $type)" == "false" ]; then
+    $fn
+  fi
+}
+
+notify::login_register_check() {
+  if [ "$(notify::check_enable LOGIN)" == "false" ]; then
+    notify::login_unregister
+  else
+    notify::login_register
+  fi
+}
+
+notify::update_check() {
+  local origin_version=$1
+  local new_version=$2
+
+  if [ -z "$origin_version" ]; then
+    log::error "[notify::update_check] origin_version is required"
+    exit 1
+  fi
+
+  if [ -z "$new_version" ]; then
+    log::error "[notify::update_check] new_version is required"
+    exit 1
+  fi
+
+  if [ "$(notify::check_enable UPDATE)" == "false" ]; then
+    #echo "NO UPDATE NOTIFY, SKIP $origin_version $new_version"
+    return
+  #else
+    #echo "WILL UPDATE NOTIFY, $origin_version $new_version"
+  fi
+
+  # send notification
+  if [ "$origin_version" = "$new_version" ]; then
+    notify::update "no change: $new_version"
+  else
+    notify::update "$origin_version => $new_version"
+  fi
+}
+
+notify::update_enable() {
+  config::global:set NOTIFY_UPDATE true
+}
+
+notify::update_disable() {
+  config::global:set NOTIFY_UPDATE false
+}
+
+notify::login_enable() {
+  config::global:set NOTIFY_LOGIN true
+}
+
+notify::login_disable() {
+  config::global:set NOTIFY_LOGIN false
+}
 
 export -f notify::feishu
 
@@ -128,3 +213,15 @@ export -f notify::update::now
 
 export -f notify::login_register
 export -f notify::login_unregister
+
+export -f notify::check_enable
+export -f notify::if_not_enable_then_turn_off
+
+export -f notify::update_check
+export -f notify::login_register_check
+
+export -f notify::update_enable
+export -f notify::update_disable
+
+export -f notify::login_enable
+export -f notify::login_disable
