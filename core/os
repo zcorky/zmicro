@@ -543,6 +543,8 @@ $(users::login::histories | head -5 | tr '\n' ',')\n\
 * doing: \n\
 $(users::doing)\n\
 \n\
+## WorkSpace\n\
+* is_workspace: $(os::is_workspace)\n\
 ## System\n\
 * shell: $shell\n\
 * hostname: $hostname\n\
@@ -659,6 +661,14 @@ os::has_command() {
   os::is_command_exist $1
 }
 
+os::is_workspace() {
+  if [ -d "/home/workspace" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -731,3 +741,5 @@ export -f os::get_env
 export -f os::inquirer
 
 export -f os::add_user_to_docker_group
+
+export -f os::is_workspace
