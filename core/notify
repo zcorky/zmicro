@@ -77,8 +77,12 @@ notify::login() {
   if [ -z "$ssh" ]; then
     ssh=$SSH_CONNECTION
   fi
-  
-  notify::feishu $url "[Login][$user] $ip" "$timestamp - $user - $shell ($ssh)"
+
+  if [ "$(os::is_workspace)" = "true" ]; then
+    notify::feishu $url "[Login][workspace: $user] $ip" "$timestamp - $user - $shell ($ssh)"
+  else
+    notify::feishu $url "[Login][$user] $ip" "$timestamp - $user - $shell ($ssh)"
+  fi
 }
 
 notify::login_register() {
