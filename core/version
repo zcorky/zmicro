@@ -144,10 +144,10 @@ version::at() {
 # Found name
 # Example:
 #   name@version => name 
-version::split_name() {
+version::at_name() {
   local name=$1
   if [ -z "$name" ]; then
-    log::error "[$(timestamp)][version::split_name] at name is required"
+    log::error "[$(timestamp)][version::at_name] at name is required"
     exit 1
   fi
 
@@ -157,10 +157,10 @@ version::split_name() {
 # Found version
 # Example:
 #   name@version => version
-version::split_version() {
+version::at_version() {
   local name=$1
   if [ -z "$name" ]; then
-    log::error "[$(timestamp)][version::split_version] at name is required"
+    log::error "[$(timestamp)][version::at_version] at name is required"
     exit 1
   fi
 
@@ -184,5 +184,5 @@ export -f version::swarm
 export -f version::update
 
 export -f version::at
-export -f version::split_name
-export -f version::split_version
+export -f version::at_name
+export -f version::at_version
