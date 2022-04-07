@@ -29,9 +29,9 @@ core() {
 
   # @FEAT support: zmicro plugin install $plugin_name@$plugin_version
   # @example zmicro plugin install name@version
-  if [ "$(string::match $plugin_name @)" ]; then
-    plugin_version=$(echo $plugin_name | awk -F@ '{print $2}')
-    plugin_name=$(echo $plugin_name | awk -F@ '{print $1}')
+  if [ "$(version::at $plugin_name)" = "true" ]; then
+    plugin_version=$(version::at_version $plugin_name)
+    plugin_name=$(version::at_name $plugin_name)
   fi
 
   # compatible no version provided, like `zmicro plugin add` command
