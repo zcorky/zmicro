@@ -148,6 +148,23 @@ string::match() {
   echo "false"
 }
 
+string::has() {
+  local sub=$1
+  local text=$2
+  
+  if [ "$sub" = "" ]; then
+    log::error "[string::has] sub is required"
+    exit 1
+  fi
+
+   if [ "$text" = "" ]; then
+    log::error "[string::has] text is required"
+    exit 1
+  fi
+
+  string::match "$text" "$sub"
+}
+
 number::increase() {
   local base=$1
   local _step=$2
@@ -359,6 +376,7 @@ export -f string::split_last_second_element
 export -f string::replace
 export -f string::remove
 export -f string::match
+export -f string::has
 
 export -f number::increase
 export -f number::step

@@ -131,6 +131,42 @@ version::swarm() {
   version::echo $path
 }
 
+version::at() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][version::at] at name is required"
+    exit 1
+  fi
+
+  string::has @ $name
+}
+
+# Found name
+# Example:
+#   name@version => name 
+version::split_name() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][version::split_name] at name is required"
+    exit 1
+  fi
+
+  echo $name | awk -F '@' '{print $1}'
+}
+
+# Found version
+# Example:
+#   name@version => version
+version::split_version() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][version::split_version] at name is required"
+    exit 1
+  fi
+
+  echo $name | awk -F '@' '{print $2}'
+}
+
 export -f version::get
 export -f version::git_hash
 export -f version::timestamp
@@ -146,3 +182,7 @@ export -f version::service
 export -f version::swarm
 
 export -f version::update
+
+export -f version::at
+export -f version::split_name
+export -f version::split_version
