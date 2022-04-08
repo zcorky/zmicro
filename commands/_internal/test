@@ -51,7 +51,10 @@ test_one_file() {
   # load function
   . $filepath
 
-  log::info "Testing: $filepath"
+  # replace // => /
+  #  Example:
+  #    core//os_test => core/os_test
+  log::info "Testing: ${filepath//\/\//\/}"
 
 
   if [ -n "$fn" ]; then
