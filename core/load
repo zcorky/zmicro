@@ -68,6 +68,8 @@ load notify
 
 load repl
 
+load testing
+
 # Cause Bug
 #   1. tput: No value for $TERM and no -T specified
 #   2. tput: terminal attributes: No such device or address

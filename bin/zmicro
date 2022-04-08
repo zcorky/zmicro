@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set -x
+
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell/76171
 # http://www.ruanyifeng.com/blog/2017/11/bash-set.html
 

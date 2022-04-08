@@ -59,7 +59,7 @@ string::split_last_second_element() {
   echo $str | awk -F $seperator '{print $(NF-1)}'
 }
 
-string_split_slice() {
+string::split_slice() {
   local seperator=$1
   local str=$2
   local start=$3
@@ -373,6 +373,7 @@ export -f string::split
 export -f string::split_length
 export -f string::split_last_element
 export -f string::split_last_second_element
+export -f string::split_slice
 export -f string::replace
 export -f string::remove
 export -f string::match

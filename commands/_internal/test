@@ -1,0 +1,87 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro test [path_to_test_file_or_dir [test_name]]"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local filepath=$1
+  local name=$2
+
+  if [ -z "$filepath" ]; then
+    log::error "test file or dir path are required"
+    exit 1
+  fi
+
+  if [ -f "$filepath" ]; then
+    test_one_file $filepath $name
+  elif [ -d "$filepath" ]; then
+    test_one_dir $filepath $name
+  else
+    log::error "test file or dir path ($filepath) is invalid"
+    exit 1
+  fi
+}
+
+test_one_dir() {
+  local dir=$1
+
+  for filepath in $dir/*_test; do
+    # echo "filepath: $filepath"
+    test_one_file $filepath
+  done
+}
+
+test_one_file() {
+  local filepath=$1
+  local fn=$2
+  
+  echo $filepath | grep "_test$" >> /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    log::error "test file name must end with _test"
+    exit 1
+  fi
+
+  # load function
+  . $filepath
+
+  log::info "Testing: $filepath"
+
+
+  if [ -n "$fn" ]; then
+    test_one_fn $fn
+
+    return
+  fi
+
+  local fns=$(cat $filepath | grep "^function" | awk '{print $2}' | awk -F '(' '{print $1}')
+  for fn in $fns; do
+    echo $fn | grep "^test_" >> /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      test_one_fn $fn
+    fi
+  done
+}
+
+test_one_fn() {
+  local fn=$1
+  type $fn >> /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    eval "$fn"
+  else
+    log::error "$fn method is not not found"
+    exit 1
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@

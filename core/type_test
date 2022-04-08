@@ -1,0 +1,122 @@
+#!/bin/bash
+
+function test_get_args_length() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "3" \
+    "$(get_args_length a b c)" 
+}
+
+function test_string::split_length() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "3" \
+    "$(string::split_length _ a_b_c)"
+}
+
+function test_string::split_last_element() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "c" \
+    "$(string::split_last_element _ a_b_c)"
+}
+
+function test_string::split_last_second_element() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "b" \
+    "$(string::split_last_second_element _ a_b_c)"
+}
+
+function test_string::split_slice() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "a_b" \
+    "$(string::split_slice _ a_b_c 0 2)"
+}
+
+function test_string::replace() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "a@b@c" \
+    "$(string::replace a_b_c _ @)"
+}
+
+function test_string::remove() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "a__c" \
+    "$(string::remove a_b_c b)"
+}
+
+function test_string::match() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(string::match a_b_c ^a)"
+  
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(string::match a_b_c c$)"
+}
+
+function test_string::has() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(string::has @ redis@v1.2.3)"
+}
+
+function test_number::increase() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "2" \
+    "$(number::increase 1)"
+}
+
+function test_array::join() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "a_b_c" \
+    "$(array::join _ a b c)"
+}
+
+function test_array::join_line() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "a\nb\nc" \
+    "$(array::join_line a b c)"
+}
+
+function test_array::each() {
+  local received=""
+
+  local data="a b c"
+  fn() {
+    local index=$1
+    local data=$2
+    received="${received}_${data}"
+  }
+
+  array::each fn $data
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    " _a_b_c" \
+    "$received"
+}

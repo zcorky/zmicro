@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function test_os_home() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$HOME" \
+    "$(os::homedir)" 
+}
+
+function test_os_username() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$USER" \
+    "$(os::username)"
+}
