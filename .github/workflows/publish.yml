@@ -103,11 +103,11 @@ jobs:
       #     username: ${{ github.repository_owner }}
       #     password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Install zmicro
-      #   run: ./install
+      - name: Install zmicro
+        run: ./install
 
       - name: Run test cases
-        run: ./bin/zmicro test core/
+        run: zmicro test core/
 
       - name: Build and push
         uses: docker/build-push-action@v2
