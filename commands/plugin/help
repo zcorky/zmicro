@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# help() {
+#   echo "Usage:"
+#   echo "  zmicro plugin help <plugin_name>"
+#   echo ""
+# }
+
+# core() {
+#   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+#     help
+#     exit 0
+#   fi
+
+#   local name=$1
+#   if [ -z "$name" ]; then
+#     log::error "plugin name is required"
+#     exit 1
+#   fi
+
+#   # plugin::get_version $name
+#   plugin::run $plugin_name --help
+# }
+
+run() {
+  # core $@
+  echo "@TODO this does not work"
+}
+
+run $@

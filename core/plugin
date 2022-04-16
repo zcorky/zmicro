@@ -465,7 +465,7 @@ plugin::run() {
   plugin::load_app_configs $plugin_name
 
   # help
-  if [ "$plugin_command" = "" ]; then
+  if [ "$plugin_command" = "" ] || [ "$plugin_command" = "help" ]; then
     plugin_command="--help"
   fi
 
