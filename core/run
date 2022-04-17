@@ -15,7 +15,8 @@ run() {
   log::debug "[$(timestamp)][command]"
 
   # Use Help Command
-  if [ "$sub_command" = "help" ]; then
+  #   if command is sub command, handle help by sub command
+  if [ ! -f "$ZMICRO_HOME/bin/sub/$command" ] && [ "$sub_command" = "help" ]; then
     help $base_command_path $command ${@:4} # $sub_command
     exit 1
   fi
