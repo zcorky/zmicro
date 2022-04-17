@@ -48,7 +48,7 @@ core() {
   log::info "[$(timestamp)][plugin] add $(color::green $plugin_name) version: $plugin_version"
 
   if [ "$(plugin::exist $plugin_name)" = "true" ]; then
-    log::success "[$(timestamp)][plugin] iinstalled before (1): ${plugin_name}"
+    log::success "[$(timestamp)][plugin] installed before (1): ${plugin_name}"
     exit 0
   fi
 
