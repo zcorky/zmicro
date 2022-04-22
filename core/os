@@ -669,6 +669,14 @@ os::is_workspace() {
   fi
 }
 
+os::fix_permissions() {
+  # log: fix all user
+  log::fix_permissions
+
+  # home: fix current user
+  sudo chown -R $USER $ZMICRO_HOME
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -743,3 +751,5 @@ export -f os::inquirer
 export -f os::add_user_to_docker_group
 
 export -f os::is_workspace
+
+export -f os::fix_permissions

@@ -3,6 +3,9 @@
 config_data_dir() {
   if [ ! -d $ZMICRO_APP_DATA_PATH ]; then
     sudo mkdir -p $ZMICRO_APP_DATA_PATH
+  fi
+
+  if [ ! -r $ZMICRO_APP_DATA_PATH ] || [ ! -w $ZMICRO_APP_DATA_PATH ]; then
     sudo chown -R $(os::username) $ZMICRO_APP_DATA_PATH
   fi
 }

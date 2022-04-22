@@ -107,7 +107,7 @@ core() {
 
   # @TODO avoid permission error
   if [ ! -w "$ZMICRO_HOME" ]; then
-    sudo chown -R $USER $ZMICRO_HOME
+    os::fix_permissions
   fi
 
   if [ -n "$plugin_name" ]; then

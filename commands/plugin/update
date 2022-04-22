@@ -43,7 +43,7 @@ update_one() {
   log::info "[$(timestamp)][plugin] updating $plugin_name ..."
 
   # Fix Git Pull Permission Denied
-  if [ ! -w "$plugin_path/.git/FETCH_HEAD" ]; then
+  if [ ! -r "$plugin_path/.git/FETCH_HEAD" ] || [ ! -w "$plugin_path/.git/FETCH_HEAD" ]; then
     sudo chown -R $USER $plugin_path
   fi
 

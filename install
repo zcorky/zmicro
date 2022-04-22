@@ -41,7 +41,7 @@ if [ ! -d $ZMICRO_LOG_DIR ]; then
   sudo mkdir -p $ZMICRO_LOG_DIR
 fi
 if [ ! -w $ZMICRO_LOG_DIR ]; then
-  sudo chown -R $USER $ZMICRO_LOG_DIR
+  sudo chmod -R 777 $ZMICRO_LOG_DIR
 fi
 # fi
 
