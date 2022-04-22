@@ -33,17 +33,19 @@ log::init() {
 
   if [ ! -d $ZMICRO_APP_LOGS_PATH ]; then
     sudo mkdir -p $ZMICRO_APP_LOGS_PATH
-    sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
+    sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
 
     log::debug "[log::init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
   fi
 
   if [ ! -w $ZMICRO_LOG_PATH ]; then
-    sudo chown -R $current_user $ZMICRO_LOG_PATH
+    # sudo chown -R $current_user $ZMICRO_LOG_PATH
+    sudo chmod -R 777 $ZMICRO_LOG_PATH
   fi
 
   if [ ! -w $ZMICRO_APP_LOGS_PATH ]; then
-    sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
+    # sudo chown -R $current_user $ZMICRO_APP_LOGS_PATH
+    sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
   fi
 
   log::debug "logs config done"
@@ -241,7 +243,7 @@ log::clean_check() {
 
   # initialize
   if [ ! -f $log_last_check ]; then
-    echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
+    echo "$(timestamp)" | tee $log_last_check >>/dev/null 2>&1
 
     # clean
     log::clean &
@@ -251,13 +253,13 @@ log::clean_check() {
 
   local last_check_timestamp=$(cat $log_last_check)
   if [ -z "$last_check_timestamp" ]; then
-    echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
+    echo "$(timestamp)" | tee $log_last_check >>/dev/null 2>&1
     return
   fi
 
   local lcts=$(timestamp::to_seconds $last_check_timestamp)
   if [ "$?" != "0" ]; then
-    echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
+    echo "$(timestamp)" | tee $log_last_check >>/dev/null 2>&1
     return
   fi
 
@@ -306,7 +308,19 @@ log::clean() {
 
   # retimestamp
   local log_last_check=$ZMICRO_LOG_PATH/.last_clean
-  echo "$(timestamp)" | sudo tee $log_last_check >>/dev/null 2>&1
+  echo "$(timestamp)" | tee $log_last_check >>/dev/null 2>&1
+}
+
+log::fix_permissions() {
+  # zmicro logs
+  if [ ! -r $ZMICRO_LOG_PATH ] || [ ! -w $ZMICRO_LOG_PATH ] || [ ! -x $ZMICRO_LOG_PATH ]; then
+    sudo chmod -R 777 $ZMICRO_LOG_PATH
+  fi
+
+  # zmicro app(plugins,package,service,...) logs
+  if [ ! -r $ZMICRO_APP_LOGS_PATH ] || [ ! -w $ZMICRO_APP_LOGS_PATH ] || [ ! -x $ZMICRO_APP_LOGS_PATH ]; then
+    sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
+  fi
 }
 
 export -f log::init
@@ -328,3 +342,5 @@ export -f log::update
 export -f log::version
 
 export -f log::plugin_update_lock
+
+export -f log::fix_permissions

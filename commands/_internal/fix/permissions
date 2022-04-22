@@ -6,6 +6,10 @@ help() {
 }
 
 core() {
+  # log: fix all user
+  log::fix_permissions
+
+  # zmicro fix current user
   sudo chown -R $USER $ZMICRO_HOME
   log::success "[$(timestamp)] Permission fixed."
 }

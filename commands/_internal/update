@@ -9,6 +9,9 @@ update_zmicro() {
   # @TODO add auto update
   # zmicro auto update
 
+  # Fix Permissions
+  zmicro fix permissions >> /dev/null 2>&1
+
   log::update CORE zmicro START
 
   cd $ZMICRO_HOME
