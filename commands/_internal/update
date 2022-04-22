@@ -10,7 +10,7 @@ update_zmicro() {
   # zmicro auto update
 
   # Fix Permissions
-  zmicro fix permissions >> /dev/null 2>&1
+  os::fix_permissions >> /dev/null 2>&1
 
   log::update CORE zmicro START
 

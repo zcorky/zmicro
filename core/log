@@ -305,16 +305,15 @@ log::clean() {
 }
 
 log::fix_permissions() {
-  # zmicro logs
-  if [ ! -r $ZMICRO_LOG_PATH ] || [ ! -w $ZMICRO_LOG_PATH ] || [ ! -x $ZMICRO_LOG_PATH ]; then
-    sudo chmod -R 777 $ZMICRO_LOG_PATH
-  fi
+  local tag=$ZMICRO_LOG_PATH/.permission_fixed
+  if [ ! -f $tag ] || [ ! -x $tag ]; then
+    # create
+    sudo touch $tag
 
-  # zmicro app(plugins,package,service,...) logs
-  if [ -d $ZMICRO_APP_LOGS_PATH ]; then
-    if [ ! -r $ZMICRO_APP_LOGS_PATH ] || [ ! -w $ZMICRO_APP_LOGS_PATH ] || [ ! -x $ZMICRO_APP_LOGS_PATH ]; then
-      sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
-    fi
+    # zmicro logs
+    sudo chmod -R 777 $ZMICRO_LOG_PATH
+    # zmicro app(plugins,package,service,...) logs
+    sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
   fi
 }
 
