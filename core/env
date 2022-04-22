@@ -39,6 +39,17 @@ env() {
     export ZMICRO_APP_LOGS_PATH=$HOME/.local/zmicro/logs
     export ZMICRO_APP_DATA_PATH=$HOME/.local/zmicro/data
   fi
+
+  # @TODO fix log permissions
+  if [ ! -f $ZMICRO_LOG_COMMON_PATH ]; then
+    if [ ! -w $ZMICRO_LOG_PATH ]; then
+      sudo touch $ZMICRO_LOG_COMMON_PATH
+      sudo chmod 777 $ZMICRO_LOG_COMMON_PATH
+    else
+      touch $ZMICRO_LOG_COMMON_PATH
+      chmod 777 $ZMICRO_LOG_COMMON_PATH
+    fi
+  fi
 }
 
 env
