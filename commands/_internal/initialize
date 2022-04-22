@@ -36,7 +36,7 @@ initialize_config() {
 
 initialize_depdendencies() {
   # install dependency plugins ...
-  require::core_mod $@
+  require::core_mod "$@"
 }
 
 initialize_notifies() {

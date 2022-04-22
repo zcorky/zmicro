@@ -7,15 +7,19 @@ require() {
   local force_update=$IS_REQUIRE_MOD_UPDATE_TMP_GLOBAL
 
   if [ "$(zmicro plugin has $name)" = "true" ]; then
+    # log::info "[require][update] ${name} ${version}"
     log::debug "[$(timestamp)][require] installed before (2): ${name}"
 
     if [ "$force_update" = "true" ]; then
       log::info "[$(timestamp)][require] update: ${name}"
       zmicro plugin update $name
+    else
+      log::info "[$(timestamp)][require] ${name} done"
     fi
     return
   fi
 
+  # log::info "[require][install] ${name} ${version}"
   #@PACKAGE ^package_name@version
   if [ "$(string::match $name ^^)" = "true" ]; then
     name=$(echo $name | awk -F '^' '{print $2}')
@@ -45,7 +49,7 @@ require() {
 }
 
 require::parse() {
-  # echo "xxx: $@"
+  # echo "require::parse: $@"
   # compose@v0.0.1
   local text=$2
 
