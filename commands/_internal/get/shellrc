@@ -1,0 +1,23 @@
+#!/bin/bash
+
+help() {
+  echo "Get Current Shell RC"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro get shellrc"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  os::shell_profile
+}
+
+run() {
+  core $@
+}
+
+run $@

@@ -9,6 +9,7 @@ help() {
   echo "Commands:"
   echo "    list | ls   List all available commands"
   echo "    register    Re register all commands"
+  echo "    path        Print the path of zmicro bin"
 }
 
 core() {
@@ -31,6 +32,9 @@ core() {
     log::success "register all commands done"
     log::info ""
     zmicro bin list
+    ;;
+  path)
+    echo $ZMICRO_BIN_PATH
     ;;
   *)
     log::info "unknown command: $1"

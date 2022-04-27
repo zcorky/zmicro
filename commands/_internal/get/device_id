@@ -1,0 +1,23 @@
+#!/bin/bash
+
+help() {
+  echo "Get Current Device ID"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro get device_id"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  os::machine_id
+}
+
+run() {
+  core $@
+}
+
+run $@

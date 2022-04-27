@@ -681,6 +681,8 @@ export -f os::homedir
 export -f os::username
 export -f os::shell
 export -f os::shell_profile
+export -f os::zsh_profile
+export -f os::bash_profile
 export -f os::hostname
 export -f os::uptime
 export -f os::kernel

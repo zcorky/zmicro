@@ -1,0 +1,23 @@
+#!/bin/bash
+
+help() {
+  echo "Get Current User"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro get user"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  os::username
+}
+
+run() {
+  core $@
+}
+
+run $@

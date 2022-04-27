@@ -1,0 +1,23 @@
+#!/bin/bash
+
+help() {
+  echo "Get Current IP"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro get ip"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  os::network_ip
+}
+
+run() {
+  core $@
+}
+
+run $@
