@@ -1,0 +1,26 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro register"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  zmicro config rc
+
+  log::success "Successful to register zmicro."
+  log::success "Now you can run: $(color::success 'source $HOME/$(os::shell_profile)')"
+  log::success "  Or $(color::success 'restart your terminal') to apply."
+  log::success "Then run: $(color::success 'zmicro -v') to check zmicro works."
+}
+
+run() {
+  core $@
+}
+
+run $@
