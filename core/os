@@ -677,6 +677,31 @@ os::fix_permissions() {
   sudo chown -R $USER $ZMICRO_HOME
 }
 
+os::distribution() {
+  local name="unknown"
+  if [ "$(os::is_linux)" = "true" ]; then
+    if [ -f /etc/redhat-release ]; then
+      name='RedHat'
+    elif [ -f /etc/SuSE-release ]; then
+      name=$(cat /etc/SuSE-release | tr "\n" ' ' | sed s/VERSION.*//)
+    elif [ -f /etc/mandrake-release ]; then
+      name='Mandrake'
+    elif [ -f /etc/os-release ]; then
+      name=$(awk -F "PRETTY_NAME=" '{print $2}' /etc/os-release | tr -d '\n"')
+    elif [ -f /etc/debian_version ]; then
+      name="Debian $(cat /etc/debian_version)"
+    fi
+
+    if [ -f /etc/UnitedLinux-release ]; then
+      name="${name}[$(cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//)]"
+    fi
+  elif [ "$(os::is_macos)" = "true" ]; then
+    name="MacOS $(sw_vers -productVersion)"
+  fi
+
+  echo $name
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -686,6 +711,7 @@ export -f os::bash_profile
 export -f os::hostname
 export -f os::uptime
 export -f os::kernel
+export -f os::distribution
 
 export -f os::ps
 export -f os::top
