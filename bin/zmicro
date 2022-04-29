@@ -12,12 +12,15 @@ if [ $? -ne 0 ]; then
     eval "$@"
   }          
   chown() {
-    # ignore
     echo "ignore chown" >> /dev/null 2>&1
-  }          
+  }
+  tput() {
+    echo "ignore tput" >> /dev/null 2>&1
+  }        
    
   export -f sudo
   export -f chown
+  export -f tput
 fi
 
 
