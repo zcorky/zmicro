@@ -516,6 +516,7 @@ os::info() {
   local hostname=$(os::hostname)
   local kernel=$(os::kernel)
   local release="-"
+  local distribution="-"
   local architecture=$(os::arch)
   local is_docker=false
   local device_config="-"
@@ -523,7 +524,8 @@ os::info() {
   local timestamp=$(os::timestamp)
 
   if [ "$(os::is_macos)" != "true" ]; then
-    release=$(os::release)
+    # release=$(os::release)
+    distribution=$(os::distribution)
     is_docker=$(os::is_docker)
     device_config=$(os::device_config)
     load="$(os::usage)"
@@ -550,7 +552,7 @@ $(users::doing)\n\
 * shell: $shell\n\
 * hostname: $hostname\n\
 * kernel: $kernel\n\
-* release: $release\n\
+* distribution: $distribution\n\
 * arch: $architecture\n\
 * is_docker: $is_docker\n\
 \n\
