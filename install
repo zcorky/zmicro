@@ -3,11 +3,15 @@
 # @TODO fix sudo in docker
 command -v sudo >>/dev/null 2>&1
 if [ $? -ne 0 ]; then
-  sudo() {
+  sudo() {           
     eval "$@"
-  }
-
+  }          
+  chown() {
+    # ignore
+  }          
+   
   export -f sudo
+  export -f chown
 fi
 
 set -e
