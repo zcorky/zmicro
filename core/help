@@ -65,4 +65,35 @@ help() {
   echo ""
 }
 
+help::list() {
+  local help_commands_path=$1
+  local command_prefix=${@:2}
+  if [ ! -d $help_commands_path ]; then
+    log::debug "[$(timestamp)][help::list] path is required"
+    return
+  fi
+
+
+
+  echo "Usage:"
+  echo ""
+  echo "  ${command_prefix} [args...]"
+  echo ""
+  # echo $(ls $ZMICRO_COMMANDS_PATH)
+
+  local help_commands=$(ls $help_commands_path)
+  local help_command=""
+  for help_command in $help_commands; do
+    if [[ $help_command = _* ]]; then
+      continue
+    fi
+
+    echo "         $help_command"
+  done
+
+  echo ""
+}
+
 export -f help
+
+export -f help::list

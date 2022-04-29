@@ -21,6 +21,17 @@ run() {
     exit 1
   fi
 
+  # @TODO help new
+  local command_path_for_help=$(array::join / ${@:3})
+  if [ -d "$ZMICRO_USER_BIN_PATH/$command_path_for_help" ]; then
+    help::list $ZMICRO_USER_BIN_PATH/$command_path_for_help ${@:3}
+    exit 1
+  elif [ -d "$ZMICRO_SUB_BIN_PATH/$command_path_for_help" ]; then
+    help::list $ZMICRO_SUB_BIN_PATH/$command_path_for_help ${@:3}
+    exit 1
+  fi
+  
+
   # command_path=$(commander::get_command_path $@)
   # if [ "$?" != "0" ]; then
   if ! commander::has_command_path "$@"; then
