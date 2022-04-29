@@ -6,7 +6,7 @@
 # http://www.ruanyifeng.com/blog/2017/11/bash-set.html
 
 # @TODO fix sudo in docker
-which sudo >> /dev/null 2>&1
+command -v sudo >>/dev/null 2>&1
 if [ $? -ne 0 ]; then
   sudo() {
     eval "$@"
@@ -14,6 +14,7 @@ if [ $? -ne 0 ]; then
 
   export -f sudo
 fi
+
 
 is_run_init() {
   if [ "$1" = "init" ]; then
