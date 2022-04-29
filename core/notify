@@ -57,7 +57,7 @@ notify::update::now() {
     release=$(os::release)
   fi
 
-  notify::feishu $url "[Update][${version_change}] $ip - $user - $release" "$message"
+  notify::feishu $url "[Update][${version_change}] $ip - $user" "$message"
 }
 
 notify::update() {
