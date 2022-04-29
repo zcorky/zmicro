@@ -11,6 +11,7 @@ export OLD_ZMICRO_HOME=$HOME/.zmicro
 export OLD_ZMICRO_HOME_BAK=/usr/local/lib/zmicro.bak
 
 # @TODO fix sudo in docker
+which sudo >> /dev/null 2>&1
 if [ $? -ne 0 ]; then
   sudo() {
     eval "$@"
@@ -18,6 +19,7 @@ if [ $? -ne 0 ]; then
 
   export -f sudo
 fi
+
 
 # @TO_REMOVE
 if [ ! -d "/usr/local/lib" ]; then
