@@ -21,6 +21,11 @@ notify::feishu() {
   echo $data > $tmp_file
 
   if [ -n "$DEBUG" ]; then
+    log::info "POST $url"
+    echo ""
+    log::info "$(cat $tmp_file)"
+    echo ""
+
     curl \
       -X POST \
       -H "Content-Type: application/json" \

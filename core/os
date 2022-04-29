@@ -545,6 +545,7 @@ $(users::doing)\n\
 \n\
 ## WorkSpace\n\
 * is_workspace: $(os::is_workspace)\n\
+\n\
 ## System\n\
 * shell: $shell\n\
 * hostname: $hostname\n\
