@@ -705,6 +705,23 @@ os::distribution() {
   echo $name
 }
 
+os::assert() {
+  local ok=$1
+  local message=$2
+
+  if [ "$ok" != "" ] && [ "$message" = "" ]; then
+    # echo "assert error, need two parameters: ok and message"
+    # exit 1
+    message=$ok
+    ok=""
+  fi
+
+  if [ "$ok" = "" ] || [ "$ok" = "false" ]; then
+    echo "assert: $message"
+    exit 1
+  fi
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -784,3 +801,5 @@ export -f os::add_user_to_docker_group
 export -f os::is_workspace
 
 export -f os::fix_permissions
+
+export -f os::assert
