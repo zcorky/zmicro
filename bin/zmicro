@@ -5,6 +5,16 @@
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell/76171
 # http://www.ruanyifeng.com/blog/2017/11/bash-set.html
 
+# @TODO fix sudo in docker
+which sudo >> /dev/null 2>&1
+if [ $? -ne 0 ]; then
+  sudo() {
+    eval "$@"
+  }
+
+  export -f sudo
+fi
+
 is_run_init() {
   if [ "$1" = "init" ]; then
     echo "true"

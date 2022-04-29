@@ -10,6 +10,15 @@ export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
 export OLD_ZMICRO_HOME=$HOME/.zmicro
 export OLD_ZMICRO_HOME_BAK=/usr/local/lib/zmicro.bak
 
+# @TODO fix sudo in docker
+if [ $? -ne 0 ]; then
+  sudo() {
+    eval "$@"
+  }
+
+  export -f sudo
+fi
+
 # @TO_REMOVE
 if [ ! -d "/usr/local/lib" ]; then
   sudo mkdir -p /usr/local/lib
