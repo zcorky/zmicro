@@ -165,6 +165,17 @@ string::has() {
   string::match "$text" "$sub"
 }
 
+strings::equals() {
+  local a=$1
+  local b=$2
+
+  if [ "$a" = "$b" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 number::increase() {
   local base=$1
   local _step=$2
@@ -378,6 +389,7 @@ export -f string::replace
 export -f string::remove
 export -f string::match
 export -f string::has
+export -f strings::equals
 
 export -f number::increase
 export -f number::step
