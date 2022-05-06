@@ -1,0 +1,24 @@
+#!/bin/bash
+
+git::commit_message() {
+  git log -1 --pretty=%B
+}
+
+git::commit_hash() {
+  git rev-parse --short=9 HEAD
+}
+
+git::commit_timestamp() {
+  local gitMainVersion=$(git --version | awk '{print $3}' | awk -F '.' '{print $1}')
+  local gitSubVersion=$(git --version | awk '{print $3}' | awk -F '.' '{print $2}')
+
+  if [ "$gitMainVersion" -ge "2" ] && [ "$gitSubVersion" -ge "7" ]; then
+    git show -s --format=%cd --date="format:%Y-%m-%d"
+  else
+    git show -s --format=%cd --date=local
+  fi
+}
+
+export -f git::commit_message
+export -f git::commit_hash
+export -f git::commit_timestamp

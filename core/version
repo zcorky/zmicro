@@ -18,16 +18,7 @@ version::timestamp() {
   local path=$1
   cd $path
 
-  local gitMainVersion=$(git --version | awk '{print $3}' | awk -F '.' '{print $1}')
-  local gitSubVersion=$(git --version | awk '{print $3}' | awk -F '.' '{print $2}')
-
-  if [ "$gitMainVersion" -ge "2" ] && [ "$gitSubVersion" -ge "7" ]; then
-    git show -s --format=%cd --date="format:%Y-%m-%d"
-  else
-    git show -s --format=%cd --date=local
-  fi
-
-
+  git::commit_timestamp
 }
 
 version::get() {
@@ -48,7 +39,7 @@ version::git_hash() {
   local path=$1
   cd $path
 
-  git rev-parse --short=9 HEAD
+  git::commit_hash
 }
 
 version::echo() {
