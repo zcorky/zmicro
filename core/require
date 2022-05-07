@@ -25,7 +25,7 @@ require() {
     name=$(echo $name | awk -F '^' '{print $2}')
     log::info "[$(timestamp)][require][package] install: $name ($version) ..."
     #
-    zmicro package install $name $version $repo
+    zmicro package install $name@$version $repo
     if [ "$?" = "0" ]; then
       log::success "[$(timestamp)][require][package] install success: ${name}"
     else
