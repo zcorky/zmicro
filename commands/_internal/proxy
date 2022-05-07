@@ -5,6 +5,7 @@ help() {
   echo "  zmicro proxy <ip>"
   echo ""
   echo "Example:"
+  echo "    zmicro proxy apply"
   echo "    zmicro proxy 127.0.0.1:17890"
 }
 
@@ -16,6 +17,13 @@ core() {
 
   local ip=$1
   local port=$2
+
+  # zmicro proxy apply
+  if [ "$ip" = "apply" ]; then
+    ip="127.0.0.1"
+    port="17890"
+  fi
+
   if [ -z "$ip" ]; then
     log::error "proxy ip is required"
     exit 1
@@ -35,6 +43,8 @@ core() {
 
   # @TODO apply in new shell
   #   @TODO can apply current shell ???
+  log::success "You have apply proxy commandline."
+  
   exec $SHELL
 }
 
