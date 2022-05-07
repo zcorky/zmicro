@@ -47,7 +47,14 @@ core() {
     fi
   fi
 
+  # already running
+  if [ "$HTTPS_PROXY" = "http://$ip:$port" ]; then
+    log::info "You have already applied proxy commandline."
+    exit 0
+  fi
+
   export https_proxy=http://$ip:$port http_proxy=http://$ip:$port all_proxy=socks5://$ip:$port
+  export HTTPS_PROXY=http://$ip:$port HTTP_PROXY=http://$ip:$port ALL_PROXY=socks5://$ip:$port
 
   # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
   export LC_CTYPE=en_US.UTF-8
@@ -56,7 +63,7 @@ core() {
 
   # @TODO apply in new shell
   #   @TODO can apply current shell ???
-  log::success "You have apply proxy commandline."
+  log::success "You have applied proxy commandline."
   
   exec $SHELL
 }
