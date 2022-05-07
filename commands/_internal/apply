@@ -1,0 +1,35 @@
+#!/bin/bash
+
+. $ZMICRO_HOME/core/env
+
+help() {
+  echo "Usage:"
+  echo "  zmicro apply <service>"
+  echo ""
+  echo "Commands:"
+  echo "    proxy       Apply proxy for commandline"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  case $1 in
+  proxy)
+    zmicro proxy apply
+    ;;
+  *)
+    log::info "unknown command: $1"
+    help
+    exit 0
+    ;;
+  esac
+}
+
+run() {
+  core $@
+}
+
+run $@

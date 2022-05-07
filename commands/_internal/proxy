@@ -20,8 +20,13 @@ core() {
 
   # zmicro proxy apply
   if [ "$ip" = "apply" ]; then
-    ip="127.0.0.1"
-    port="17890"
+    ip=$(zmicro config get PROXY_IP)
+    port=$(zmicro config get PROXY_PORT)
+
+    if [ "$ip" = "" ]; then
+      ip="127.0.0.1"
+      port="17890"
+    fi
   fi
 
   if [ -z "$ip" ]; then
@@ -32,6 +37,14 @@ core() {
   if [ -z "$port" ]; then
     log::error "proxy port is required"
     exit 1
+  fi
+
+  if [ "$(os::has_command nc)" = "true" ]; then
+    nc -z -v -n -w 1 $ip $port >> /dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      log::error "ClashZ is not running, please check"
+      exit 1
+    fi
   fi
 
   export https_proxy=http://$ip:$port http_proxy=http://$ip:$port all_proxy=socks5://$ip:$port
