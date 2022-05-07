@@ -30,7 +30,6 @@ run() {
     help::list $ZMICRO_SUB_BIN_PATH/$command_path_for_help ${@:3}
     exit 1
   fi
-  
 
   # command_path=$(commander::get_command_path $@)
   # if [ "$?" != "0" ]; then
@@ -61,7 +60,7 @@ run() {
   # Get Command
   log::debug "[$(timestamp)][command]"
   log::debug "[$(timestamp)][command] get command path start ..."
-  command_path=$(commander::get_command_path $@)
+  command_path=$(commander::get_command_path "$@")
 
   log::command "$command_path"
 }

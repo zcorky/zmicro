@@ -8,21 +8,20 @@
 # @TODO fix sudo in docker
 command -v sudo >>/dev/null 2>&1
 if [ $? -ne 0 ]; then
-  sudo() {           
+  sudo() {
     eval "$@"
-  }          
+  }
   chown() {
-    echo "ignore chown" >> /dev/null 2>&1
+    echo "ignore chown" >>/dev/null 2>&1
   }
   tput() {
-    echo "ignore tput" >> /dev/null 2>&1
-  }        
-   
+    echo "ignore tput" >>/dev/null 2>&1
+  }
+
   export -f sudo
   export -f chown
   export -f tput
 fi
-
 
 is_run_init() {
   if [ "$1" = "init" ]; then
@@ -47,4 +46,12 @@ log::clean_check # & >> /dev/null 2>&1
 #   $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
 # fi
 
-run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGINS_PATH $@
+# @TODO
+#  1. AS A Executor: #!/usr/bin/env zmicro
+#  2. Execute Local Script: zmicro ./xxx.sh
+echo $@ | grep "^/" >/dev/null
+if [ "$?" = "0" ]; then
+  bash $@
+else
+  run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGINS_PATH $@
+fi

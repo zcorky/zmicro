@@ -113,6 +113,15 @@ commander::has_command_path() {
     return 0
   fi
 
+  # 3. local
+  #  such:
+  #   1. zmicro ./xxx.sh
+  #   2. env zmicro
+  local local_command_path=$command
+  if [ -f "$local_command_path" ]; then
+    return 0
+  fi
+
   # *. not found
   log::debug [$(timestamp)]$(color::error "[command] 404 not found ($command $args)")
   return 1
@@ -214,6 +223,16 @@ commander::get_command_path() {
     return 0
   fi
 
+  # 3. local
+  #  such:
+  #   1. zmicro ./xxx.sh
+  #   2. env zmicro
+  local local_command_path=$command
+  if [ -f "$local_command_path" ]; then
+    echo "$PWD#$local_command_path#"
+    return 0
+  fi
+
   HAS_FILE_LOG_SILIENT="false"
 
   _path="[commander::get_command_path]"
@@ -235,6 +254,11 @@ commander::get_command_path_with_fragments() {
       command_path="$command_path/$command"
     fi
   done
+
+  if [ "$base_command_path" = "-" ]; then
+    echo "$command_path"
+    return
+  fi
 
   echo "$base_command_path/${command_path}"
 }

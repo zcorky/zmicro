@@ -112,6 +112,13 @@ log::command() {
   local base_command_path=$(echo $command_path_with_seperator | cut -d "#" -f 1)
   local command_fragments=$(echo $command_path_with_seperator | cut -d "#" -f 2)
   local command_args=$(echo $command_path_with_seperator | cut -d "#" -f 3-)
+
+  # # @TODO
+  # echo $command_fragments | grep "^/" >/dev/null
+  # if [ "$?" = "0" ]; then
+  #   return
+  # fi
+
   # Init Script Path
   local init_path=$base_command_path/_init
 
