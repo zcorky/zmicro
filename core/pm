@@ -2,13 +2,13 @@
 
 pm() {
   which brew >>/dev/null 2>&1
-  if [ "$?" = "0" ]; then
+  if [ "$?" = "0" ] && [ "$(os::is_macos)" = "true" ]; then
     # ignore -yqq in mac
     local args=""
     for arg in $@; do
       case $arg in
       -yqq) ;;
-
+      -y) ;;
       *)
         args="$args $arg"
         ;;
