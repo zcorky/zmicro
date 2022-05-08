@@ -172,6 +172,8 @@ config::check_or_set() {
   local key=$1
   local type=$2
   local filepath=$3
+  local message=$4
+  
   if [ -z "$key" ]; then
     log::error "[config::check_or_set] key is required"
     exit 1
@@ -202,10 +204,18 @@ config::check_or_set() {
 
   if [ -z "$value" ]; then
     if [ "$type" = "text" ]; then
-      inquirer::text "请输入 $key:" value
+      if [ -z "$message" ]; then
+        message="请输入 $key:"
+      fi
+
+      inquirer::text "$message" value
     elif [ "$type" = "yesno" ]; then
+      if [ -z "$message" ]; then
+        message="是否启用 $key?"
+      fi
+
       local choices=("Yes" "No")
-      inquirer::select "是否启用 $key?" choices value
+      inquirer::select "$message" choices value
       if [ "$value" = "Yes" ]; then
         value="true"
       else
