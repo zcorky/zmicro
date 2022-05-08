@@ -722,6 +722,62 @@ os::assert() {
   fi
 }
 
+os::is_nodejs_installed() {
+  # ZMICRO_NVM
+  export NODE_HOME=/usr/local/node
+  export NODE_USER_HOME=$HOME/.node
+  export PATH=$NODE_HOME/bin:$NODE_USER_HOME/bin:$PATH
+
+  which node >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+os::is_go_installed() {
+  # ZMICRO_GVM
+  export GOHOME=/usr/local/go
+  export GOPATH=$HOME/.go
+  export PATH=$GOHOME/bin:$GOPATH/bin:$PATH
+
+  which go >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+os::is_deno_installed() {
+  # ZMICRO_DVM
+  export DENO_HOME=/usr/local/deno
+  export DENO_USER_HOME=$HOME/.deno
+  export PATH=$DENO_HOME/bin:$DENO_USER_HOME/bin:$PATH
+
+  which deno >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+os::is_rust_installed() {
+  # ZMICRO_RSVM
+  export RUST_HOME=/usr/local/rust
+  export RUST_USER_HOME=$HOME/.rust
+  export PATH=$RUST_HOME/rustc/bin:$RUST_HOME/cargo/bin:$RUST_USER_HOME/bin:$PATH
+
+  which rustc >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -803,3 +859,8 @@ export -f os::is_workspace
 export -f os::fix_permissions
 
 export -f os::assert
+
+export -f os::is_nodejs_installed
+export -f os::is_go_installed
+export -f os::is_deno_installed
+export -f os::is_rust_installed

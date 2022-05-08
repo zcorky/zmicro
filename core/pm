@@ -34,20 +34,7 @@ pm() {
 
 # node npm
 pm::npm() {
-  export NODE_HOME=/usr/local/node
-  export NODE_USER_HOME=/home/zero/.node
-  export PATH=$NODE_HOME/bin:$NODE_USER_HOME/bin:$PATH
-
-  is_nodejs_installed() {
-    which node >> /dev/null 2>&1
-    if [ "$?" = "0" ]; then
-      echo "true"
-    else
-      echo "false"
-    fi
-  }
-
-  if [ "$(is_nodejs_installed)" = "false" ]; then
+  if [ "$(os::is_nodejs_installed)" = "false" ]; then
     zpackage install nodejs
   fi
 
