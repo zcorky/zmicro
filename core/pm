@@ -30,6 +30,21 @@ pm() {
     sudo apt $@
     return
   fi
+
+  which apk >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sudo apk $@
+    return
+  fi
+
+  which dnf >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sudo dnf $@
+    return
+  fi
+
+  log::error "[pm] unknown system package manager"
+  exit 1
 }
 
 # node npm
