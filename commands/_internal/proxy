@@ -34,6 +34,9 @@ core() {
     unset HTTP_PROXY
     unset https_proxy
     unset http_proxy
+
+    log::success "You have removed proxy commandline."
+    exec $SHELL
     exit 0
   fi
 
