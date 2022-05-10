@@ -18,6 +18,7 @@ core() {
   local ip=$1
   local port=$2
 
+  # @TODO
   # zmicro proxy apply
   if [ "$ip" = "apply" ]; then
     ip=$(zmicro config get PROXY_IP)
@@ -27,6 +28,13 @@ core() {
       ip="127.0.0.1"
       port="17890"
     fi
+  elif [ "$ip" = "remove" ]; then
+  # zmicro proxy remove
+    unset HTTPS_PROXY
+    unset HTTP_PROXY
+    unset https_proxy
+    unset http_proxy
+    exit 0
   fi
 
   if [ -z "$ip" ]; then

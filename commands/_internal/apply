@@ -4,9 +4,12 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro apply <service>"
+  echo "  zmicro apply [option] <service>"
   echo ""
-  echo "Commands:"
+  echo "Options:"
+  echo "    -r,--remove Remove apply service"
+  echo ""
+  echo "Services:"
   echo "    proxy       Apply proxy for commandline"
 }
 
@@ -16,9 +19,29 @@ core() {
     exit 0
   fi
 
-  case $1 in
+  local option=$1
+  local service=$2
+
+  if [ -z "$service" ]; then
+    service=$option
+    option=""
+  fi
+
+  local option_remove=false
+  case $option in
+    -r | --remove)
+      option_remove=true
+      ;;
+  esac
+
+
+  case $service in
   proxy)
-    zmicro proxy apply
+    if [ "$option_remove" = "true" ]; then
+      zmicro proxy remove
+    else
+      zmicro proxy apply
+    fi
     ;;
   *)
     log::info "unknown command: $1"
