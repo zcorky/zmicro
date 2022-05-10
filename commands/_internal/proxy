@@ -39,12 +39,9 @@ core() {
     exit 1
   fi
 
-  if [ "$(os::has_command nc)" = "true" ]; then
-    nc -z -v -n -w 1 $ip $port >> /dev/null 2>&1
-    if [ "$?" != "0" ]; then
-      log::error "ClashZ is not running, please check"
-      exit 1
-    fi
+  if [ "$(net::is_port_visitable $ip $port)" != "true" ]; then
+    log::error "ClashZ is not running, please check"
+    exit 1
   fi
 
   # already running
@@ -64,7 +61,7 @@ core() {
   # @TODO apply in new shell
   #   @TODO can apply current shell ???
   log::success "You have applied proxy commandline."
-  
+
   exec $SHELL
 }
 

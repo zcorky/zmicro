@@ -26,6 +26,73 @@ net::is_in_china() {
   fi
 }
 
+net::is_ip() {
+  os::is_ip $1
+}
+
+net::get_domain_ip() {
+  local domain=$1
+  if [ -z "$domain" ]; then
+    log::error "domain is required"
+    exit 1
+  fi
+
+  dig +short $domain @114.114.114.114
+}
+
+net::is_url_visitable() {
+  local url=$1
+  if [ -z "$url" ]; then
+    log::error "url is required"
+    return
+  fi
+
+  curl -I $1 --connect-timeout 3 >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    echo "false"
+  else
+    echo "true"
+  fi
+}
+
+net::is_port_visitable() {
+  local ip=$1
+  local port=$2
+
+  if [ -z "$ip" ]; then
+    log::error "ip is required"
+    exit 1
+  fi
+
+  if [ -z "$port" ]; then
+    log::error "port is required"
+    exit 1
+  fi
+
+  # no a valid ip, search dns
+  if [ "$(net::is_ip $ip)" = "false" ]; then
+    ip=$(net::get_domain_ip $ip)
+  fi
+
+  if [ "$(os::has_command nc)" = "true" ]; then
+    nc -z -v -n -w 1 $ip $port >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "false"
+    else
+      echo "true"
+    fi
+  else
+    # @TODO
+    echo "true"
+  fi
+}
+
 export -f net::is_in_china
 export -f net::is_github_visitable
 export -f net::is_google_visitable
+
+export -f net::is_ip
+export -f net::get_domain_ip
+
+export -f net::is_url_visitable
+export -f net::is_port_visitable
