@@ -19,13 +19,13 @@ core() {
     where="home"
   fi
 
-  # where => default plugin when name exist
-  # zmicro go package
-  #   => zmicro go plugin package
-  if [ -n "$where" ] && [ "$where" != "home" ] && [ "$where" != "plugin" ] && [ "$where" != "service" ] && [ "$where" != "package" ]; then
-    where="plugin"
-    name=$1
-  fi
+  # # where => default plugin when name exist
+  # # zmicro go package
+  # #   => zmicro go plugin package
+  # if [ -n "$where" ] && [ "$where" != "home" ] && [ "$where" != "plugin" ] && [ "$where" != "service" ] && [ "$where" != "package" ]; then
+  #   where="plugin"
+  #   name=$1
+  # fi
 
   # echo "where: $where"
   # echo "name: $name"
@@ -43,7 +43,7 @@ core() {
 
       local plugin_path=$ZMICRO_HOME/plugins/$name
       if [ ! -d $plugin_path ]; then
-        log::error "unknown plugin ${name}"
+        log::error "plugin (${name}) not found"
         exit 1
       fi
 
@@ -51,14 +51,17 @@ core() {
       exec $SHELL
       ;;
     service)
-      if [ -z "$name" ]; then
-        log::error "${where} name is required"
+      local path=$ZMICRO_HOME/plugins/${where}
+      if [ ! -d $path ]; then
+        log::error "plugin(${where}) not found (1)"
         exit 1
       fi
 
-      local path=$ZMICRO_HOME/plugins/${where}/${where}s/$name
+      if [ -n "$name" ]; then
+        path=$path/${where}s/$name        
+      fi
       if [ ! -d $path ]; then
-        log::error "unknown ${where} ${name}"
+        log::error "${where}(${name}) not found"
         exit 1
       fi
 
@@ -66,14 +69,17 @@ core() {
       exec $SHELL
       ;;
     package)
-      if [ -z "$name" ]; then
-        log::error "${where} name is required"
+      local path=$ZMICRO_HOME/plugins/${where}
+      if [ ! -d $path ]; then
+        log::error "plugin(${where}) not found (2)"
         exit 1
       fi
 
-      local path=$ZMICRO_HOME/plugins/${where}/${where}s/$name
+      if [ -n "$name" ]; then
+        path=$path/${where}s/$name        
+      fi
       if [ ! -d $path ]; then
-        log::error "unknown ${where} ${name}"
+        log::error "${where}(${name}) not found"
         exit 1
       fi
 
@@ -81,7 +87,7 @@ core() {
       exec $SHELL
       ;;
     *)
-      log::error "unknown go where: $where"
+      log::error "plugin(${where}) not found (3)"
       ;;
   esac
 }
