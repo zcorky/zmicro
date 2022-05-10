@@ -8,7 +8,7 @@ help() {
 }
 
 core() {
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
     help
     exit 0
   fi
