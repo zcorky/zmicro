@@ -121,6 +121,10 @@ os::tmp() {
   echo /tmp
 }
 
+os::tmp_dir() {
+  mktemp -u
+}
+
 os::tmp_file() {
   mktemp
 }
@@ -818,6 +822,7 @@ export -f os::top
 
 export -f os::pwd
 export -f os::tmp
+export -f os::tmp_dir
 export -f os::tmp_file
 
 export -f os::is_bash
