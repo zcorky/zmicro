@@ -121,6 +121,10 @@ os::tmp() {
   echo /tmp
 }
 
+os::tmp_dir() {
+  mktemp -u
+}
+
 os::tmp_file() {
   mktemp
 }
@@ -242,6 +246,30 @@ os::is_command_exist() {
 os::is_support_color() {
   # if [ "$(echo $PS1)" != "" ]; then
   if [ "$TERM" = "xterm-256color" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+os::is_ip() {
+  local ip=$1
+
+  if [ -z "$ip" ]; then
+    log::error "ip is required"
+    return
+  fi
+
+  # regexp syntax: [[ a =~ b ]]
+  # if [[ "1.2.3.4" =~ "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" ]]; then
+  #   echo "true"
+  # else
+  #   echo "false"
+  # fi
+
+  # is ip
+  echo $ip | grep -E "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
     echo "true"
   else
     echo "false"
@@ -457,7 +485,7 @@ os::random_string() {
   fi
 
   if [ "$(os::is_command_exist openssl)" = "false" ]; then
-    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $length | head -n 1 
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $length | head -n 1
     return
   fi
 
@@ -476,7 +504,7 @@ os::random_int() {
     min=0
   fi
 
-  echo $(( ( RANDOM % $max )  + $min ))
+  echo $(((RANDOM % $max) + $min))
 }
 
 os::random_id() {
@@ -626,7 +654,7 @@ os::inquirer() {
   fi
 
   if [ "$type" = "text" ]; then
-    inquirer::text "$description" value "" "value is required" inquirer::required 
+    inquirer::text "$description" value "" "value is required" inquirer::required
   elif [ "$type" = "yesno" ]; then
     local choices=("Yes" "No")
     inquirer::select "$description" choices value
@@ -635,7 +663,7 @@ os::inquirer() {
     else
       value="false"
     fi
-  else 
+  else
     log::error "[os::inquirer] invalid type($type), options: text, yesno"
     exit 1
   fi
@@ -728,7 +756,7 @@ os::is_nodejs_installed() {
   export NODE_USER_HOME=$HOME/.node
   export PATH=$NODE_HOME/bin:$NODE_USER_HOME/bin:$PATH
 
-  which node >> /dev/null 2>&1
+  which node >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     echo "true"
   else
@@ -742,7 +770,7 @@ os::is_go_installed() {
   export GOPATH=$HOME/.go
   export PATH=$GOHOME/bin:$GOPATH/bin:$PATH
 
-  which go >> /dev/null 2>&1
+  which go >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     echo "true"
   else
@@ -756,7 +784,7 @@ os::is_deno_installed() {
   export DENO_USER_HOME=$HOME/.deno
   export PATH=$DENO_HOME/bin:$DENO_USER_HOME/bin:$PATH
 
-  which deno >> /dev/null 2>&1
+  which deno >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     echo "true"
   else
@@ -770,7 +798,7 @@ os::is_rust_installed() {
   export RUST_USER_HOME=$HOME/.rust
   export PATH=$RUST_HOME/rustc/bin:$RUST_HOME/cargo/bin:$RUST_USER_HOME/bin:$PATH
 
-  which rustc >> /dev/null 2>&1
+  which rustc >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     echo "true"
   else
@@ -794,6 +822,7 @@ export -f os::top
 
 export -f os::pwd
 export -f os::tmp
+export -f os::tmp_dir
 export -f os::tmp_file
 
 export -f os::is_bash
@@ -864,3 +893,5 @@ export -f os::is_nodejs_installed
 export -f os::is_go_installed
 export -f os::is_deno_installed
 export -f os::is_rust_installed
+
+export -f os::is_ip
