@@ -127,12 +127,59 @@ fs::remove_line_has_str() {
   # sed -i "/${match_str}/d" $file_path
   local tmp_file_path=$(os::tmp_file)
   cp $file_path $tmp_file_path
-  cat $tmp_file_path \
-    | sed -e "/${match_str}/d" \
-    | sudo tee $file_path >>/dev/null 2>&1
+  cat $tmp_file_path |
+    sed -e "/${match_str}/d" |
+    sudo tee $file_path >>/dev/null 2>&1
 
   # # fix emtpy line
   # fs::remove_empty_line $file_path
+}
+
+fs::watch() {
+  local filepath=$1
+  local action=$2
+
+  if [ ! -e "$filepath" ]; then
+    log::error "[$(timestamp)][fs::watch] filepath($filepath) not found"
+    exit 1
+  fi
+
+  if [ ! -f "$filepath" ]; then
+    log::error "[$(timestamp)][fs::watch] filepath($filepath) should be a file, but not"
+    exit 1
+  fi
+
+  if [ -z "$action" ]; then
+    log::error "[$(timestamp)][fs::watch] action is required"
+    exit 1
+  fi
+
+  local last_changed_at=$(ls -l "$filepath")
+  local is_stopping=false
+
+  function fn_stop() {
+    is_stopping=true
+  }
+
+  log::info "[$(os::timestamp)][fs::watch][start] file: $filepath with ${command} ..."
+
+  while true; do
+    sleep 1
+    # log::info "[$(os::timestamp)][$(date +'%Y-%m-%d %H:%M:%S')] checking file: $filepath ..."
+    if [ "$is_stopping" = "true" ]; then
+      log::info "[$(os::timestamp)]is during stoping, ignore change (file: $filepath)..."
+      continue
+    fi
+
+    local new_changed_at=$(ls -l "$filepath")
+    if [ "$new_changed_at" != "$last_changed_at" ]; then
+      log::info "[$(os::timestamp)][fs::watch][changed] file: $filepath ..."
+
+      $action $filepath fn_stop
+
+      last_changed_at="$new_changed_at"
+    fi
+  done
 }
 
 export -f fs::write
@@ -142,3 +189,5 @@ export -f fs::append
 
 export -f fs::remove_line_has_str
 export -f fs::remove_empty_line
+
+export -f fs::watch
