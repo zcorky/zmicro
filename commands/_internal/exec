@@ -16,14 +16,23 @@ core() {
   local shell_command=$1
   local shell_command_args=${@:2}
 
+  # fix: a.sh => ./a.sh
+  # fix: bin/a.sh => ./bin/a.sh
+  # normal: /a.sh => /a.sh
+  # normal: /bin/a.sh => /bin/a.sh
+  if [ "${shell_command:0:1}" != "/" ] && [ "${shell_command:0:1}" != "." ]; then
+    shell_command="./$shell_command"
+  fi
+
   # @TODO
   set +e
 
-  type $fn >>/dev/null 2>&1
+  type $shell_command >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
+    echo "$shell_command $shell_command_args"
     eval "$shell_command $shell_command_args"
   else
-    log::error "$fn method is not not found"
+    log::error "$shell_command method is not not found"
   fi
 
   # @TODO
