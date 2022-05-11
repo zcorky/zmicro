@@ -48,7 +48,13 @@ test_one_file() {
     exit 1
   fi
 
-  # load function
+  # remove suffix: core/os_test => core/os
+  local core_filepath=${filepath%_test}
+
+  # load
+  # @1 load methods
+  . $core_filepath
+  # @2 load testcases
   . $filepath
 
   # replace // => /
