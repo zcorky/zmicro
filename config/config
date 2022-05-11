@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export TZ=Asia/Shanghai
+
 export TODAY=$(date +%Y-%m-%d)
 
 # Core

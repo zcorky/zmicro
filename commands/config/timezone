@@ -1,12 +1,10 @@
 #!/bin/bash
 
-DEFAULT_TIMEZONE=Asia/Shanghai
-
 help() {
   echo "Usage:"
   echo "  zmicro config timezone [TIMEZONE]"
   echo ""
-  echo "    Default timezone: Asia/Shanghai"
+  echo "    Default timezone: ${TZ}"
 }
 
 is_timezone_seted() {
@@ -51,7 +49,7 @@ core() {
   fi
 
   local _timezone=$1
-  local timezone=${_timezone:-$DEFAULT_TIMEZONE}
+  local timezone=${_timezone:-$TZ}
   log::debug "timezone: $timezone"
 
   # Show current timezone
@@ -62,9 +60,30 @@ core() {
 
   # Set timezone
   if [ "$(os::is_docker)" = "true" ]; then
-    # @TODO
-    # date >> /dev/null 2>&1
-    log::warn "[$(timestamp)][config] @TODO set timezone in docker"
+    # @FIX TimeZone in Docker
+    #  https://www.cnblogs.com/flipped/p/15808681.html
+    sudo cp /usr/share/zoneinfo/${TZ} /etc/localtime >> /dev/null 2>&1
+    echo ${TZ} | sudo tee /etc/timezone >> /dev/null 2>&1
+
+    local BASHRC_PATH=$HOME/.bashrc
+    if [ -f $BASHRC_PATH ]; then
+      cat $BASHRC_PATH | grep "ZMICRO TIMEZONE" >>/dev/null 2>&1
+      if [ "$?" != "0" ]; then
+        echo "# ZMICRO TIMEZONE" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
+        echo "TZ=\"${TZ}\"" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
+        echo "" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
+      fi
+    fi
+
+    local ZSHRC_PATH=$HOME/.zshrc
+    if [ -f $ZSHRC_PATH ]; then
+      cat $ZSHRC_PATH | grep "ZMICRO TIMEZONE" >>/dev/null 2>&1
+      if [ "$?" != "0" ]; then
+        echo "# ZMICRO TIMEZONE" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
+        echo "TZ=\"${TZ}\"" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
+        echo "" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
+      fi
+    fi
     return 
   fi
 
