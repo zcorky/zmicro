@@ -29,7 +29,7 @@ core() {
     exit 1
   fi
 
-  if [ "$plugin_name" = "." ]; then
+  if [ "$plugin_name" = "." ] || [ "$plugin_child_name" = "." ]; then
     local path=$(dirname $PWD)
     local relative_path=${path#$ZMICRO_PLUGINS_PATH}
     if [ "$path" != "$relative_path" ] && [ -n "$relative_path" ]; then
