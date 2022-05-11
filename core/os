@@ -627,9 +627,19 @@ os::get_env() {
 os::inquirer() {
   load inquirer
   local key=$1
+  # 1. text       <args: key question required default>
+  # 2. yesno      <args: key question required default>
+  # 3. select     <args: key choices question required>
+  # 4. confirm (alias of yesno)
+  # 5. radio   (alias of select)
   local type=$2
-  local description=$3
+  #
+  local question=$3
   local required=$4
+  local default_value=$5
+  
+  # @TODO
+  local choices=()
 
   if [ -z "$key" ]; then
     log::error "[os::inquirer] key is required"
@@ -641,11 +651,26 @@ os::inquirer() {
     return
   fi
 
-  if [ -z "$description" ]; then
+  # correct args
+  if [ "$type" = "text" ]; then
+    # os::inquirer value "text" "请输入 ？" "默认值"
+    if [ "$required" != "true" ] && [ "$required" != "false" ]; then
+      default_value=$required
+    fi
+  elif [ "$type" = "select" ] || [ "$type" = "radio" ]; then
+    choices="$3"
+    question=$4
+    required=$5
+    # default_value=$6
+  fi
+
+  if [ -z "$question" ]; then
     if [ "$type" = "text" ]; then
-      description="请输入 $key:"
-    elif [ "$type" = "yesno" ]; then
-      description="是否启用 $key?"
+      question="请输入 $key:"
+    elif [ "$type" = "yesno" ] || [ "$type" = "confirm" ]; then
+      question="是否启用 $key?"
+    elif [ "$type" = "select" ] || [ "$type" = "radio" ]; then
+      question="请选择 $key:"
     fi
   fi
 
@@ -654,26 +679,39 @@ os::inquirer() {
   fi
 
   if [ "$type" = "text" ]; then
-    inquirer::text "$description" value "" "value is required" inquirer::required
-  elif [ "$type" = "yesno" ]; then
+    inquirer::text "$question" value "$default_value" "value is required" inquirer::required
+  elif [ "$type" = "yesno" ] || [ "$type" = "confirm" ]; then
     local choices=("Yes" "No")
-    inquirer::select "$description" choices value
+    inquirer::select "$question" choices value
     if [ "$value" = "Yes" ]; then
       value="true"
     else
       value="false"
     fi
+  elif [ "$type" = "select" ] || [ "$type" = "radio" ]; then
+    # @TODO study from inquirer => select => _list_input
+    eval _choices=( '"${'${choices}'[@]}"' )
+    local _choices_length=${#_choices[@]}
+    local _choices_index=0
+    choices=()
+    while [ "$_choices_index" -lt "$_choices_length" ]; do
+      choices+=("${_choices[$_choices_index]}")
+      _choices_index=$((_choices_index + 1))
+    done  
+
+    inquirer::select "$question" choices value
   else
     log::error "[os::inquirer] invalid type($type), options: text, yesno"
     exit 1
   fi
 
-  # if [ "$required" = "true" ]; then
-  #   if [ -z "$value" ]; then
-  #     log::error "[os::inquirer] value is required"
-  #     exit 1
-  #   fi
-  # fi
+  if [ "$required" = "true" ]; then
+    if [ -z "$value" ]; then
+      log::error "[os::inquirer] value is required"
+      os::inquirer "$@"
+      return
+    fi
+  fi
 
   # @TODO
   export $key=$value
