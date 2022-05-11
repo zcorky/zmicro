@@ -53,7 +53,7 @@ core() {
           local pre_plugin_child_name=$(basename $PWD)
           os::inquirer value confirm "是否发布当前 ${pre_plugin_name} <$pre_plugin_child_name> ？"
           if [ "$value" = "true" ]; then
-            plugin_child_name=pre_plugin_child_name
+            plugin_child_name=$pre_plugin_child_name
           else
             log::info "取消发布"
             exit 0
