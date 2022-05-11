@@ -288,7 +288,7 @@ inquirer::text() {
   local var_name=$2
   local _text_default_value=$3
   # If there are default value, then show as a gray tip
-  local _text_default_tip=$([ -z "$_text_default_value" ] && echo "" || echo "(${_text_default_value})")
+  local _text_default_tip=$([ -z "$_text_default_value" ] && echo "" || echo "(default: ${_text_default_value})")
   local _text_input_regex_failed_msg=${4:-"Input validation failed"}
   local _text_input_validator=${5:-text_input_default_validator}
   local _read_prompt_start=$'\e[32m?\e[39m\e[1m'
