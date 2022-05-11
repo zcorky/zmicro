@@ -29,8 +29,9 @@ core() {
 
   type $shell_command >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
-    echo "$shell_command $shell_command_args"
+    # echo "$shell_command $shell_command_args"
     eval "$shell_command $shell_command_args"
+    exit $?
   else
     log::error "$shell_command method is not not found"
   fi
