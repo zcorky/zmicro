@@ -12,7 +12,7 @@ required() {
 
 help() {
   echo "Usage:"
-  echo "  zmicro plugin release <plugin_name>"
+  echo "  zmicro plugin release <plugin_name> [plugin_child_name | .]"
   echo ""
 }
 
@@ -23,16 +23,65 @@ core() {
   fi
 
   local plugin_name=$1
-  if [ "$name" != "" ]; then
+  local plugin_child_name=$2
+  if [ "$plugin_name" = "" ]; then
     log::error "plugin name is required"
     exit 1
   fi
 
-  local origin_version=$(plugin::get_version $plugin_name)
-  inquirer::text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
+  if [ "$plugin_name" = "." ]; then
+    local path=$(dirname $PWD)
+    local relative_path=${path#$ZMICRO_PLUGINS_PATH}
+    if [ "$path" != "$relative_path" ] && [ -n "$relative_path" ]; then
+      local pre_plugin_name=$(echo $relative_path | awk -F "/" '{print $2}')
+      local pre_plugin_children_dir=$(echo $relative_path | awk -F "/" '{print $3}')
+
+      if [ "$pre_plugin_name" != "" ]; then
+        # 1. release a plugin
+        if [ "$pre_plugin_children_dir" = "" ]; then
+          os::inquirer value confirm "是否发布当前 plugin <$pre_plugin_name> ？"
+          if [ "$value" = "true" ]; then
+            plugin_name=$pre_plugin_name
+          else
+            log::info "取消发布"
+            exit 0
+          fi
+        else
+          plugin_name=$pre_plugin_name
+
+          # 2. release a child of a plugin
+          local pre_plugin_child_name=$(basename $PWD)
+          os::inquirer value confirm "是否发布当前 ${pre_plugin_name} <$pre_plugin_child_name> ？"
+          if [ "$value" = "true" ]; then
+            plugin_child_name=pre_plugin_child_name
+          else
+            log::info "取消发布"
+            exit 0
+          fi
+        fi      
+      else
+        log::error "[$(timestamp)][service::release] custom dir($path) is not a plugin"
+        exit 1
+      fi
+    else
+      log::error "[$(timestamp)][service::release] custom dir($path) is not a plugin or plugin children"
+      exit 1
+    fi
+  fi
 
   # @TODO
-  cd $ZMICRO_PLUGINS_PATH/$plugin_name
+  local project_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+  if [ -n "$plugin_child_name" ]; then
+    project_path=$project_path/${plugin_name}s/$plugin_child_name
+  fi
+
+  # cd to project path
+  cd $project_path
+
+  # local origin_version=$(plugin::get_version $plugin_name)
+  local origin_version=$(cat mod | grep "VERSION" | awk -F "=" '{print $2}')
+  inquirer::text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
+
   sed -i -e "s/${origin_version}/$new_version/" mod >>/dev/null 2>&1
 
   #@TODO mod-e file occurred
