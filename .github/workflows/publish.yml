@@ -43,6 +43,9 @@ jobs:
     container: whatwewant/zmicro:v1.15.24
 
     steps:
+      - name: Update zmicro to latest
+        run: zmicro update
+
       - name: Get Current Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
