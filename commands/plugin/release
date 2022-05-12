@@ -115,6 +115,11 @@ core() {
       git push origin master >> /dev/null
       log::success "[plugin][release] cancel publish version (${new_version})"
     fi
+  else
+    git tag ${new_version} -f 
+    git push origin ${new_version} -f
+    git push origin master >> /dev/null
+    log::success "[plugin][release] ${plugin_name} ${new_version}"
   fi
 }
 
