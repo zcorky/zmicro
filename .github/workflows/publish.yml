@@ -83,6 +83,9 @@ jobs:
         run: |
           echo "Docker Tags: ${{ steps.meta.outputs.tags }}"
 
+      - name: Fix QEMU depends on Docker CLI
+        run: zmicro package install docker
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
