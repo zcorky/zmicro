@@ -22,6 +22,7 @@ core() {
     exit 0
   fi
 
+  local plugin_type=plugin
   local plugin_name=$1
   local plugin_child_name=$2
   if [ "$plugin_name" = "" ]; then
@@ -32,7 +33,9 @@ core() {
   if [ "$plugin_name" = "." ] || [ "$plugin_child_name" = "." ]; then
     local path=$(dirname $PWD)
     local relative_path=${path#$ZMICRO_PLUGINS_PATH}
-    if [ "$path" != "$relative_path" ] && [ -n "$relative_path" ]; then
+    if [ "$path" = "$ZMICRO_PLUGINS_PATH" ]; then
+      plugin_name=$(basename $PWD)
+    elif [ "$path" != "$relative_path" ] && [ -n "$relative_path" ]; then
       local pre_plugin_name=$(echo $relative_path | awk -F "/" '{print $2}')
       local pre_plugin_children_dir=$(echo $relative_path | awk -F "/" '{print $3}')
 
@@ -63,6 +66,9 @@ core() {
         log::error "[$(timestamp)][service::release] custom dir($path) is not a plugin"
         exit 1
       fi
+
+      # update plugin type
+      plugin_type=$plugin_name
     else
       log::error "[$(timestamp)][service::release] custom dir($path) is not a plugin or plugin children"
       exit 1
@@ -80,7 +86,11 @@ core() {
 
   # local origin_version=$(plugin::get_version $plugin_name)
   local origin_version=$(cat mod | grep "VERSION" | awk -F "=" '{print $2}')
-  inquirer::text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
+  if [ -z "$plugin_child_name" ]; then
+    inquirer::text "[$(color::green plugin.${plugin_name})] 输入新版本(当前: ${origin_version}):" new_version "" "version is required" required
+  else
+    inquirer::text "[$(color::green ${plugin_name}.${plugin_child_name})] 输入新版本(当前: ${origin_version}):" new_version "" "version is required" required
+  fi
 
   sed -i -e "s/${origin_version}/$new_version/" mod >>/dev/null 2>&1
 
