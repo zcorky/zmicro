@@ -39,7 +39,8 @@ jobs:
             状态: 构建失败（https://github.com/${{ github.repository }}/actions/runs/${{ github.run.id }}）
 
   publish:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    container: whatwewant/zmicro:v1.15.24
 
     steps:
       - name: Get Current Date
