@@ -46,7 +46,7 @@ core() {
           if [ "$value" = "true" ]; then
             plugin_name=$pre_plugin_name
           else
-            log::info "取消发布"
+            log::info "PUBLISH CANCELLED"
             exit 0
           fi
         else
@@ -58,7 +58,7 @@ core() {
           if [ "$value" = "true" ]; then
             plugin_child_name=$pre_plugin_child_name
           else
-            log::info "取消发布"
+            log::info "PUBLISH CANCELLED"
             exit 0
           fi
         fi      
@@ -87,9 +87,9 @@ core() {
   # local origin_version=$(plugin::get_version $plugin_name)
   local origin_version=$(cat mod | grep "VERSION" | awk -F "=" '{print $2}')
   if [ -z "$plugin_child_name" ]; then
-    inquirer::text "[$(color::green plugin.${plugin_name})] 输入新版本(当前: ${origin_version}):" new_version "" "version is required" required
+    inquirer::text "[$(color::green plugin.${plugin_name})] Input new version(current: ${origin_version}):" new_version "" "version is required" required
   else
-    inquirer::text "[$(color::green ${plugin_name}.${plugin_child_name})] 输入新版本(当前: ${origin_version}):" new_version "" "version is required" required
+    inquirer::text "[$(color::green ${plugin_name}.${plugin_child_name})] Input new version(current: ${origin_version}):" new_version "" "version is required" required
   fi
 
   sed -i -e "s/${origin_version}/$new_version/" mod >>/dev/null 2>&1
@@ -100,12 +100,22 @@ core() {
   fi
 
   git add mod
-  git commit -m "chore(release): bumped version to ${new_version}"
-  git tag ${new_version}
-  git push origin ${new_version}
-  git push origin master
+  git commit -m "chore(release): bumped version to ${new_version}" >> /dev/null
 
-  log::success "[plugin][release] ${plugin_name} ${new_version}"
+  git tag | grep "${new_version}" >> /dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    local actions=("Override" "ignore")
+    os::inquirer action "select" actions "Version ${new_version} already exists，Override or ignore ?"
+    if [ "$action" = "Override" ]; then
+      git tag ${new_version} -f 
+      git push origin ${new_version} -f
+      git push origin master >> /dev/null
+      log::success "[plugin][release] ${plugin_name} ${new_version}"
+    else
+      git push origin master >> /dev/null
+      log::success "[plugin][release] cancel publish version (${new_version})"
+    fi
+  fi
 }
 
 run() {
