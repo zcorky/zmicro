@@ -64,6 +64,15 @@ os::arch() {
   echo $(uname -m)
 }
 
+os::platform() {
+  if [ "$(os::is_macos)" = "true" ]; then
+    echo "darwin"
+    return
+  fi
+
+  echo "linux"
+}
+
 os::release() {
   local issue=""
 
@@ -855,16 +864,20 @@ os::support_method() {
   fi
 }
 
+export -f os::arch
+export -f os::platform
+export -f os::release
+export -f os::kernel
+export -f os::distribution
+export -f os::shell
+
 export -f os::homedir
 export -f os::username
-export -f os::shell
 export -f os::shell_profile
 export -f os::zsh_profile
 export -f os::bash_profile
 export -f os::hostname
 export -f os::uptime
-export -f os::kernel
-export -f os::distribution
 
 export -f os::ps
 export -f os::top
