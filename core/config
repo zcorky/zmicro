@@ -93,6 +93,7 @@ config::load_user_config() {
 config::get() {
   local key=$1
   local filepath=$2
+  local default_value=$3
   if [ -z "$filepath" ]; then
     filepath=$ZMICRO_RC
   fi
@@ -103,6 +104,10 @@ config::get() {
   fi
 
   local value=$(cat $filepath | grep "${key}=" | awk -F '=' '{print $2}')
+  if [ -z "$value" ]; then
+    value=$default_value
+  fi
+  
   echo $value
 }
 
