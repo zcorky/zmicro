@@ -43,7 +43,7 @@ core() {
   if [ -z "$plugin_url" ]; then
     # @TODO check github
     if [ "$(net::is_github_visitable)" = "false" ]; then
-      export ZMICRO_PLUGIN_REPO_PREFIX="${ZMICRO_PLUGIN_GITHUB_PROXY:-$ZMICRO_PLUGIN_GITHUB_DEFAULT_PROXY}/plugin-"
+      export ZMICRO_PLUGIN_REPO_PREFIX="${ZMICRO_PLUGIN_GITHUB_PROXY:-$ZMICRO_PLUGIN_GITHUB_DEFAULT_PROXY}/${ZMICRO_REPO_ORGANIZATION}/plugin-"
     fi
 
     plugin_url="${ZMICRO_PLUGIN_REPO_PREFIX}${plugin_name}"
