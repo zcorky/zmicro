@@ -4,19 +4,19 @@ function test_path::resolve() {
   testing::expect \
     "${FUNCNAME[0]} - relative" \
     "to_equal" \
-    "$ZMICRO_HOME/bin/zmicro" \
+    "$PWD/bin/zmicro" \
     "$(path::resolve bin/zmicro)" 
   
   testing::expect \
     "${FUNCNAME[0]} - relative dot" \
     "to_equal" \
-    "$ZMICRO_HOME/bin/zmicro" \
+    "$PWD/bin/zmicro" \
     "$(path::resolve ./bin/zmicro)" 
 
   testing::expect \
     "${FUNCNAME[0]} - relative dot dot" \
     "to_equal" \
-    "$(dirname $ZMICRO_HOME)/bin/zmicro" \
+    "$(dirname $PWD)/bin/zmicro" \
     "$(path::resolve ../bin/zmicro)" 
   
   testing::expect \
