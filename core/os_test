@@ -15,3 +15,17 @@ function test_os_username() {
     "$USER" \
     "$(os::username)"
 }
+
+function test_os::support_method() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(os::support_method os::homedir)"
+
+   testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "false" \
+    "$(os::support_method unkown_method_or_not_system_function)"
+}

@@ -41,11 +41,18 @@ test_one_dir() {
 test_one_file() {
   local filepath=$1
   local fn=$2
-  
+
+  # feat: auto detect test file name
+  # zmicro test core/os => core/os_test
   echo $filepath | grep "_test$" >> /dev/null 2>&1
   if [ $? -ne 0 ]; then
-    log::error "test file name must end with _test"
-    exit 1
+    local filepath_test="${filepath}_test"
+    if [ ! -f "$filepath_test" ]; then
+      log::error "test file name must end with _test"
+      exit 1      
+    fi
+
+    filepath=$filepath_test
   fi
 
   # remove suffix: core/os_test => core/os

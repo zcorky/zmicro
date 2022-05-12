@@ -844,6 +844,17 @@ os::is_rust_installed() {
   fi
 }
 
+os::support_method() {
+  local method=$1
+  # echo "method: $method"
+  command -v $method >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 export -f os::homedir
 export -f os::username
 export -f os::shell
@@ -933,3 +944,5 @@ export -f os::is_deno_installed
 export -f os::is_rust_installed
 
 export -f os::is_ip
+
+export -f os::support_method

@@ -41,7 +41,7 @@ path::dirname() {
     exit 1
   fi
 
-  echo "/$(string_split_slice '/' $path 0 -1)"
+  echo "/$(string::split_slice '/' $path 0 -1)"
 }
 
 path::join() {
@@ -63,6 +63,32 @@ realpath() {
   echo "$REALPATH"
 }
 
+path::resolve() {
+  local path=$1
+  if [ -z "$path" ]; then
+    log::error "[path::resolve] path is required"
+    exit 1
+  fi
+
+  local first_char=$(string::first_char $path)
+  if [ "$first_char" = "/" ]; then
+    # /bin/zmicro
+    echo $path
+    return
+  elif [ "${path:0:2}" = ".." ]; then
+    # ../bin/zmicro
+    echo $(path::join $(dirname $PWD) ${path:3})
+    return
+  elif [ "$first_char" = "." ]; then
+    # ./bin/zmicro
+    echo $(path::join $PWD ${path:2})
+    return
+  else
+    echo $(path::join $PWD $path)
+    return
+  fi
+}
+
 
 export -f get_current_path
 export -f path::is_file
@@ -73,3 +99,5 @@ export -f path::dirname
 export -f path::join
 
 export -f realpath
+
+export -f path::resolve

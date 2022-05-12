@@ -11,7 +11,7 @@ CONFIGS_DIR=$ZMICRO_HOME/config
 
 help() {
   echo "Usage:"
-  echo "  zmicro config get <key>"
+  echo "  zmicro config get <key> [configpath]"
 }
 
 core() {
@@ -21,6 +21,7 @@ core() {
   fi
 
   local key=$1
+  local configpath=$2
   if [ "$key" = "" ]; then
     log::error "key is required"
     
@@ -28,7 +29,7 @@ core() {
     exit 1
   fi
 
-  config::get $key
+  config::get "$key" "$configpath"
 }
 
 run() {

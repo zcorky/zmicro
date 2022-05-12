@@ -176,6 +176,22 @@ strings::equals() {
   fi
 }
 
+string::equals() {
+  local a=$1
+  local b=$2
+
+  if [ "$a" = "$b" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+string::first_char() {
+  local str=$1
+  echo ${str:0:1}
+}
+
 number::increase() {
   local base=$1
   local _step=$2
@@ -389,7 +405,9 @@ export -f string::replace
 export -f string::remove
 export -f string::match
 export -f string::has
-export -f strings::equals
+export -f strings::equals # compatible
+export -f string::equals
+export -f string::first_char
 
 export -f number::increase
 export -f number::step

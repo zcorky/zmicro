@@ -1,0 +1,36 @@
+#!/bin/bash
+
+help() {
+  echo "Check is method supported"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro support <method_name>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local fns=$@
+  if [ -z "$fns" ]; then
+    log::error "method is required"
+    exit 1
+  fi
+
+  if [ "$(array::length $fns)" = "1" ]; then
+    os::support_method $fns
+    exit 0
+  fi
+
+  for fn in ${fns[@]}; do
+    log::info "support $fn: $(os::support_method $fn)"
+  done
+}
+
+run() {
+  core $@
+}
+
+run $@

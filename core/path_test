@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function test_path::resolve() {
+  testing::expect \
+    "${FUNCNAME[0]} - relative" \
+    "to_equal" \
+    "$ZMICRO_HOME/bin/zmicro" \
+    "$(path::resolve bin/zmicro)" 
+  
+  testing::expect \
+    "${FUNCNAME[0]} - relative dot" \
+    "to_equal" \
+    "$ZMICRO_HOME/bin/zmicro" \
+    "$(path::resolve ./bin/zmicro)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - relative dot dot" \
+    "to_equal" \
+    "$(dirname $ZMICRO_HOME)/bin/zmicro" \
+    "$(path::resolve ../bin/zmicro)" 
+  
+  testing::expect \
+    "${FUNCNAME[0]} - absolute" \
+    "to_equal" \
+    "/bin/zmicro" \
+    "$(path::resolve /bin/zmicro)" 
+}

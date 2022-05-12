@@ -120,3 +120,23 @@ function test_array::each() {
     " _a_b_c" \
     "$received"
 }
+
+function test_string::first_char() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "a" \
+    "$(string::first_char abc)"
+  
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "/" \
+    "$(string::first_char /abc)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$" \
+    "$(string::first_char \$abc)"
+}
