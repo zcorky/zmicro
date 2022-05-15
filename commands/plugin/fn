@@ -29,7 +29,9 @@ core() {
     exit 1
   fi
 
+  plugin::load_mod $plugin_name
   plugin::load_core $plugin_name
+  plugin::load_config $plugin_name
 
   type $fn >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
