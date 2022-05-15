@@ -158,6 +158,20 @@ version::at_version() {
   echo $name | awk -F '@' '{print $2}'
 }
 
+version::is_valid() {
+  local version=$1
+  if [ -z "$version" ]; then
+    echo "false"
+    return
+  fi
+
+  if [[ $version =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 export -f version::get
 export -f version::git_hash
 export -f version::timestamp
@@ -177,3 +191,5 @@ export -f version::update
 export -f version::at
 export -f version::at_name
 export -f version::at_version
+
+export -f version::is_valid
