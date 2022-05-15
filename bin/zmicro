@@ -38,15 +38,15 @@ export PATH=$ZMICRO_BIN_PATH:$PATH
 
 . $ZMICRO_CORE_PATH/env
 
-if [ ! -w "$ZMICRO_APP_CONFIGS_PATH" ]; then
-  # @TODO
-  sudo chown -R $USER $ZMICRO_APP_CONFIGS_PATH
-fi
+# if [ ! -w "$ZMICRO_APP_CONFIGS_PATH" ]; then
+#   # @TODO
+#   sudo chown -R $USER $ZMICRO_APP_CONFIGS_PATH
+# fi
 
-if [ ! -w "$ZMICRO_APP_DATA_PATH" ]; then
-  # @TODO
-  sudo chown -R $USER $ZMICRO_APP_DATA_PATH
-fi
+# if [ ! -w "$ZMICRO_APP_DATA_PATH" ]; then
+#   # @TODO
+#   sudo chown -R $USER $ZMICRO_APP_DATA_PATH
+# fi
 
 # @TODO
 log::clean_check # & >> /dev/null 2>&1
