@@ -753,6 +753,18 @@ os::fix_permissions() {
 
   # home: fix current user
   sudo chown -R $USER $ZMICRO_HOME
+
+  # /data
+  if [ ! -w "$ZMICRO_APP_CONFIGS_PATH" ]; then
+    # @TODO
+    sudo chown -R $USER $ZMICRO_APP_CONFIGS_PATH
+  fi
+
+  # /configs
+  if [ ! -w "$ZMICRO_APP_DATA_PATH" ]; then
+    # @TODO
+    sudo chown -R $USER $ZMICRO_APP_DATA_PATH
+  fi
 }
 
 os::distribution() {
