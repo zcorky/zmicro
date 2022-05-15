@@ -24,8 +24,13 @@ core() {
 
   # is plugin release
   if [ "$1" != "" ]; then
-    zmicro plugin release "$@"
-    return
+    if [ "$1" = "." ] && [ "$PWD" = "$ZMICRO_HOME" ]; then
+      # break
+      echo "release zmicro" >> /dev/null
+    else
+      zmicro plugin release "$@"
+      return
+    fi
   fi
 
   local origin_version=$(version::get $ZMICRO_HOME)
