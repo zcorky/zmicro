@@ -755,16 +755,18 @@ os::fix_permissions() {
   sudo chown -R $USER $ZMICRO_HOME
 
   # /data
-  if [ ! -w "$ZMICRO_APP_CONFIGS_PATH" ]; then
-    # @TODO
-    sudo chown -R $USER $ZMICRO_APP_CONFIGS_PATH
-  fi
+  # @TODO data 不能随便变更权限，会导致容器权限问题
+  #   比如会导致 postgres 因为权限问题挂掉
+  # if [ ! -w "$ZMICRO_APP_CONFIGS_PATH" ]; then
+  #   # @TODO
+  #   sudo chown -R $USER $ZMICRO_APP_CONFIGS_PATH
+  # fi
 
   # /configs
-  if [ ! -w "$ZMICRO_APP_DATA_PATH" ]; then
-    # @TODO
-    sudo chown -R $USER $ZMICRO_APP_DATA_PATH
-  fi
+  # if [ ! -w "$ZMICRO_APP_DATA_PATH" ]; then
+  #   # @TODO
+  #   sudo chown -R $USER $ZMICRO_APP_DATA_PATH
+  # fi
 }
 
 os::distribution() {
