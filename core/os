@@ -665,6 +665,7 @@ os::inquirer() {
     # os::inquirer value "text" "请输入 ？" "默认值"
     if [ "$required" != "true" ] && [ "$required" != "false" ]; then
       default_value=$required
+      required="true"
     fi
   elif [ "$type" = "select" ] || [ "$type" = "radio" ]; then
     choices="$3"
