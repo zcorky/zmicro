@@ -129,3 +129,23 @@ function test_version_semver() {
   "v1.2.5" \
   "$(version::get_patch v1.2.5)"
 }
+
+function test_version_semver_with_prefix() {
+  testing::expect \
+  "${FUNCNAME[0]} - major(v1.2.5, vvv) => vvv1" \
+  "to_equal" \
+  "vvv1" \
+  "$(version::get_major v1.2.5 vvv)"
+
+  testing::expect \
+  "${FUNCNAME[0]} - minor(v1.2.5, vvv) => vvv1.2" \
+  "to_equal" \
+  "vvv1.2" \
+  "$(version::get_minor v1.2.5 vvv)"
+
+  testing::expect \
+  "${FUNCNAME[0]} - patch(v1.2.5, vvv) => vvv1.2.5" \
+  "to_equal" \
+  "vvv1.2.5" \
+  "$(version::get_patch v1.2.5 vvv)"
+}

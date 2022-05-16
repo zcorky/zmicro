@@ -3,6 +3,7 @@
 tag::docker() {
   local name=$1
   local version=$2
+  local prefix=$3
   
   if [ -z "$name" ]; then
     log::error "[tag::docker] name is required"
@@ -14,9 +15,13 @@ tag::docker() {
     exit 1
   fi
 
-  local major=$(version::get_major $version)
-  local minor=$(version::get_minor $version)
-  local patch=$(version::get_patch $version)
+  if [ -z "$prefix" ]; then
+    prefix="v"
+  fi
+
+  local major=$(version::get_major $version $prefix)
+  local minor=$(version::get_minor $version $prefix)
+  local patch=$(version::get_patch $version $prefix)
 
   echo "$name:$major,$name:$minor,$name:$patch"
 }
