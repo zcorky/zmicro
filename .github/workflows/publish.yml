@@ -73,12 +73,8 @@ jobs:
         id: meta
         run: |
           IMAGE_VERSION=$(echo ${GITHUB_REF} | sed -e "s%refs/tags/%%g")
-          v1=$(echo ${IMAGE_VERSION#v} | awk -F '.' '{print $1}')
-          v2=$(echo ${IMAGE_VERSION#v} | awk -F '.' '{print $2}')
-          IMAGE_VERSION_TWO=v${v1}.${v2}
-          IMAGE_VERSION_ONE=v${v1}
           IMAGE_NAME=${ACTION_IMAGE_NAMESPACE}/${ACTION_IMAGE_NAME}
-          IMAGE_TAGS=${IMAGE_NAME}:${IMAGE_VERSION_ONE},${IMAGE_NAME}:${IMAGE_VERSION_TWO},${IMAGE_NAME}:${IMAGE_VERSION}
+          IMAGE_TAGS=$(zmicro fn tag::docker $IMAGE_NAME $IMAGE_VERSION)
           echo "IMAGE_TAGS: ${IMAGE_TAGS}"
           echo "::set-output name=version::${IMAGE_VERSION}"
           echo "::set-output name=name::${IMAGE_NAME}"
