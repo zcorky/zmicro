@@ -240,6 +240,29 @@ version::next() {
   echo "v$v11.$v12.$v131"
 }
 
+version::get_major() {
+  local v1=$1
+  local v11=$(echo ${v1#v} | awk -F '.' '{print $1}' | awk -F 'v' '{print $1}')
+  echo "v${v11}"
+}
+
+version::get_minor() {
+  local v1=$1
+  local v11=$(echo ${v1#v} | awk -F '.' '{print $1}' | awk -F 'v' '{print $1}')
+  local v12=$(echo ${v1#v} | awk -F '.' '{print $2}')
+  echo "v${v11}.${v12}"
+}
+
+version::get_patch() {
+  local v1=$1
+
+  local v11=$(echo ${v1#v} | awk -F '.' '{print $1}' | awk -F 'v' '{print $1}')
+  local v12=$(echo ${v1#v} | awk -F '.' '{print $2}')
+  local v13=$(echo ${v1#v} | awk -F '.' '{print $3}')
+
+  echo "v$v11.$v12.$v13"
+}
+
 export -f version::get
 export -f version::git_hash
 export -f version::timestamp
@@ -267,3 +290,7 @@ export -f version::compare_gt
 export -f version::compare_lt
 
 export -f version::next
+
+export -f version::get_major
+export -f version::get_minor
+export -f version::get_patch

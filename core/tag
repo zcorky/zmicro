@@ -1,0 +1,24 @@
+#!/bin/bash
+
+tag::docker() {
+  local name=$1
+  local version=$2
+  
+  if [ -z "$name" ]; then
+    log::error "[tag::docker] name is required"
+    exit 1
+  fi
+
+  if [ -z "$version" ]; then
+    log::error "[tag::docker] version is required"
+    exit 1
+  fi
+
+  local major=$(version::get_major $version)
+  local minor=$(version::get_minor $version)
+  local patch=$(version::get_patch $version)
+
+  echo "$name:$major,$name:$minor,$name:$patch"
+}
+
+export -f tag::docker

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function test_tag::docker() {
+  testing::expect \
+  "${FUNCNAME[0]} - whatwewant/zmicro v1.2.3 => whatwewant/zmicro:v1,whatwewant/zmicro:v1.2,whatwewant/zmicro:v1.2.3" \
+  "to_equal" \
+  "whatwewant/zmicro:v1,whatwewant/zmicro:v1.2,whatwewant/zmicro:v1.2.3" \
+  "$(tag::docker whatwewant/zmicro v1.2.3)"
+}
