@@ -228,6 +228,18 @@ version::compare_lt() {
   version::compare_gt $v2 $v1
 }
 
+version::next() {
+  local v1=$1
+
+  local v11=$(echo ${v1#v} | awk -F '.' '{print $1}' | awk -F 'v' '{print $1}')
+  local v12=$(echo ${v1#v} | awk -F '.' '{print $2}')
+  local v13=$(echo ${v1#v} | awk -F '.' '{print $3}')
+
+  local v131=$((v13+1))
+
+  echo "v$v11.$v12.$v131"
+}
+
 export -f version::get
 export -f version::git_hash
 export -f version::timestamp
@@ -253,3 +265,5 @@ export -f version::is_valid
 export -f version::compare_equals
 export -f version::compare_gt
 export -f version::compare_lt
+
+export -f version::next

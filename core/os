@@ -636,9 +636,9 @@ os::get_env() {
 os::inquirer() {
   load inquirer
   local key=$1
-  # 1. text       <args: key question required default>
-  # 2. yesno      <args: key question required default>
-  # 3. select     <args: key choices question required>
+  # 1. text       <args: key "text" question required default>
+  # 2. yesno      <args: key "yesno" question required default>
+  # 3. select     <args: key "select" choices question required>
   # 4. confirm (alias of yesno)
   # 5. radio   (alias of select)
   local type=$2

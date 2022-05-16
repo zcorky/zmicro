@@ -101,3 +101,11 @@ function test_version::compare_lt() {
     "true" \
     "$(version::compare_lt v0.3.5 v1.2.4)" 
 }
+
+function test_version::next() {
+  testing::expect \
+  "${FUNCNAME[0]} - v1.2.5 => v1.2.6" \
+  "to_equal" \
+  "v1.2.6" \
+  "$(version::next v1.2.5)"
+}
