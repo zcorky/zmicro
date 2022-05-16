@@ -71,7 +71,7 @@ core() {
     package)
       local path=$ZMICRO_HOME/plugins/${where}
       if [ ! -d $path ]; then
-        log::error "plugin(${where}) not found (2)"
+        log::error "package(${where}) not found (2)"
         exit 1
       fi
 
@@ -87,7 +87,22 @@ core() {
       exec $SHELL
       ;;
     *)
-      log::error "plugin(${where}) not found (3)"
+      # fallback to plugin
+      name=$where
+      
+      if [ -z "$name" ]; then
+        log::error "plugin name is required"
+        exit 1
+      fi
+
+      local plugin_path=$ZMICRO_HOME/plugins/$name
+      if [ ! -d $plugin_path ]; then
+        log::error "plugin (${name}) not found (3)"
+        exit 1
+      fi
+
+      cd $plugin_path
+      exec $SHELL
       ;;
   esac
 }
