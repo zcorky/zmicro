@@ -43,6 +43,11 @@ core() {
     if [ "$is_valid" = "false" ]; then
       log::error "${new_version} is not valid version, should be x.y.z"
     fi
+
+    if [ "$(version::compare_gt $new_version $origin_version)" = "false" ]; then
+      log::error "${new_version} is not greater than ${origin_version}"
+      is_valid="false"
+    fi
   done
 
 

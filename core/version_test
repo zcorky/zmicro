@@ -37,3 +37,67 @@ function test_version::is_valid() {
     "false" \
     "$(version::is_valid v1.2)" 
 }
+
+function test_version::compare_gt() {
+  testing::expect \
+    "${FUNCNAME[0]} - v1.2.5 > v1.2.4" \
+    "to_equal" \
+    "true" \
+    "$(version::compare_gt v1.2.5 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v1.2.4 > v1.2.4" \
+    "to_equal" \
+    "false" \
+    "$(version::compare_gt v1.2.4 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v1.2.3 > v1.2.4" \
+    "to_equal" \
+    "false" \
+    "$(version::compare_gt v1.2.3 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v1.1.5 > v1.2.4" \
+    "to_equal" \
+    "false" \
+    "$(version::compare_gt v1.1.5 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v0.3.5 > v1.2.4" \
+    "to_equal" \
+    "false" \
+    "$(version::compare_gt v0.3.5 v1.2.4)" 
+}
+
+function test_version::compare_lt() {
+  testing::expect \
+    "${FUNCNAME[0]} - v1.2.5 < v1.2.4" \
+    "to_equal" \
+    "false" \
+    "$(version::compare_lt v1.2.5 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v1.2.4 < v1.2.4" \
+    "to_equal" \
+    "false" \
+    "$(version::compare_lt v1.2.4 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v1.2.3 < v1.2.4" \
+    "to_equal" \
+    "true" \
+    "$(version::compare_lt v1.2.3 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v1.1.5 < v1.2.4" \
+    "to_equal" \
+    "true" \
+    "$(version::compare_lt v1.1.5 v1.2.4)" 
+
+  testing::expect \
+    "${FUNCNAME[0]} - v0.3.5 < v1.2.4" \
+    "to_equal" \
+    "true" \
+    "$(version::compare_lt v0.3.5 v1.2.4)" 
+}
