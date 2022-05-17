@@ -1,0 +1,23 @@
+#!/bin/bash
+
+help() {
+  echo "List Zmicro Config - alias of config list"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro config ls"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  zmicro config list
+}
+
+run() {
+  core $@
+}
+
+run $@
