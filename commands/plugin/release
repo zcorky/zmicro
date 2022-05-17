@@ -86,11 +86,27 @@ core() {
 
   # local origin_version=$(plugin::get_version $plugin_name)
   local origin_version=$(cat mod | grep "VERSION" | awk -F "=" '{print $2}')
-  if [ -z "$plugin_child_name" ]; then
-    inquirer::text "[$(color::green plugin.${plugin_name})] Input new version(current: ${origin_version}):" new_version "" "version is required" required
-  else
-    inquirer::text "[$(color::green ${plugin_name}.${plugin_child_name})] Input new version(current: ${origin_version}):" new_version "" "version is required" required
-  fi
+  local default_new_version=$(version::next $origin_version)
+
+  local is_valid="false"
+  while [ "$is_valid" = "false" ]; do
+    if [ -z "$plugin_child_name" ]; then
+      os::inquirer new_version "text" "[$(color::green plugin.${plugin_name})] Input new version(current: ${origin_version}):" "$default_new_version"
+    else
+      os::inquirer new_version "text" "[$(color::green ${plugin_name}.${plugin_child_name})] Input new version(current: ${origin_version}):" "$default_new_version"
+    fi
+
+    is_valid=$(version::is_valid $new_version)
+
+    if [ "$is_valid" = "false" ]; then
+      log::error "${new_version} is not valid version, should be x.y.z"
+    fi
+
+    if [ "$(version::compare_gt $new_version $origin_version)" = "false" ]; then
+      log::error "${new_version} is not greater than ${origin_version}"
+      is_valid="false"
+    fi
+  done
 
   sed -i -e "s/${origin_version}/$new_version/" mod >>/dev/null 2>&1
 

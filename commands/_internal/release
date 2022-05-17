@@ -39,7 +39,7 @@ core() {
   local is_valid="false"
   while [ "$is_valid" = "false" ]; do
     # inquirer::text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
-     os::inquirer new_version "text" "input new version(origin: ${origin_version}):" "$default_new_version"
+    os::inquirer new_version "text" "input new version(origin: ${origin_version}):" "$default_new_version"
     is_valid=$(version::is_valid $new_version)
 
     if [ "$is_valid" = "false" ]; then
