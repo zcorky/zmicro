@@ -1,0 +1,27 @@
+#!/bin/bash
+
+help() {
+  echo "Config CLI Proxy"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro config proxy"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  os::inquirer proxy_ip "text" "Your Proxy IP:"
+  os::inquirer proxy_port "text" "Your Proxy Port:"
+
+  config::set "PROXY_IP" "$proxy_ip" 
+  config::set "PROXY_PORT" "$proxy_port" 
+}
+
+run() {
+  core $@
+}
+
+run $@
