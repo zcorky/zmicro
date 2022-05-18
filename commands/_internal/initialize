@@ -41,12 +41,18 @@ initialize_depdendencies() {
 
 initialize_notifies() {
   #echo "Initialize Notifies"
-  
-  # Disable NOTIFY UPDATE
-  notify::update_disable
 
-  # Disable NOTIFY LOGIN
-  notify::login_disable
+  if [ "$(os::is_workspace)" = "true" ]; then
+    # Enable NOTIFY LOGIN
+    notify::login_enable
+    # Enable NOTIFY UPDATE
+    notify::update_enable
+  else
+    # Disable NOTIFY LOGIN
+    notify::login_disable
+    # Disable NOTIFY UPDATE
+    notify::update_disable
+  fi
 }
 
 help() {
