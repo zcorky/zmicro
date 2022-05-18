@@ -1,0 +1,35 @@
+#!/bin/bash
+
+DOCKER_SOCKET=/var/run/docker.sock
+
+help() {
+  echo "Usage:"
+  echo "  zmicro config docker"
+}
+
+core() {
+  groups | grep docker >> /dev/null 2>&1
+  if [ "$?" != "0" ] && [ -e "$DOCKER_SOCKET" ]; then
+    local group_id=$(ls -n $DOCKER_SOCKET | awk '{print $4}')
+    if [ "$group_id" = "0" ]; then
+      sudo usermod -aG root $USER
+      return
+    fi
+
+    sudo groupadd -g $group_id docker >> /dev/null 2>&1
+    sudo usermod -aG docker $USER >> /dev/null 2>&1
+
+    log::info "successfuly config docker for $USER."
+  fi
+}
+
+run() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  core $@
+}
+
+run $@
