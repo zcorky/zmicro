@@ -43,7 +43,7 @@ net::get_domain_ip() {
 net::is_url_visitable() {
   local url=$1
   if [ -z "$url" ]; then
-    log::error "url is required"
+    log::error "[net::is_url_visitable] url is required"
     return
   fi
 

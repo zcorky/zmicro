@@ -879,6 +879,16 @@ os::support_method() {
   fi
 }
 
+os::healthcheck() {
+  local url=$1
+   if [ -z "$url" ]; then
+    log::error "[os::healthcheck] url is required"
+    return
+  fi
+
+  net::is_url_visitable $url
+}
+
 export -f os::arch
 export -f os::platform
 export -f os::release
@@ -974,3 +984,5 @@ export -f os::is_rust_installed
 export -f os::is_ip
 
 export -f os::support_method
+
+export -f os::healthcheck
