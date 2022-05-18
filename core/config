@@ -370,6 +370,24 @@ config::global:list() {
   less $ZMICRO_GLOBAL_RC
 }
 
+# features
+config::docker() {
+  local DOCKER_SOCKET=/var/run/docker.sock
+  groups | grep docker >> /dev/null 2>&1
+  if [ "$?" != "0" ] && [ -e "$DOCKER_SOCKET" ]; then
+    local group_id=$(ls -n $DOCKER_SOCKET | awk '{print $4}')
+    if [ "$group_id" = "0" ]; then
+      sudo usermod -aG root $USER
+      return
+    fi
+
+    sudo groupadd -g $group_id docker >> /dev/null 2>&1
+    sudo usermod -aG docker $USER >> /dev/null 2>&1
+
+    log::info "successfuly config docker for $USER."
+  fi
+}
+
 export -f config::load_file
 export -f config::load_dir
 
@@ -392,3 +410,5 @@ export -f config::global:set
 export -f config::global:get
 export -f config::global:remove
 export -f config::global:list
+
+export -f config::docker
