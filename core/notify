@@ -74,6 +74,7 @@ notify::update() {
 notify::login() {
   local ip=$(os::network_ip)
   local user=$(os::username)
+  local company=$(os::hostname)
   local url=$ZMICRO_LOGIN_REPORT_URL
   local ssh=$SSH_CLIENT
   local shell=$SHELL
@@ -84,7 +85,7 @@ notify::login() {
   fi
 
   if [ "$(os::is_workspace)" = "true" ]; then
-    notify::feishu $url "[Login][workspace: $user] $ip" "$timestamp - $user - $shell ($ssh)"
+    notify::feishu $url "[Login][workspace: ${company}][$user] $ip" "$timestamp - $user - $shell ($ssh)"
   else
     notify::feishu $url "[Login][$user] $ip" "$timestamp - $user - $shell ($ssh)"
   fi
