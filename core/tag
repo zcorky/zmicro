@@ -23,6 +23,13 @@ tag::docker() {
   local minor=$(version::get_minor $version $prefix)
   local patch=$(version::get_patch $version $prefix)
 
+  # @TODO v16-
+  if [ -n "$prefix" ] && [ "$prefix" != "v" ]; then
+    local base_tag=$(echo $prefix | awk -F '-' '{print $1}')
+    echo "$name:$base_tag,$name:$major,$name:$minor,$name:$patch"
+    return
+  fi
+
   echo "$name:$major,$name:$minor,$name:$patch"
 }
 
