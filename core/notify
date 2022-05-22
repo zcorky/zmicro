@@ -84,10 +84,11 @@ notify::login() {
     ssh=$SSH_CONNECTION
   fi
 
+  export NO_COLOR=true
   if [ "$(os::is_workspace)" = "true" ]; then
-    notify::feishu $url "[Login][workspace: ${company}][$user] $ip" "$timestamp - $user - $shell ($ssh)"
+    notify::feishu $url "[Login][workspace: ${company}][$user] $ip" "timestamp: $timestamp\nuser: $user\nshell: $shell\nip: $ssh\nzmicro: $(version::main)"
   else
-    notify::feishu $url "[Login][$user] $ip" "$timestamp - $user - $shell ($ssh)"
+    notify::feishu $url "[Login][$user] $ip" "timestamp: $timestamp\nuser: $user\nshell: $shell\nip: $ssh\nzmicro: $(version::main)"
   fi
 }
 
