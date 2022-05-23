@@ -48,6 +48,9 @@ config_git() {
   #   hint: or --ff-only on the command line to override the configured default per
   #   hint: invocation.
   git config --global pull.rebase false
+
+  # fix git permissions
+  git::fix_permissions
 }
 
 help() {

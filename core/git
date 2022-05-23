@@ -19,6 +19,16 @@ git::commit_timestamp() {
   fi
 }
 
+git::fix_permissions() {
+  # fix unsafe repository
+  git config --global -l | grep "safe.directory=\*" >> /dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    git config --global --add safe.directory "*"
+  fi
+}
+
 export -f git::commit_message
 export -f git::commit_hash
 export -f git::commit_timestamp
+
+export -f git::fix_permissions

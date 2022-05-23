@@ -752,6 +752,9 @@ os::fix_permissions() {
   # log: fix all user
   log::fix_permissions
 
+  # fix git permissions
+  git::fix_permissions
+
   # home: fix current user
   sudo chown -R $USER $ZMICRO_HOME
 
