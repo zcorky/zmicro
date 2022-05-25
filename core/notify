@@ -80,6 +80,21 @@ notify::login() {
   local shell=$SHELL
   local timestamp=$(os::timestamp)
 
+  local log_path=$ZMICRO_LOG_PATH/lastlogin.log
+  # do not notify in 5 minutes
+  if [ -f "$log_path" ]; then
+    local lastlogin=$(cat $log_path)
+    if [ -n "$lastlogin" ] && [ "$(timestamp::in_x_minutes 5 $lastlogin)" = "true" ]; then
+      return
+    fi
+  fi
+
+  echo "notify::login"
+
+  echo $(date +%s) > $log_path
+
+  local key=/${user}
+
   if [ -z "$ssh" ]; then
     ssh=$SSH_CONNECTION
   fi
