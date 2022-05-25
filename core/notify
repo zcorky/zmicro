@@ -80,7 +80,7 @@ notify::login() {
   local shell=$SHELL
   local timestamp=$(os::timestamp)
 
-  local log_path=$ZMICRO_LOG_PATH/lastlogin.log
+  local log_path=$ZMICRO_LOG_PATH/lastlogin.${user}.log
   # do not notify in 5 minutes
   if [ -f "$log_path" ]; then
     local lastlogin=$(cat $log_path)
