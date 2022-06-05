@@ -174,10 +174,12 @@ config::list() {
 
 config::check_or_set() {
   load inquirer
+
   local key=$1
   local type=$2
   local filepath=$3
   local message=$4
+  local default_value=$5
   
   if [ -z "$key" ]; then
     log::error "[config::check_or_set] key is required"
@@ -213,19 +215,23 @@ config::check_or_set() {
         message="请输入 $key:"
       fi
 
-      inquirer::text "$message" value
+      # inquirer::text "$message" value
+      os::inquirer value "text" "$message" true "$default_value"
     elif [ "$type" = "yesno" ]; then
       if [ -z "$message" ]; then
         message="是否启用 $key?"
       fi
 
-      local choices=("Yes" "No")
-      inquirer::select "$message" choices value
-      if [ "$value" = "Yes" ]; then
-        value="true"
-      else
-        value="false"
-      fi
+      # local choices=("Yes" "No")
+      # inquirer::select "$message" choices value
+      # if [ "$value" = "Yes" ]; then
+      #   value="true"
+      # else
+      #   value="false"
+      # fi
+      os::inquirer value "yesno" "$message" true "$default_value"
+    # elif [ "$type" = "select" ]; then
+    #   os::inquirer value "select" choices "$message" true
     else
       log::error "[config::check_or_set] invalid type($type), options: text, yesno"
       exit 1
