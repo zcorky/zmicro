@@ -394,6 +394,40 @@ config::docker() {
   fi
 }
 
+config::inquirer() {
+  if [ -z "$CONFIG_FILEPATH" ]; then
+    log::error "[config::inquirer] CONFIG_FILEPATH is required"
+    exit 1
+  fi
+
+  local key=$1
+  if [ "$CONFIG_IGNORE_IF_EXISTS" = "true" ] && [ -n "$(env::get $key)" ]; then
+    return
+  fi
+  
+  os::inquirer "$@"
+
+  local value=$(env::get $key)
+  local filepath=$CONFIG_FILEPATH
+  config::set $key $value $filepath
+}
+
+config::set_filepath() {
+  local path=$1
+  if [ -z "$path" ]; then
+    log::error "[config::set_filepath] path is required"
+    exit 1
+  fi
+
+  # @TODO global env maybe harmful
+  export CONFIG_FILEPATH=$path
+}
+
+config::set_ignore_if_exists() {
+  # @TODO global env maybe harmful
+  export CONFIG_IGNORE_IF_EXISTS=true
+}
+
 export -f config::load_file
 export -f config::load_dir
 
@@ -418,3 +452,8 @@ export -f config::global:remove
 export -f config::global:list
 
 export -f config::docker
+
+export -f config::inquirer
+
+export -f config::set_filepath
+export -f config::set_ignore_if_exists
