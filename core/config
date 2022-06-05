@@ -420,12 +420,22 @@ config::set_filepath() {
   fi
 
   # @TODO global env maybe harmful
+  # should do with config::unset_filepath
   export CONFIG_FILEPATH=$path
 }
 
 config::set_ignore_if_exists() {
   # @TODO global env maybe harmful
+  # should do with config::unset_ignore_if_exists
   export CONFIG_IGNORE_IF_EXISTS=true
+}
+
+config::unset_filepath() {
+  export CONFIG_FILEPATH=
+}
+
+config::unset_ignore_if_exists() {
+  export CONFIG_IGNORE_IF_EXISTS=
 }
 
 export -f config::load_file
@@ -457,3 +467,6 @@ export -f config::inquirer
 
 export -f config::set_filepath
 export -f config::set_ignore_if_exists
+
+export -f config::unset_filepath
+export -f config::unset_ignore_if_exists
