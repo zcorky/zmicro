@@ -19,6 +19,16 @@ core() {
     exit 1
   fi
 
+  # @TODO load dependencies
+  local config_dir=$PWD/config
+  local core_dir=$PWD/core
+  if [ -d "$config_dir" ]; then
+    config::load_dir $config_dir
+  fi
+  if [ -d "$core_dir" ]; then
+    config::load_dir $core_dir
+  fi
+
   if [ -f "$filepath" ]; then
     test_one_file $filepath $name
   elif [ -d "$filepath" ]; then
@@ -44,12 +54,12 @@ test_one_file() {
 
   # feat: auto detect test file name
   # zmicro test core/os => core/os_test
-  echo $filepath | grep "_test$" >> /dev/null 2>&1
+  echo $filepath | grep "_test$" >>/dev/null 2>&1
   if [ $? -ne 0 ]; then
     local filepath_test="${filepath}_test"
     if [ ! -f "$filepath_test" ]; then
       log::error "test file name must end with _test"
-      exit 1      
+      exit 1
     fi
 
     filepath=$filepath_test
@@ -69,7 +79,6 @@ test_one_file() {
   #    core//os_test => core/os_test
   log::info "Testing: ${filepath//\/\//\/}"
 
-
   if [ -n "$fn" ]; then
     test_one_fn $fn
 
@@ -78,7 +87,7 @@ test_one_file() {
 
   local fns=$(cat $filepath | grep "^function" | awk '{print $2}' | awk -F '(' '{print $1}')
   for fn in $fns; do
-    echo $fn | grep "^test_" >> /dev/null 2>&1
+    echo $fn | grep "^test_" >>/dev/null 2>&1
     if [ $? -eq 0 ]; then
       test_one_fn $fn
     fi
@@ -87,7 +96,7 @@ test_one_file() {
 
 test_one_fn() {
   local fn=$1
-  type $fn >> /dev/null 2>&1
+  type $fn >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     eval "$fn"
   else
