@@ -107,7 +107,7 @@ config::get() {
   if [ -z "$value" ]; then
     value=$default_value
   fi
-  
+
   echo $value
 }
 
@@ -155,7 +155,7 @@ config::remove() {
   if [ -z "$filepath" ]; then
     filepath=$ZMICRO_RC
   elif [ ! -f "$filepath" ]; then
-    log::error "[config::set] file(${filepath}) not found"
+    log::error "[config::remove] file(${filepath}) not found"
     exit 1
   fi
 
@@ -178,7 +178,7 @@ config::check_or_set() {
   local type=$2
   local filepath=$3
   local message=$4
-  
+
   if [ -z "$key" ]; then
     log::error "[config::check_or_set] key is required"
     exit 1
@@ -249,12 +249,19 @@ config::export() {
   fi
 
   while read line; do
+    # @1 empty line
     if [[ $line = "" ]]; then
       continue
     fi
 
-    local key=$(echo $line | awk -F '=' '{print $1}')
-    local value=$(echo $line | awk -F '=' '{print $2}')
+    # @2 # start @TODO bug not fix, cause by others
+    if [ "$(string::starts_with '$line' '#')" = "0" ]; then
+      continue
+    fi
+
+    local real_line=$(echo $line | awk -F '#' '{print $1}')
+    local key=$(echo $real_line | awk -F '=' '{print $1}')
+    local value=$(echo $real_line | awk -F '=' '{print $2}')
 
     if [ -z "$key" ]; then
       continue
@@ -373,7 +380,7 @@ config::global:list() {
 # features
 config::docker() {
   local DOCKER_SOCKET=/var/run/docker.sock
-  groups | grep docker >> /dev/null 2>&1
+  groups | grep docker >>/dev/null 2>&1
   if [ "$?" != "0" ] && [ -e "$DOCKER_SOCKET" ]; then
     local group_id=$(ls -n $DOCKER_SOCKET | awk '{print $4}')
     if [ "$group_id" = "0" ]; then
@@ -381,8 +388,8 @@ config::docker() {
       return
     fi
 
-    sudo groupadd -g $group_id docker >> /dev/null 2>&1
-    sudo usermod -aG docker $USER >> /dev/null 2>&1
+    sudo groupadd -g $group_id docker >>/dev/null 2>&1
+    sudo usermod -aG docker $USER >>/dev/null 2>&1
 
     log::info "successfuly config docker for $USER."
   fi

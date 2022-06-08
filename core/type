@@ -151,13 +151,13 @@ string::match() {
 string::has() {
   local sub=$1
   local text=$2
-  
+
   if [ "$sub" = "" ]; then
     log::error "[string::has] sub is required"
     exit 1
   fi
 
-   if [ "$text" = "" ]; then
+  if [ "$text" = "" ]; then
     log::error "[string::has] text is required"
     exit 1
   fi
@@ -190,6 +190,16 @@ string::equals() {
 string::first_char() {
   local str=$1
   echo ${str:0:1}
+}
+
+string::starts_with() {
+  local str=$1
+  local char=$2
+  if [ "$(string::first_char '${str}')" = "$char" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
 }
 
 number::increase() {
@@ -375,7 +385,7 @@ array::slice() {
   slice() {
     local index=$1
     local value=$2
-    if (( index < start )) || (( index >= end )); then
+    if ((index < start)) || ((index >= end)); then
       return
     fi
 
@@ -408,6 +418,7 @@ export -f string::has
 export -f strings::equals # compatible
 export -f string::equals
 export -f string::first_char
+export -f string::starts_with
 
 export -f number::increase
 export -f number::step
