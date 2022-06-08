@@ -892,6 +892,39 @@ os::healthcheck() {
   net::is_url_visitable $url
 }
 
+# @TODO this is an example used in service/restart
+# which is a good example for seperating options before service name
+# 可以把选项提前，一直没有找到好方法，这里只是一个例子
+#
+os::get_options() {
+  local args_length=${#@}
+  local args_index=0
+  while [ "$1" != "" ]; do
+    args_index=$((args_index + 1))
+    case $1 in
+      -h | --help)
+        help
+        exit 0
+        ;;
+      -p | --pull)
+        pull=true
+        ;;
+      -u | --upgrade)
+        pull=true
+        ;;
+      *)
+        if [ "$args_index" != "$args_length" ]; then
+          log::error "Unknown option: $1"
+          exit 1
+        else
+          service_name=$1
+        fi
+        ;;
+    esac
+    shift
+  done
+}
+
 export -f os::arch
 export -f os::platform
 export -f os::release
@@ -989,3 +1022,5 @@ export -f os::is_ip
 export -f os::support_method
 
 export -f os::healthcheck
+
+export -f os::get_options

@@ -8,7 +8,7 @@ ARG   DEBIAN_FRONTEND=noninteractive
 
 RUN   sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-RUN   apt update && apt install -y curl wget git sudo systemd
+RUN   apt update && apt install -y curl wget git sudo systemd make gcc g++
 
 ARG   VERSION
 

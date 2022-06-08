@@ -174,10 +174,12 @@ config::list() {
 
 config::check_or_set() {
   load inquirer
+
   local key=$1
   local type=$2
   local filepath=$3
   local message=$4
+  local default_value=$5
 
   if [ -z "$key" ]; then
     log::error "[config::check_or_set] key is required"
@@ -213,19 +215,23 @@ config::check_or_set() {
         message="请输入 $key:"
       fi
 
-      inquirer::text "$message" value
+      # inquirer::text "$message" value
+      os::inquirer value "text" "$message" true "$default_value"
     elif [ "$type" = "yesno" ]; then
       if [ -z "$message" ]; then
         message="是否启用 $key?"
       fi
 
-      local choices=("Yes" "No")
-      inquirer::select "$message" choices value
-      if [ "$value" = "Yes" ]; then
-        value="true"
-      else
-        value="false"
-      fi
+      # local choices=("Yes" "No")
+      # inquirer::select "$message" choices value
+      # if [ "$value" = "Yes" ]; then
+      #   value="true"
+      # else
+      #   value="false"
+      # fi
+      os::inquirer value "yesno" "$message" true "$default_value"
+    # elif [ "$type" = "select" ]; then
+    #   os::inquirer value "select" choices "$message" true
     else
       log::error "[config::check_or_set] invalid type($type), options: text, yesno"
       exit 1
@@ -395,6 +401,50 @@ config::docker() {
   fi
 }
 
+config::inquirer() {
+  if [ -z "$CONFIG_FILEPATH" ]; then
+    log::error "[config::inquirer] CONFIG_FILEPATH is required"
+    exit 1
+  fi
+
+  local key=$1
+  if [ "$CONFIG_IGNORE_IF_EXISTS" = "true" ] && [ -n "$(env::get $key)" ]; then
+    return
+  fi
+
+  os::inquirer "$@"
+
+  local value=$(env::get $key)
+  local filepath=$CONFIG_FILEPATH
+  config::set $key $value $filepath
+}
+
+config::set_filepath() {
+  local path=$1
+  if [ -z "$path" ]; then
+    log::error "[config::set_filepath] path is required"
+    exit 1
+  fi
+
+  # @TODO global env maybe harmful
+  # should do with config::unset_filepath
+  export CONFIG_FILEPATH=$path
+}
+
+config::set_ignore_if_exists() {
+  # @TODO global env maybe harmful
+  # should do with config::unset_ignore_if_exists
+  export CONFIG_IGNORE_IF_EXISTS=true
+}
+
+config::unset_filepath() {
+  export CONFIG_FILEPATH=
+}
+
+config::unset_ignore_if_exists() {
+  export CONFIG_IGNORE_IF_EXISTS=
+}
+
 export -f config::load_file
 export -f config::load_dir
 
@@ -419,3 +469,11 @@ export -f config::global:remove
 export -f config::global:list
 
 export -f config::docker
+
+export -f config::inquirer
+
+export -f config::set_filepath
+export -f config::set_ignore_if_exists
+
+export -f config::unset_filepath
+export -f config::unset_ignore_if_exists
