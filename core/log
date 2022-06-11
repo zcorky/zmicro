@@ -246,8 +246,7 @@ log::clean_check() {
     echo "$(timestamp)" | tee $log_last_check >>/dev/null 2>&1
 
     # clean
-    log::clean &
-    >>/dev/null 2>&1
+    log::clean >>/dev/null 2>&1 &
     return
   fi
 
@@ -269,7 +268,7 @@ log::clean_check() {
   # echo "delta: $delta"
   if [ $delta -gt $DAYS_SECONDS_90 ]; then
     # do clean
-    log::clean # & >> /dev/null 2>&1
+    log::clean >>/dev/null 2>&1 &
     # else
     # echo "[log::clean_check] no need clean"
   fi
