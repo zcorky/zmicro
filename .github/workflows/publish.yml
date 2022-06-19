@@ -76,6 +76,8 @@ jobs:
           IMAGE_VERSION=$(echo ${GITHUB_REF} | sed -e "s%refs/tags/%%g")
           IMAGE_NAME=${ACTION_IMAGE_NAMESPACE}/${ACTION_IMAGE_NAME}
           IMAGE_TAGS=$(zmicro fn tag::docker $IMAGE_NAME $IMAGE_VERSION)
+          echo "::set-output name=version::${IMAGE_VERSION}"
+          echo "::set-output name=name::${IMAGE_NAME}"
           echo "::set-output name=tags::${IMAGE_TAGS}"
         shell: bash
         env:
@@ -125,5 +127,5 @@ jobs:
           cache-from: type=registry,ref=${{ steps.meta.outputs.name }}:buildcache
           cache-to: type=registry,ref=${{ steps.meta.outputs.name }}:buildcache,mode=max
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          # labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
