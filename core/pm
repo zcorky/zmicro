@@ -49,13 +49,20 @@ pm() {
 
 # node npm
 pm::npm() {
+  # ZMICRO_NVM
+  if [ -z "$NODE_HOME" ]; then
+    export NODE_HOME=/usr/local/node
+    export NODE_USER_HOME=$HOME/.node
+    export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
+  fi
+
   if [ "$(os::is_nodejs_installed)" = "false" ]; then
     zpackage install nodejs
   fi
 
   # @TODO
   if [ "$(net::is_google_visitable)" = "false" ]; then
-    export NPM_CONFIG_REGISTRY=https://registry.npm.taobao.org
+    export NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
   fi
 
   npm $@
