@@ -5,7 +5,7 @@ function test_get_args_length() {
     "${FUNCNAME[0]}" \
     "to_equal" \
     "3" \
-    "$(get_args_length a b c)" 
+    "$(get_args_length a b c)"
 }
 
 function test_string::split_length() {
@@ -62,7 +62,7 @@ function test_string::match() {
     "to_equal" \
     "true" \
     "$(string::match a_b_c ^a)"
-  
+
   testing::expect \
     "${FUNCNAME[0]}" \
     "to_equal" \
@@ -76,6 +76,14 @@ function test_string::has() {
     "to_equal" \
     "true" \
     "$(string::has @ redis@v1.2.3)"
+}
+
+function test_strings::contains() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(strings::contains redis@v1.2.3 @)"
 }
 
 function test_number::increase() {
@@ -127,7 +135,7 @@ function test_string::first_char() {
     "to_equal" \
     "a" \
     "$(string::first_char abc)"
-  
+
   testing::expect \
     "${FUNCNAME[0]}" \
     "to_equal" \
