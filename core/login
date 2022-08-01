@@ -29,6 +29,30 @@ login::docker() {
   log::success "Docker Login Success"
 }
 
+login::docker_v2() {
+  local username=$1
+  local password=$2
+  local registry=$3
+
+  if [ "$username" = "" ]; then
+    log::error "[core][login::docker] username is required"
+    exit 1
+  fi
+
+  if [ "$password" = "" ]; then
+    log::error "[core][login::docker] password is required"
+    exit 1
+  fi
+
+  docker login $registry -u $username -p $password >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    log::error "Docker Login Failed"
+    exit -1
+  fi
+
+  log::success "Docker Login Success"
+}
+
 login::npm() {
   local registry=$1
   local username=$2
@@ -105,3 +129,5 @@ login::git() {
 export -f login::docker
 export -f login::npm
 export -f login::git
+
+export -f login::docker_v2
