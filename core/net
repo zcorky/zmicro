@@ -37,6 +37,27 @@ net::get_domain_ip() {
     exit 1
   fi
 
+  # dig install in ubuntu/centos https://cloud.tencent.com/developer/article/1618605
+  if [ "$(os::has_command dig)" = "false" ]; then
+    # ubuntu
+    if [ "$(os::has_command apt)" = "true" ]; then
+      sudo apt install -y dnsutils
+    # centos
+    elif [ "$(os::has_command yum)" = "true" ]; then
+      sudo yum install -y bind-utils
+    # alpine
+    elif [ "$(os::has_command apk)" = "true" ]; then
+      sudo apk add -U bind-tools
+    # macos
+    elif [ "$(os::has_command brew)" = "true" ]; then
+      brew install dnsutils
+    # unknown
+    else
+      log::error "unknown os to install dig"
+      exit 1
+    fi
+  fi
+
   dig +short $domain @114.114.114.114
 }
 
