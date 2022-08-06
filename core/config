@@ -242,6 +242,13 @@ config::check_or_set() {
   config::set $key $value $filepath
 }
 
+# bug:
+#   question:
+#     Shell script read missing last line
+#     shell 无法读取最后一行，因为 shell 没有换行符，所以读取到的是空行
+#   stackoverflow: https://stackoverflow.com/questions/12916352/shell-script-read-missing-last-line
+#   solution:
+#     确保换行
 config::export() {
   local filepath=$1
   if [ -z "$filepath" ]; then
@@ -255,8 +262,9 @@ config::export() {
   fi
 
   while read line; do
+    # echo "line: $line - $filepath"
     # @1 empty line
-    if [[ $line = "" ]]; then
+    if [ $line = "" ]; then
       continue
     fi
 
@@ -269,6 +277,7 @@ config::export() {
     local key=$(echo $real_line | awk -F '=' '{print $1}')
     local value=$(echo $real_line | awk -F '=' '{print $2}')
 
+    # echo "real_line: $real_line - $key"
     if [ -z "$key" ]; then
       continue
     fi
@@ -281,7 +290,6 @@ config::export() {
     # trim quote
     value=$(echo $value | sed -e 's/^"//' -e 's/"$//' | sed -e "s/^'//" -e "s/'$//")
 
-    # echo "export $key=$value"
     export $key=$value
   done <$filepath
 }
