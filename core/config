@@ -264,7 +264,7 @@ config::export() {
   while read line; do
     # echo "line: $line - $filepath"
     # @1 empty line
-    if [ $line = "" ]; then
+    if [ -z "$line" ]; then
       continue
     fi
 
@@ -290,7 +290,7 @@ config::export() {
     # trim quote
     value=$(echo $value | sed -e 's/^"//' -e 's/"$//' | sed -e "s/^'//" -e "s/'$//")
 
-    export $key=$value
+    export "$key"="$value"
   done <$filepath
 }
 
