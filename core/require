@@ -101,6 +101,11 @@ require::mod() {
   # load mod
   config::load_file $mod_path
 
+  # ignore update dependencies
+  if [ -n "$NO_DEPENDENCIES" ]; then
+    return
+  fi
+
   if [ -n $DEPENDENCIES ]; then
     local dependeny_count=$(array::length ${DEPENDENCIES[@]})
     if [ "$dependeny_count" = "0" ]; then
