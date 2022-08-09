@@ -11,4 +11,14 @@ os::delay() {
   eval $fn
 }
 
+os::wait() {
+  local t=$1
+  if [ "$t" = "" ]; then
+    t=1
+  fi
+
+  sleep $t
+}
+
 export -f os::delay
+export -f os::wait
