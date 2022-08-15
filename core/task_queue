@@ -1,0 +1,166 @@
+#!/bin/bash
+
+task_queue::lock_path() {
+  local name="$1"
+  local dir="/tmp/zmicro_task_queue"
+  if [ ! -d "$dir" ]; then
+    mkdir -p $dir
+  fi
+
+  if [ -z "$name" ]; then
+    log::error "[task_queue::lock_path] name is required"
+    return 1
+  fi
+
+  echo "${dir}/$name.lock"
+}
+
+task_queue::is_available() {
+  local name=$1
+  local cocurrency=$2
+
+  if [ -z "$name" ]; then
+    log::error "[task_queue::is_available] name is required"
+    return 1
+  fi
+
+  if [ -z "$cocurrency" ]; then
+    log::error "[task_queue::is_available] cocurrency is required"
+    return 1
+  fi
+
+  local rest=$(task_queue::count_rest "$name" "$cocurrency")
+  if [ "$rest" -gt "0" ]; then
+    echo "true"
+    # return 0
+  else
+    echo "false"
+    # return 1
+  fi
+}
+
+task_queue::count_running() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[task_queue::count_running] name is required"
+    return 1
+  fi
+
+  local lock_path=$(task_queue::lock_path "$name")
+
+  if [ ! -f "$lock_path" ]; then
+    echo "0"
+    return
+  fi
+
+  local running=$(cat $lock_path)
+  # local re='^[0-9]+$'
+  # if ! [[ $running =~ $re ]] ; then
+  #   echo "invalid_number"
+  #   return
+  # fi
+
+  echo $running
+}
+
+task_queue::count_rest() {
+  local name=$1
+  local cocurrency=$2
+
+  if [ -z "$name" ]; then
+    log::error "[task_queue::count_rest] name is required"
+    return 1
+  fi
+
+  if [ -z "$cocurrency" ]; then
+    log::error "[task_queue::count_rest] cocurrency is required"
+    return 1
+  fi
+
+  local running=$(task_queue::count_running "$name")
+  local rest=$(($cocurrency - $running))
+  echo $rest
+}
+
+task_queue::count_total() {
+  local cocurrency=$1
+
+  if [ -z "$cocurrency" ]; then
+    log::error "[task_queue::count_total] cocurrency is required"
+    return 1
+  fi
+
+  echo $cocurrency
+}
+
+task_queue::start() {
+  local name=$1
+  local cocurrency=$2
+
+  if [ -z "$name" ]; then
+    log::error "[task_queue::start] name is required"
+    return 1
+  fi
+
+  if [ -z "$cocurrency" ]; then
+    log::error "[task_queue::count_rest] cocurrency is required"
+    return 1
+  fi
+
+  local lock_path=$(task_queue::lock_path "$name")
+
+  local rest=$(task_queue::count_rest "$name" "$cocurrency")
+  if [ "$rest" -lt "0" ] || [ "$rest" -eq "0" ]; then
+    echo "false"
+    return
+  fi
+
+  local running=$(task_queue::count_running "$name")
+  local next=$(($running + 1))
+  echo $next >$lock_path
+  echo "true"
+}
+
+task_queue::done() {
+  local name=$1
+
+  if [ -z "$name" ]; then
+    log::error "[task_queue::start] name is required"
+    return 1
+  fi
+
+  local lock_path=$(task_queue::lock_path "$name")
+
+  local running=$(task_queue::count_running "$name")
+  if [ "$running" -eq "0" ]; then
+    echo "false"
+  fi
+
+  local next=$(($running - 1))
+  if [ "$next" -lt "0" ]; then
+    next=0
+  fi
+
+  echo $next >$lock_path
+  echo "true"
+}
+
+task_queue::clean() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[task_queue::clean] name is required"
+    return 1
+  fi
+
+  local lock_path=$(task_queue::lock_path "$name")
+  rm -f $lock_path
+}
+
+export -f task_queue::is_available
+export -f task_queue::count_running
+export -f task_queue::count_rest
+export -f task_queue::count_total
+
+export -f task_queue::start
+export -f task_queue::done
+export -f task_queue::clean

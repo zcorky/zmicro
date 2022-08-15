@@ -1,0 +1,253 @@
+#!/bin/bash
+
+function test_task_queue::count_running() {
+  local name=test
+  task_queue::clean $name
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "0" \
+    "$(task_queue::count_running $name)"
+
+  echo "1" >$(task_queue::lock_path $name)
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "1" \
+    "$(task_queue::count_running $name)"
+
+  task_queue::clean $name
+}
+
+function test_task_queue::rest_running() {
+  local name=test
+  local cocurrency=2
+
+  task_queue::clean $name
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "2" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  echo "1" >$(task_queue::lock_path $name)
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "1" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  echo "2" >$(task_queue::lock_path $name)
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "0" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  echo "0" >$(task_queue::lock_path $name)
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "2" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  task_queue::clean $name
+}
+
+function test_task_queue::is_available() {
+  local name=test
+  local cocurrency=2
+
+  task_queue::clean $name
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  echo "1" >$(task_queue::lock_path $name)
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  echo "2" >$(task_queue::lock_path $name)
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "false" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  rm -f $(task_queue::lock_path $name)
+}
+
+function test_task_queue::start_done() {
+  local name=test
+  local cocurrency=2
+
+  task_queue::clean $name
+
+  # initial
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "0" \
+    "$(task_queue::count_running $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$cocurrency" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  # start
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::start $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "1" \
+    "$(task_queue::count_running $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$(($cocurrency - 1))" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  # start 2
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::start $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "2" \
+    "$(task_queue::count_running $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$(($cocurrency - 2))" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "false" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  # start 3
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "false" \
+    "$(task_queue::start $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "2" \
+    "$(task_queue::count_running $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$(($cocurrency - 2))" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  # done
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::done $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "1" \
+    "$(task_queue::count_running $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$(($cocurrency - 1))" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  # done 2
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::done $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "0" \
+    "$(task_queue::count_running $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$cocurrency" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "true" \
+    "$(task_queue::is_available $name $cocurrency)"
+
+  # done 3
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "false" \
+    "$(task_queue::done $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "0" \
+    "$(task_queue::count_running $name)"
+
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "$cocurrency" \
+    "$(task_queue::count_rest $name $cocurrency)"
+
+  task_queue::clean $name
+}

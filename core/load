@@ -17,7 +17,6 @@ if [ "$NO_LOG" != "true" ]; then
   os::ensure_logs_permission
 fi
 
-
 load() {
   # ensure_permission() {
   #   local path=$1
@@ -79,6 +78,8 @@ load support
 load tag
 
 load dotenv
+
+load task_queue
 
 # Cause Bug
 #   1. tput: No value for $TERM and no -T specified
