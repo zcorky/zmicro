@@ -4,17 +4,20 @@
 clean::docker() {
   log::info "[$(timestamp)][clean::docker] starting clean ..."
 
-  # clean stopped containers
-  log::info "[$(timestamp)][clean::docker] clean stopped containers ..."
-  docker container prune -f # >>/dev/null 2>&1
+  # # clean stopped containers
+  # log::info "[$(timestamp)][clean::docker] clean stopped containers ..."
+  # docker container prune -f # >>/dev/null 2>&1
 
-  # clean stopped images
-  log::info "[$(timestamp)][clean::docker] clean stopped images ..."
-  docker image prune -a -f # >>/dev/null 2>&1
-  # docker rmi $(docker images -qf "dangling=true") >>/dev/null 2>&1
+  # # clean stopped images
+  # log::info "[$(timestamp)][clean::docker] clean stopped images ..."
+  # docker image prune -a -f # >>/dev/null 2>&1
+  # # docker rmi $(docker images -qf "dangling=true") >>/dev/null 2>&1
 
-  # clean stopped volumes
-  # docker volume prune >>/dev/null 2>&1
+  # # clean stopped volumes
+  # # docker volume prune >>/dev/null 2>&1
+
+  # https://blog.csdn.net/haohaoxuexiyai/article/details/111244328
+  docker system prune -f -a
 
   log::success "[$(timestamp)][clean::docker] clean done"
 }
