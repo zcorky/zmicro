@@ -10,7 +10,7 @@ clean::docker() {
 
   # clean stopped images
   log::info "[$(timestamp)][clean::docker] clean stopped images ..."
-  docker image prune -f # >>/dev/null 2>&1
+  docker image prune -a -f # >>/dev/null 2>&1
   # docker rmi $(docker images -qf "dangling=true") >>/dev/null 2>&1
 
   # clean stopped volumes
