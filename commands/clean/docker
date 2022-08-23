@@ -1,0 +1,21 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro clean docker"
+}
+
+core() {
+  clean::docker
+}
+
+run() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  core $@
+}
+
+run $@

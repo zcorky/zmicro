@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# reference: https://note.qidong.name/2017/06/26/docker-clean/
+clean::docker() {
+  log::info "[$(timestamp)][clean::docker] starting clean ..."
+
+  # clean stopped containers
+  log::info "[$(timestamp)][clean::docker] clean stopped containers ..."
+  docker container prune -f # >>/dev/null 2>&1
+
+  # clean stopped images
+  log::info "[$(timestamp)][clean::docker] clean stopped images ..."
+  docker image prune -f # >>/dev/null 2>&1
+  # docker rmi $(docker images -qf "dangling=true") >>/dev/null 2>&1
+
+  # clean stopped volumes
+  # docker volume prune >>/dev/null 2>&1
+
+  log::success "[$(timestamp)][clean::docker] clean done"
+}
+
+# reference: https://stackoverflow.com/questions/21122342/how-to-clean-node-modules-folder-of-packages-that-are-not-in-package-json
+clean::node_modules() {
+  local current_dir=$PWD
+  log::info "[$(timestamp)][clean::node_modules] starting clean (current dir: $current_dir) ..."
+
+  find $current_dir -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
+
+  log::success "[$(timestamp)][clean::node_modules] clean done"
+}
+
+export -f clean::docker
+export -f clean::node_modules
