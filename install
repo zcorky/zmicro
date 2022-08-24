@@ -3,16 +3,16 @@
 # @TODO fix sudo in docker
 command -v sudo >>/dev/null 2>&1
 if [ $? -ne 0 ]; then
-  sudo() {           
+  sudo() {
     eval "$@"
-  }          
+  }
   chown() {
-    echo "ignore chown" >> /dev/null 2>&1
+    echo "ignore chown" >>/dev/null 2>&1
   }
   tput() {
-    echo "ignore tput" >> /dev/null 2>&1
-  }        
-   
+    echo "ignore tput" >>/dev/null 2>&1
+  }
+
   export -f sudo
   export -f chown
   export -f tput
@@ -20,14 +20,20 @@ fi
 
 set -e
 
+export USR_LOCAL_BIN=/usr/local/bin
+
 export ZMICRO_HOME=/usr/local/lib/zmicro
 export ZMICRO_GLOBAL_RC_DIR=/etc/zmicro
 export ZMICRO_GLOBAL_RC=$ZMICRO_GLOBAL_RC_DIR/.zmicrorc
 export ZMICRO_LOG_DIR=/var/log/zmicro
-export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
+export ZMICRO_LOCAL_BIN=$USR_LOCAL_BIN/zmicro
 
 export OLD_ZMICRO_HOME=$HOME/.zmicro
 export OLD_ZMICRO_HOME_BAK=/usr/local/lib/zmicro.bak
+
+if [ ! -d "$USR_LOCAL_BIN" ]; then
+  sudo mkdir -p $USR_LOCAL_BIN
+fi
 
 # @TO_REMOVE
 if [ ! -d "/usr/local/lib" ]; then
