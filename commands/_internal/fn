@@ -24,7 +24,7 @@ core() {
   # @TODO
   # set +e
 
-  type $fn >> /dev/null 2>&1
+  type $fn >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     eval "$fn $args"
   else

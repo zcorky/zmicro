@@ -24,8 +24,8 @@ timestamp::gt() {
   local a=$1
   local b=$2
 
-  echo "a: $a"
-  echo "b: $b"
+  # echo "a: $a"
+  # echo "b: $b"
 
   if [ $a -gt $b ]; then
     echo "true"
