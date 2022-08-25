@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+  schedule:
+    - cron: '0 1 * * 1'
 
 jobs:
   on-success:
@@ -21,7 +23,7 @@ jobs:
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
             提交人: ${{ github.actor }}
-            状态: 构建成功（https://github.com/${{ github.repository }}/actions/runs/${{ github.run.id }}）
+            状态: 构建成功（https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}）
 
   on-failure:
     needs: publish
@@ -38,7 +40,7 @@ jobs:
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
             提交人: ${{ github.actor }}
-            状态: 构建失败（https://github.com/${{ github.repository }}/actions/runs/${{ github.run.id }}）
+            状态: 构建失败（https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}）
 
   publish:
     runs-on: ubuntu-latest
