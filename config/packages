@@ -28,4 +28,5 @@ AVAILABLE_PACKAGES=(
   "youtube-dl"
   "gh"
   "fkill"
+  "mtr"
 )
