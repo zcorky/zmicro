@@ -9,4 +9,5 @@ AVAILABLE_PACKAGES=(
   "inlets"
   "rsa"
   "acme"
+  "cheat"
 )
