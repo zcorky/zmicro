@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# @TODO
+#  cannot use export AVAILABLE_PACKAGES
+AVAILABLE_PACKAGES=(
+  "frp"
+  "sync"
+  "tldr"
+  "inlets"
+  "rsa"
+  "acme"
+)

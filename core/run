@@ -48,8 +48,21 @@ run() {
       fi
 
       if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
+        local command=$(echo $commands | awk -F ' ' '{print $1}')
+
+        check_and_install() {
+          if [ "$2" = "$command" ]; then
+            log::info "[$(timestamp)][command] find: $command, installing ..."
+            zmicro package install $command
+            log::success "[$(timestamp)][command] successfully installl: $command, please try again."
+            exit 0
+          fi
+        }
+
+        array::each check_and_install ${AVAILABLE_PACKAGES[@]}
+
         echo -e "No such command: $(color::red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
-        echo ""
+        exit 1
       fi
     fi
 
@@ -68,7 +81,7 @@ run() {
 run::js() {
   local script=$1
   local args=${@:2}
-  
+
   if [ -z "$script" ]; then
     log::error "js script is required"
     exit 1
