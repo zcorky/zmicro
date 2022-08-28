@@ -14,7 +14,7 @@ env::ensure_vars() {
 
 env::ensure_core_utils() {
   if [ ! -d "$ZMICRO_HOME/plugins/core-utils" ]; then
-    git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils
+    git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils >>/dev/null
   fi
 }
 
