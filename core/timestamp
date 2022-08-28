@@ -5,4 +5,20 @@ timestamp() {
   echo $res
 }
 
+timestamp::to_seconds() {
+  local text=$@
+  if [ -z "$text" ]; then
+    log::error "[timestamp::to_seconds] timestamp string is required"
+    exit 1
+  fi
+
+  if [ "$(os::is_macos)" = "true" ]; then
+    date -jf "%Y-%m-%d %H:%M:%S" "$text" +%s
+    return
+  fi
+
+  date -d "$text" +%s
+}
+
 export -f timestamp
+export -f timestamp::to_seconds

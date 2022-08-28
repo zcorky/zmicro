@@ -51,8 +51,45 @@ config::load_core_mod() {
   config::load_mod $ZMICRO_HOME
 }
 
+load_config() {
+  # @TOREMOVE
+  # Fix Old ZMICRORC
+  # local old_home=$(config::get HOME)
+  # if [ "$old_home" != "" ]; then
+  #   log::debug "remove old config .zmicrorc"
+
+  #   config::remove HOME
+  #   config::remove BIN
+  #   config::remove VERSION
+  # fi
+
+  CONFIG_PATH=$1
+  if [ "$CONFIG_PATH" = "" ]; then
+    log "load_config: Config Path is required"
+    exit 1
+  fi
+
+  if [ ! -f $CONFIG_PATH ] && [ ! -d $CONFIG_PATH ]; then
+    log "load_config: Config Path(${CONFIG_PATH}) not found"
+    exit 1
+  fi
+
+  # config::load_core_mod
+
+  if [ -f $CONFIG_PATH ]; then
+    config::load_file $CONFIG_PATH
+  elif [ -d $CONFIG_PATH ]; then
+    config::load_dir $CONFIG_PATH
+  else
+    log "load_config: Invalid Config Path(${CONFIG_PATH})"
+    exit 1
+  fi
+}
+
 export -f config::load_file
 export -f config::load_dir
 
 export -f config::load_mod
 export -f config::load_core_mod
+
+export -f load_config

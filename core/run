@@ -1,0 +1,122 @@
+#!/bin/bash
+
+run() {
+  local base_command_path=$1
+  local base_plugin_get_path=$2
+  local command=$3
+  local sub_command=$4
+
+  # register plugins commands
+  # plugin::register_all $base_plugin_get_path
+
+  log::debug ""
+  log::debug "[$(timestamp)][command] base command path: $base_command_path"
+  log::debug "[$(timestamp)][command] run: ${@:3}"
+  log::debug "[$(timestamp)][command]"
+
+  # Use Help Command
+  #   if command is sub command, handle help by sub command
+  if [ ! -f "$ZMICRO_HOME/bin/sub/$command" ] && [ "$sub_command" = "help" ]; then
+    help $base_command_path $command ${@:4} # $sub_command
+    exit 1
+  fi
+
+  # @TODO help new
+  local command_path_for_help=$(array::join / ${@:3})
+  if [ -d "$ZMICRO_USER_BIN_PATH/$command_path_for_help" ]; then
+    help::list $ZMICRO_USER_BIN_PATH/$command_path_for_help ${@:3}
+    exit 1
+  elif [ -d "$ZMICRO_SUB_BIN_PATH/$command_path_for_help" ]; then
+    help::list $ZMICRO_SUB_BIN_PATH/$command_path_for_help ${@:3}
+    exit 1
+  fi
+
+  # command_path=$(commander::get_command_path $@)
+  # if [ "$?" != "0" ]; then
+  if ! commander::has_command_path "$@"; then
+    local commands=${@:3}
+    # DEBUG
+    log::debug "[$(timestamp)][command]"
+    log::debug "[$(timestamp)][command] command: $commands"
+
+    # Help
+    if [ "$command" != "" ]; then
+      # zmicro -v
+      if [ "$command" = "-v" ]; then
+        zmicro version
+        exit 0
+      fi
+
+      if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
+        local package_name=$(echo $commands | awk -F ' ' '{print $1}')
+
+        # avoid dead loop
+        if [ -z "$INSTALL_PACKAGE_FROM" ]; then
+          if $(zmicro metadata has package $package_name); then
+            log::info "[$(timestamp)][command] find package: $package_name, installing ..."
+            zmicro package install $package_name
+            log::success "[$(timestamp)][command] successfully install: $package_name, please try again."
+
+            export INSTALL_PACKAGE_FROM=NO_SUCH_COMMAND
+            run "$@"
+            return
+          fi
+        fi
+
+        echo -e "No such command: $(color::red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
+        exit 1
+      fi
+    fi
+
+    help $base_command_path $commands
+    exit 1
+  fi
+
+  # Get Command
+  log::debug "[$(timestamp)][command]"
+  log::debug "[$(timestamp)][command] get command path start ..."
+  command_path=$(commander::get_command_path "$@")
+
+  log::command "$command_path"
+}
+
+run::js() {
+  local script=$1
+  local args=${@:2}
+
+  if [ -z "$script" ]; then
+    log::error "js script is required"
+    exit 1
+  fi
+
+  # ZMICRO_NVM
+  if [ -z "$NODE_HOME" ]; then
+    export NODE_HOME=/usr/local/node
+    export NODE_USER_HOME=$HOME/.node
+    export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
+  fi
+
+  is_nodejs_installed() {
+    which node >>/dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      echo "true"
+    else
+      echo "false"
+    fi
+  }
+
+  if [ "$(is_nodejs_installed)" = "false" ]; then
+    zpackage install nodejs
+  fi
+
+  # @TODO
+  if [ "$(net::is_google_visitable)" = "false" ]; then
+    export NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
+  fi
+
+  # node $script $args
+  node "$@"
+}
+
+export -f run
+export -f run::js
