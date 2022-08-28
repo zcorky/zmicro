@@ -22,7 +22,7 @@ initialize_config() {
   # zmicro config git
   # zmicro config timezone
 
-    # Do for MacOS
+  # Do for MacOS
   if [ "$(os::is_macos)" != "true" ]; then
     zmicro config locale
     zmicro config timezone
@@ -74,25 +74,30 @@ core() {
     local key=$1
     local value=$2
     case $key in
-      -h | --help)
+    -h | --help)
+      help
+      exit 0
+      ;;
+    -u | --update)
+      os::set_var is_plugin_update true
+      shift
+      ;;
+    *)
+      if [ "$(string::match $key ^-)" = "true" ]; then
+        echo "ERROR: unknown parameter \"$key\""
         help
-        exit 0
-        ;;
-      -u | --update)
-        os::set_var is_plugin_update true
-        shift
-        ;;
-      *)
-        if [ "$(string::match $key ^-)" = "true" ]; then
-          echo "ERROR: unknown parameter \"$key\""
-          help
-          exit 1
-        fi
+        exit 1
+      fi
 
-        shift
-        ;;
+      shift
+      ;;
     esac
   done
+
+  # @TODO fix install zmicro core missing core-utils
+  if [ ! -d "$ZMICRO_HOME/plugins/core-utils" ]; then
+    git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils
+  fi
 
   initialize_repo
   initialize_config
@@ -106,7 +111,7 @@ core() {
   initialize_notifies
 
   # @TODO add auto update
-  zmicro auto update 
+  zmicro auto update
 }
 
 run() {
@@ -114,4 +119,3 @@ run() {
 }
 
 run $@
-
