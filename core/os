@@ -65,6 +65,27 @@ os::is_support_color() {
   fi
 }
 
+os::username() {
+  if [ "$GIT_USER" != "" ]; then
+    echo $GIT_USER
+    return
+  fi
+
+  if [ "$USER" != "" ]; then
+    echo $USER
+    return
+  fi
+
+  local user=$(id -u -n)
+  if [ "$user" != "" ]; then
+    echo $user
+    return
+  fi
+
+  log::error "Cannot get user by os::username"
+  exit 1
+}
+
 array::join() {
   local seperator=$1
   local args=${@:2}
@@ -145,6 +166,75 @@ version::zmicro() {
   version::get $ZMICRO_HOME
 }
 
+# Usage:
+#   default mode: echo "$var" | fs::write $file_path
+#   append mode: echo "$var" | fs::write -a $file_path
+#
+# Example:
+#   echo "hi" | fs::write /tmp/hi
+#   echo "$HOME" | fs::write /tmp/hi
+#
+#   @NOTICE 当写入多行数据的时候，必须加引号，否则换行将消失
+#     text=$(cat <<-END
+#     line1
+#     line2
+#     line3
+#     END
+#     )
+#     GOOD: echo "$text" | fs::write /tmp/hi
+#     BAD: echo $text | fs::write /tmp/hi
+#
+fs::write() {
+  local path=$1
+  local is_append_mode=false
+  local text=$(</dev/stdin)
+
+  # @TODO
+  # fs::write -a /tmp/path
+  if [ "$path" = "-a" ]; then
+    path=$2
+    is_append_mode=true
+  fi
+
+  if [ "$2" = "true" ]; then
+    is_append_mode=true
+  fi
+
+  if [ -z "$path" ] || [ -z "$text" ]; then
+    log::error "[$(timestamp)][fs::write] path and text is required"
+    exit 1
+  fi
+
+  # if [ ! -f $path ]; then
+  #   log::error "[$(timestamp)][fs::write] path $path not found"
+  #   exit 1
+  # fi
+
+  # no permission
+  # try to use sudo/root
+  if [ ! -w $path ]; then
+    if [ "$is_append_mode" = "true" ]; then
+      sudo tee -a $path >>/dev/null <<EOF
+${text}
+EOF
+    else
+      sudo tee $path >>/dev/null <<EOF
+${text}
+EOF
+    fi
+    return
+  fi
+
+  if [ "$is_append_mode" = "true" ]; then
+    echo "$text" >>$path
+  else
+    echo "$text" >$path
+  fi
+  #     tee -a $path >> /dev/null <<EOF
+  # ${text}
+  # EOF
+}
+
 export -f os::kernel
 export -f os::is_macos
 
@@ -154,9 +244,13 @@ export -f os::ensure_logs_permission
 
 export -f os::is_support_color
 
+export -f os::username
+
 export -f array::join
 export -f help::list
 export -f path::is_file
 
 export -f version::get
 export -f version::zmicro
+
+export -f fs::write
