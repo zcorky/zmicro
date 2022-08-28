@@ -235,6 +235,34 @@ EOF
   # EOF
 }
 
+os::is_docker() {
+  if [ -f "/.dockerenv" ]; then
+    echo "true"
+    return
+  fi
+
+  if [ ! -f "/proc/self/cgroup" ]; then
+    echo "false"
+    return
+  fi
+
+  cat /proc/self/cgroup | grep docker >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+    return
+  fi
+
+  echo "false"
+}
+
+git::fix_permissions() {
+  # fix unsafe repository
+  git config --global -l | grep "safe.directory=\*" >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    git config --global --add safe.directory "*"
+  fi
+}
+
 export -f os::kernel
 export -f os::is_macos
 
@@ -246,6 +274,8 @@ export -f os::is_support_color
 
 export -f os::username
 
+export -f os::is_docker
+
 export -f array::join
 export -f help::list
 export -f path::is_file
@@ -254,3 +284,5 @@ export -f version::get
 export -f version::zmicro
 
 export -f fs::write
+
+export -f git::fix_permissions
