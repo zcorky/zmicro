@@ -56,9 +56,65 @@ os::ensure_logs_permission() {
   os::ensure_permission $ZMICRO_LOG_NOTIFY_PATH
 }
 
+array::join() {
+  local seperator=$1
+  local args=${@:2}
+
+  if [ "$seperator" = "" ] || [ "$args" = "" ]; then
+    log::error "seperator, args is required"
+    exit 1
+  fi
+
+  if [ "$seperator" = "<>" ]; then
+    seperator=""
+  fi
+
+  local res=""
+  for element in $args; do
+    if [ "$res" = "" ]; then
+      res=$element
+      continue
+    fi
+
+    res="${res}${seperator}${element}"
+  done
+
+  echo $res
+}
+
+help::list() {
+  local help_commands_path=$1
+  local command_prefix=${@:2}
+  if [ ! -d $help_commands_path ]; then
+    log::debug "[$(timestamp)][help::list] path is required"
+    return
+  fi
+
+  echo "Usage:"
+  echo ""
+  echo "  ${command_prefix} [args...]"
+  echo ""
+  # echo $(ls $ZMICRO_COMMANDS_PATH)
+
+  local help_commands=$(ls $help_commands_path)
+  local help_command=""
+  for help_command in $help_commands; do
+    if [[ $help_command = _* ]]; then
+      continue
+    fi
+
+    echo "         $help_command"
+  done
+
+  echo ""
+}
+
 export -f os::kernel
 export -f os::is_macos
 
 export -f os::rw_permission
 export -f os::ensure_permission
 export -f os::ensure_logs_permission
+
+export -f array::join
+export -f help::list
