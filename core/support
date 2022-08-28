@@ -1,7 +1,0 @@
-#!/bin/bash
-
-support() {
-  os::support_method "$@"
-}
-
-export -f support

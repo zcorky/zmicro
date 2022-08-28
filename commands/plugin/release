@@ -1,7 +1,5 @@
 #!/bin/bash
 
-load inquirer
-
 required() {
   if [ "$1" = "" ]; then
     echo false
@@ -61,7 +59,7 @@ core() {
             log::info "PUBLISH CANCELLED"
             exit 0
           fi
-        fi      
+        fi
       else
         log::error "[$(timestamp)][service::release] custom dir($path) is not a plugin"
         exit 1
@@ -116,25 +114,25 @@ core() {
   fi
 
   git add mod
-  git commit -m "chore(release): bumped version to ${new_version}" >> /dev/null
+  git commit -m "chore(release): bumped version to ${new_version}" >>/dev/null
 
-  git tag | grep "${new_version}" >> /dev/null 2>&1
+  git tag | grep "${new_version}" >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
     local actions=("Override" "ignore")
     os::inquirer action "select" actions "Version ${new_version} already exists，Override or ignore ?"
     if [ "$action" = "Override" ]; then
-      git tag ${new_version} -f 
+      git tag ${new_version} -f
       git push origin ${new_version} -f
-      git push origin master >> /dev/null
+      git push origin master >>/dev/null
       log::success "[plugin][release] ${plugin_name} ${new_version}"
     else
-      git push origin master >> /dev/null
+      git push origin master >>/dev/null
       log::success "[plugin][release] cancel publish version (${new_version})"
     fi
   else
-    git tag ${new_version} -f 
+    git tag ${new_version} -f
     git push origin ${new_version} -f
-    git push origin master >> /dev/null
+    git push origin master >>/dev/null
     log::success "[plugin][release] ${plugin_name} ${new_version}"
   fi
 }

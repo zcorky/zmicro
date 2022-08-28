@@ -10,7 +10,7 @@ update_zmicro() {
   # zmicro auto update
 
   # Fix Permissions
-  os::fix_permissions >> /dev/null 2>&1
+  os::fix_permissions >>/dev/null 2>&1
 
   log::update CORE zmicro START
 
@@ -21,6 +21,9 @@ update_zmicro() {
     tail -n 50 $ZMICRO_LOG_ERROR_PATH
     exit -1
   fi
+
+  # ensure load core-utils
+  env::load_core_utils
 
   # log::update LATEST
   local new_version=$(version::zmicro)
@@ -41,10 +44,10 @@ update_zmicro() {
   config::ensure_global_rc
 
   # login notify check
-  notify::login_register_check > /dev/null 2>&1 &
-  
+  notify::login_register_check >/dev/null 2>&1 &
+
   # update notify check
-  notify::update_check $origin_version $new_version > /dev/null 2>&1 & 
+  notify::update_check $origin_version $new_version >/dev/null 2>&1 &
 }
 
 help() {

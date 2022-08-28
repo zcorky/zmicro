@@ -1,7 +1,0 @@
-#!/bin/bash
-
-os::uuid() {
-  curl https://httpbin.zcorky.com/uuid 2>/dev/null | awk -F '"' '{print $4}'
-}
-
-export -f os::uuid

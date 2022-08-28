@@ -12,7 +12,6 @@ ensure_vars() {
   fi
 }
 
-
 env() {
   ensure_vars
 
@@ -20,8 +19,16 @@ env() {
   . $ZMICRO_CONFIG_PATH/config
 
   # Load Doreamon Fns
-  . $ZMICRO_CORE_PATH/load
-  # . $CURRENT_DIR/load
+  # load config
+  . $ZMICRO_CORE_PATH/config
+  # load timestamp
+  . $ZMICRO_CORE_PATH/timestamp
+  # load os
+  . $ZMICRO_CORE_PATH/os
+  # load log
+  . $ZMICRO_CORE_PATH/log
+  # load core-utils
+  env::load_core_utils
 
   # 配置加载顺序
   # 1. mod
@@ -52,10 +59,18 @@ env() {
   fi
 }
 
+env::load_core_utils() {
+  if [ "$ZMICRO_CORE_UTILS_LOADED" = "false" ]; then
+    if [ -d "$ZMICRO_PLUGINS_PATH/core-utils/core" ]; then
+      config::load_dir $ZMICRO_PLUGINS_PATH/core-utils/core
+    fi
+  fi
+}
+
 env
 
 # Get env by name
-# 
+#
 # @Example:
 #   local key
 #   env::get $key
@@ -65,3 +80,4 @@ env::get() {
 }
 
 export -f env::get
+export -f env::load_core_utils

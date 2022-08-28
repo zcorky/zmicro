@@ -8,74 +8,6 @@ help() {
   echo "  -f, --force   Force update"
 }
 
-update_one() {
-  local plugin_name=$1
-  local is_force_update=false
-
-  if [ "$2" = "-f" ] || [ "$2" = "--force" ]; then
-    is_force_update=true
-  elif [ -n "$PLUGIN_FORCE_UPDATE" ]; then
-    is_force_update=true
-  fi
-
-  if [ "$is_force_update" = "true" ]; then
-    plugin::clean_lock $plugin_name
-  fi
-
-  local plugin_old_version=$(plugin::get_version $plugin_name)
-
-  if [ "$(plugin::is_plugin_need_update $plugin_name)" = "false" ]; then
-    log::info "[$(timestamp)][plugin][update] $plugin_name updated recently"
-    # log::info "[$(timestamp)][plugin][$(color::yellow "recently")] $plugin_name($plugin_old_version)"
-    # echo ""
-    # log::update plugin $plugin_name END
-    return
-  fi
-
-  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
-  if [ ! -d $plugin_path ]; then
-    log::error "[$(timestamp)][plugin] not found"
-    exit 0
-  fi
-
-  local plugin_origin_version=$(plugin::get_version $plugin_name)
-  log::update plugin $plugin_name START $plugin_origin_version
-  log::info "[$(timestamp)][plugin] updating $plugin_name ..."
-
-  # Fix Git Pull Permission Denied
-  if [ ! -r "$plugin_path/.git/FETCH_HEAD" ] || [ ! -w "$plugin_path/.git/FETCH_HEAD" ]; then
-    sudo chown -R $USER $plugin_path
-  fi
-
-  # Update @TODO
-  cd $plugin_path
-  git pull origin master >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
-  if [ "$?" != "0" ]; then
-    log::error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
-    log::update plugin $plugin_name ERROR
-    tail -n 50 $ZMICRO_LOG_ERROR_PATH
-    exit 1
-  fi
-  # cd - >>/dev/null 2>&1
-
-  # install depdendencies
-  require::plugin_mod $plugin_name -u
-
-  # register
-  plugin::register $plugin_name
-
-  local plugin_new_version=$(plugin::get_version $plugin_name)
-
-  if [ "$plugin_old_version" != "$plugin_new_version" ]; then
-    log::success "[$(timestamp)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color::success $plugin_new_version))"
-  else
-    log::info "[$(timestamp)][plugin][$(color::green "no change")] $plugin_name($plugin_old_version)"
-    echo ""
-  fi
-
-  log::update plugin $plugin_name END $plugin_origin_version $plugin_new_version
-}
-
 core() {
   while [[ $# -gt 0 ]]; do
     local key=$1
@@ -95,19 +27,7 @@ core() {
     esac
   done
 
-  local name=$1
-  if [ "$name" != "" ]; then
-    update_one $name
-    exit 0
-  fi
-
-  fn() {
-    local name=$2
-
-    update_one $name
-  }
-
-  plugin::each fn
+  plugin::update $@
 }
 
 run() {
