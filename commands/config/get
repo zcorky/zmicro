@@ -6,8 +6,8 @@ CONFIGS_DIR=$ZMICRO_HOME/config
 
 # Load Base Config
 . $CONFIGS_DIR/config
-# Load Doreamon Fns
-. $ZMICRO_CORE_PATH/load
+# # Load Doreamon Fns
+# . $ZMICRO_CORE_PATH/load
 
 help() {
   echo "Usage:"
@@ -25,7 +25,7 @@ core() {
   local default_value=$3
   if [ "$key" = "" ]; then
     log::error "key is required"
-    
+
     help
     exit 1
   fi
