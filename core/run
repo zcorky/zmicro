@@ -48,18 +48,20 @@ run() {
       fi
 
       if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
-        local command=$(echo $commands | awk -F ' ' '{print $1}')
+        local package_name=$(echo $commands | awk -F ' ' '{print $1}')
 
-        check_and_install() {
-          if [ "$2" = "$command" ]; then
-            log::info "[$(timestamp)][command] find: $command, installing ..."
-            zmicro package install $command
-            log::success "[$(timestamp)][command] successfully installl: $command, please try again."
-            exit 0
+        # avoid dead loop
+        if [ -z "$INSTALL_PACKAGE_FROM" ]; then
+          if $(zmicro metadata has package $package_name); then
+            log::info "[$(timestamp)][command] find package: $package_name, installing ..."
+            zmicro package install $package_name
+            log::success "[$(timestamp)][command] successfully install: $package_name, please try again."
+
+            export INSTALL_PACKAGE_FROM=NO_SUCH_COMMAND
+            run "$@"
+            return
           fi
-        }
-
-        array::each check_and_install ${AVAILABLE_PACKAGES[@]}
+        fi
 
         echo -e "No such command: $(color::red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
         exit 1
