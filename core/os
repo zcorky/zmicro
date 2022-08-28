@@ -61,7 +61,14 @@ os::uptime() {
 }
 
 os::arch() {
-  echo $(uname -m)
+  local arch=$(uname -m)
+  if [ "$arch" = "x86_64" ] || [ "$arch" = "amd64" ]; then
+    arch="amd64"
+  elif [ "$arch" = "aarch64" ] || [ "$arch" = "arm64" ]; then
+    arch="arm64"
+  fi
+
+  echo $arch
 }
 
 os::platform() {
