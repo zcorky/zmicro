@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ensure_vars() {
+env::ensure_vars() {
   if [ -z "$ZMICRO_CONFIG_PATH" ]; then
     ZMICRO_CONFIG_PATH=$ZMICRO_HOME/config
   fi
@@ -12,8 +12,16 @@ ensure_vars() {
   fi
 }
 
+env::ensure_core_utils() {
+  if [ ! -d "$ZMICRO_HOME/plugins/core-utils" ]; then
+    git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils
+  fi
+}
+
 env() {
-  ensure_vars
+  env::ensure_vars
+
+  env::ensure_core_utils
 
   # Load Base Config
   . $ZMICRO_CONFIG_PATH/config
@@ -87,3 +95,6 @@ env::get() {
 
 export -f env::get
 export -f env::load_core_utils
+
+export -f env::ensure_vars
+export -f env::ensure_core_utils

@@ -94,13 +94,13 @@ core() {
     esac
   done
 
-  # @TODO fix install zmicro core missing core-utils
-  if [ ! -d "$ZMICRO_HOME/plugins/core-utils" ]; then
-    git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils
+  # # @TODO fix install zmicro core missing core-utils
+  # if [ ! -d "$ZMICRO_HOME/plugins/core-utils" ]; then
+  #   git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils
 
-    # ensure load core-utils
-    env::load_core_utils
-  fi
+  #   # ensure load core-utils
+  #   env::load_core_utils
+  # fi
 
   initialize_repo
   initialize_config
