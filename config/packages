@@ -29,4 +29,5 @@ AVAILABLE_PACKAGES=(
   "gh"
   "fkill"
   "mtr"
+  "rsync"
 )
