@@ -14,7 +14,11 @@ env::ensure_vars() {
 
 env::ensure_core_utils() {
   if [ ! -d "$ZMICRO_HOME/plugins/core-utils" ]; then
-    git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils >>/dev/null
+    git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "error: failed to install core-utils"
+      exit 1
+    fi
   fi
 }
 
