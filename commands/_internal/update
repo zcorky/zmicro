@@ -9,11 +9,6 @@ update_zmicro() {
   # @TODO add auto update
   # zmicro auto update
 
-  # # @TODO fix update zmicro core missing core-utils
-  # if [ ! -d "$ZMICRO_HOME/plugins/core-utils" ]; then
-  #   git clone https://github.com/zmicro-design/plugin-core-utils $ZMICRO_HOME/plugins/core-utils
-  # fi
-
   # Fix Permissions
   os::fix_permissions >>/dev/null 2>&1
 
