@@ -56,6 +56,15 @@ os::ensure_logs_permission() {
   os::ensure_permission $ZMICRO_LOG_NOTIFY_PATH
 }
 
+os::is_support_color() {
+  # if [ "$(echo $PS1)" != "" ]; then
+  if [ "$TERM" = "xterm-256color" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 array::join() {
   local seperator=$1
   local args=${@:2}
@@ -109,6 +118,33 @@ help::list() {
   echo ""
 }
 
+path::is_file() {
+  path=$1
+  if [ -f $path ]; then
+    return 0
+  fi
+
+  return 1
+}
+
+version::get() {
+  local path=$1
+  cd $path
+
+  config::load_mod $path
+
+  # @TODO REMOVE patch next version
+  if [ "$PLUGIN_VERSION" ]; then
+    export VERSION=$PLUGIN_VERSION
+  fi
+
+  echo $VERSION
+}
+
+version::zmicro() {
+  version::get $ZMICRO_HOME
+}
+
 export -f os::kernel
 export -f os::is_macos
 
@@ -116,5 +152,11 @@ export -f os::rw_permission
 export -f os::ensure_permission
 export -f os::ensure_logs_permission
 
+export -f os::is_support_color
+
 export -f array::join
 export -f help::list
+export -f path::is_file
+
+export -f version::get
+export -f version::zmicro

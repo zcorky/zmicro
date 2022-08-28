@@ -25,8 +25,12 @@ env() {
   . $ZMICRO_CORE_PATH/timestamp
   # load os
   . $ZMICRO_CORE_PATH/os
+  # load color
+  . $ZMICRO_CORE_PATH/color
   # load log
   . $ZMICRO_CORE_PATH/log
+  # load commander
+  . $ZMICRO_CORE_PATH/commander
   # load run
   . $ZMICRO_CORE_PATH/run
   # load core-utils
