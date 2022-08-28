@@ -43,7 +43,7 @@ plugin::register() {
     fi
 
     log::success "[$(timestamp)][plugin][$(color::green "register")] $plugin_name bin: $(color::success $bin)"
-    ln -s $plugin_bin_path/$bin $bin_path
+    ln -sf $plugin_bin_path/$bin $bin_path
   done
 
   local plugin_sub_bin_path=$(plugin::get_sub_bin_path $plugin_name)
@@ -59,7 +59,7 @@ plugin::register() {
       fi
 
       log::success "[$(timestamp)][plugin][$(color::green "register")] $plugin_name sub bin: $(color::success $bin)"
-      ln -s $plugin_sub_bin_path/$bin $bin_path
+      ln -sf $plugin_sub_bin_path/$bin $bin_path
     done
   fi
 
@@ -125,7 +125,7 @@ plugin::register_all() {
       if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
         log::debug "[$(timestamp)][plugin][register] $plugin bin: $bin"
 
-        ln -s $plugin_bin_path $bin_path
+        ln -sf $plugin_bin_path $bin_path
         if [ "$?" != "0" ]; then
           log::warn "[$(timestamp)][plugin][register] failed to register $plugin bin: $bin"
         fi
