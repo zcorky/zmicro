@@ -27,8 +27,6 @@ env() {
   . $ZMICRO_CORE_PATH/os
   # load log
   . $ZMICRO_CORE_PATH/log
-  # load plugin
-  . $ZMICRO_CORE_PATH/plugin
   # load core-utils
   env::load_core_utils
 
