@@ -56,6 +56,16 @@ run() {
       if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
         local package_name=$(echo $commands | awk -F ' ' '{print $1}')
 
+        # is directory, run help
+        local command_full_path=$base_command_path
+        for command in $commands; do
+          command_full_path=$command_full_path/$command
+        done
+        if [ -d $command_full_path ]; then
+          help $base_command_path $command ${@:4} # $sub_command
+          exit 1
+        fi
+
         # avoid dead loop
         if [ -z "$INSTALL_PACKAGE_FROM" ]; then
           if $(zmicro metadata has package $package_name); then
