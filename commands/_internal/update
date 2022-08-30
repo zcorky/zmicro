@@ -12,6 +12,9 @@ update_zmicro() {
   # Fix Permissions
   os::fix_permissions >>/dev/null 2>&1
 
+  # fix git safe.directory
+  os::fix_git_safe_directory >>/dev/null 2>&1
+
   log::update CORE zmicro START
 
   cd $ZMICRO_HOME
