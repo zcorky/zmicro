@@ -145,6 +145,18 @@ version::zmicro() {
   version::get $ZMICRO_HOME
 }
 
+os::fix_git_safe_directory() {
+  local origin=$(git config --global --get safe.directory)
+  if [ "$origin" != "*" ]; then
+    if [ "$origin" = "" ]; then
+      sudo git config --global --add safe.directory '*'
+      return
+    fi
+
+    sudo git config --global --replace-all safe.directory '*'
+  fi
+}
+
 export -f os::kernel
 export -f os::is_macos
 
@@ -160,3 +172,5 @@ export -f path::is_file
 
 export -f version::get
 export -f version::zmicro
+
+export -f os::fix_git_safe_directory
