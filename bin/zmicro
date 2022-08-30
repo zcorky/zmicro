@@ -31,10 +31,24 @@ is_run_init() {
   fi
 }
 
+safe_update_background() {
+  # run after 15s
+  sleep 15
+  cd $ZMICRO_HOME
+  git pull origin master
+}
+
 export ZMICRO_HOME=/usr/local/lib/zmicro
 export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
 export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin
 export PATH=$ZMICRO_BIN_PATH:$PATH
+
+# safe strategy for update
+#   which will update self correct even if core is broken
+action=$1
+if [ "$action" = "update" ]; then
+  safe_update_background >>/dev/null 2>&1 &
+fi
 
 . $ZMICRO_CORE_PATH/env
 
