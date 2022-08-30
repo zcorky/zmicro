@@ -37,16 +37,22 @@ run() {
     local commands=${@:3}
     # DEBUG
     log::debug "[$(timestamp)][command]"
-    log::debug "[$(timestamp)][command] command: $commands"
+    log::debug "[$(timestamp)][command] command: $command - $commands"
+
+    # zmicro -v
+    if [ "$command" = "-v" ]; then
+      zmicro version
+      exit 0
+    fi
+
+    local last_arg=$(array::last_element $commands)
+    if [ "$last_arg" = "-h" ] || [ "$last_arg" = "--help" ]; then
+      help $base_command_path $command ${@:4} # $sub_command
+      exit 1
+    fi
 
     # Help
     if [ "$command" != "" ]; then
-      # zmicro -v
-      if [ "$command" = "-v" ]; then
-        zmicro version
-        exit 0
-      fi
-
       if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
         local package_name=$(echo $commands | awk -F ' ' '{print $1}')
 

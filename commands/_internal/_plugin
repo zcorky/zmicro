@@ -43,7 +43,7 @@ core() {
   config::load_dir $core_path/config
   config::load_dir $core_path/core
   config::load_file $core_path/mod
-  
+
   $command_path $args
 }
 
