@@ -1,30 +1,41 @@
 #!/bin/bash
 
-# help() {
-#   echo "Usage:"
-#   echo "  zmicro plugin help <plugin_name>"
-#   echo ""
-# }
+description() {
+  echo "Manage plugins install/register/release/run/update/remove ..."
+}
 
-# core() {
-#   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-#     help
-#     exit 0
-#   fi
+usage() {
+  echo "Usage:  zmicro plugin <action> [ARG...]"
+  echo ""
+  echo "Action:"
+  echo "  install <plugin_name>[@<plugin_version>] [plugin_url] - Install a plugin"
+  echo "  update <plugin_name>                                  - Upgrade a plugin"
+  echo "  remove <plugin_name>                                  - Remove a plugin"
+  echo "  version <plugin_name>                                 - Show version of the plugin"
+  echo ""
+  echo "  ls                                                    - List all plugins"
+  echo "  has <plugin_name>                                     - Check if a plugin is installed"
+  echo "  dependencies <plugin_name>                            - List dependencies of a plugin"
+  echo ""
+  echo "  register <plugin_name>                                - Register a plugin"
+  echo ""
+  echo "  release <plugin_name> [plugin_child_name | .]         - Release a plugin"
+  echo ""
+  echo "  run <plugin_name> <plugin_command> <args...>          - Run a plugin"
+  echo ""
+  echo "  fn <plugin_name> <fn_name> <fn_args...>               - Run a plugin function"
+  echo ""
+  echo "  help                                                  - Show help"
+}
 
-#   local name=$1
-#   if [ -z "$name" ]; then
-#     log::error "plugin name is required"
-#     exit 1
-#   fi
-
-#   # plugin::get_version $name
-#   plugin::run $plugin_name --help
-# }
+core() {
+  description
+  echo ""
+  usage
+}
 
 run() {
-  # core $@
-  echo "@TODO this does not work"
+  core $@
 }
 
 run $@

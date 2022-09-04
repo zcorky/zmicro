@@ -2,7 +2,7 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro plugin install <plugin_name>@<plugin_version>"
+  echo "  zmicro plugin install <plugin_name>@<plugin_version> [plugin_url]"
 }
 
 check_plugin() {
