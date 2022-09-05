@@ -1,0 +1,28 @@
+#!/bin/bash
+
+help() {
+  echo "Replay executed scripts"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro script record"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  if [ "$(os::is_macos)" = "true" ]; then
+    script -t $ZMICRO_SCRIPT_RECORD_TIMESTAMP -p $ZMICRO_SCRIPT_RECORD_COMMANDS
+    return
+  fi
+
+  scriptreplay -t $ZMICRO_SCRIPT_RECORD_TIMESTAMP $ZMICRO_SCRIPT_RECORD_COMMANDS
+}
+
+run() {
+  core $@
+}
+
+run $@

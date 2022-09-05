@@ -1,0 +1,36 @@
+#!/bin/bash
+
+help() {
+  echo "Record executed scripts"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro script record"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  if [ -f "$ZMICRO_SCRIPT_RECORD_TIMESTAMP" ]; then
+    rm -rf $ZMICRO_SCRIPT_RECORD_TIMESTAMP
+  fi
+
+  if [ -f "$ZMICRO_SCRIPT_RECORD_COMMANDS" ]; then
+    rm -rf $ZMICRO_SCRIPT_RECORD_COMMANDS
+  fi
+
+  if [ "$(os::is_macos)" = "true" ]; then
+    script -t $ZMICRO_SCRIPT_RECORD_TIMESTAMP -r $ZMICRO_SCRIPT_RECORD_COMMANDS
+    return
+  fi
+
+  script -t $ZMICRO_SCRIPT_RECORD_COMMANDS 2>$ZMICRO_SCRIPT_RECORD_TIMESTAMP
+}
+
+run() {
+  core $@
+}
+
+run $@
