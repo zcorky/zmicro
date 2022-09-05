@@ -4,9 +4,15 @@ config_git() {
   USERNAME=$1
   EMAIL=$2
 
+  # credential
   git config --global credential.helper store
   # git config --global credential.helper 'cache --timeout=604800'
+  # editor
   git config --global core.editor "vim"
+  # default branch
+  git config --global init.defaultbranch master
+  # pull reabse
+  git config --global pull.rebase false
 
   # if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
   #   log::warn "Config Git: USERNAME and EMAIL is required"
