@@ -180,10 +180,9 @@ log::update() {
   local origin_version=$4
   local current_version=$5
 
-  # local current_version=$(version::get)
   if [ "$stage" = "START" ]; then
     if [ "$type" = "CORE" ]; then
-      current_version=$(version::get)
+      current_version=$(version::zmicro)
     else
       current_version=$origin_version
     fi

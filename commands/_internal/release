@@ -26,16 +26,16 @@ core() {
   if [ "$1" != "" ]; then
     if [ "$1" = "." ] && [ "$PWD" = "$ZMICRO_HOME" ]; then
       # break
-      echo "release zmicro" >> /dev/null
+      echo "release zmicro" >>/dev/null
     else
       zmicro plugin release "$@"
       return
     fi
   fi
 
-  local origin_version=$(version::get $ZMICRO_HOME)
+  local origin_version=$(version::zmicro)
   local default_new_version=$(version::next $origin_version)
- 
+
   local is_valid="false"
   while [ "$is_valid" = "false" ]; do
     # inquirer::text "input new version(origin: ${origin_version}):" new_version "" "version is required" required
@@ -51,7 +51,6 @@ core() {
       is_valid="false"
     fi
   done
-
 
   sed -i -e "s/${origin_version}/$new_version/" mod >>/dev/null 2>&1
 
