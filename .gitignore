@@ -6,6 +6,7 @@ plugins/
 *_tmp
 *.swp
 code
+!commands/_internal/code
 .env
 
 *.snap
