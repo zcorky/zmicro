@@ -70,6 +70,9 @@ core() {
     exit 0
   fi
 
+  # fix git safe.directory
+  os::fix_git_safe_directory >>/dev/null 2>&1
+
   while [[ $# -gt 0 ]]; do
     local key=$1
     local value=$2
