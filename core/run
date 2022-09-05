@@ -18,7 +18,7 @@ run() {
   #   if command is sub command, handle help by sub command
   if [ ! -f "$ZMICRO_HOME/bin/sub/$command" ] && [ "$sub_command" = "help" ]; then
     help $base_command_path $command ${@:4} # $sub_command
-    exit 1
+    exit 0
   fi
 
   # @TODO help new
@@ -77,6 +77,12 @@ run() {
             run "$@"
             return
           fi
+        fi
+
+        # compitable pplugin
+        if [ "$(pplugin::has $command)" = "true" ]; then
+          pplugin::help $command
+          exit 1
         fi
 
         echo -e "No such command: $(color::red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
