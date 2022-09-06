@@ -4,7 +4,7 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro exec <shell_command> <shell_command_args...>"
+  echo "  zmicro exec <shell_script> <shell_script_args...>"
 }
 
 core() {
@@ -13,28 +13,33 @@ core() {
     exit 0
   fi
 
-  local shell_command=$1
-  local shell_command_args=${@:2}
+  local shell_script=$1
+  local shell_script_args=${@:2}
+
+  command -v $shell_script >>/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    local built_in_command=$shell_script
+    $built_in_command $shell_script_args
+    return
+  fi
 
   # fix: a.sh => ./a.sh
   # fix: bin/a.sh => ./bin/a.sh
   # normal: /a.sh => /a.sh
   # normal: /bin/a.sh => /bin/a.sh
-  if [ "${shell_command:0:1}" != "/" ] && [ "${shell_command:0:1}" != "." ]; then
-    shell_command="./$shell_command"
+  if [ "${shell_script:0:1}" != "/" ] && [ "${shell_script:0:1}" != "." ]; then
+    shell_script="./$shell_script"
   fi
 
   # @TODO
   set +e
 
-  type $shell_command >>/dev/null 2>&1
-  if [ $? -eq 0 ]; then
-    # echo "$shell_command $shell_command_args"
-    eval "$shell_command $shell_command_args"
-    exit $?
-  else
-    log::error "$shell_command method is not not found"
+  if [ -f "$shell_script" ]; then
+    bash $shell_script $shell_script_args
+    return
   fi
+
+  log::error "script $shell_script not found"
 
   # @TODO
   set -e
