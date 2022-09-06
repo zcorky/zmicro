@@ -175,6 +175,41 @@ run::deno() {
   deno run "$@" --allow-all
 }
 
+run::go() {
+  local script=$1
+  local args=${@:2}
+
+  if [ -z "$script" ]; then
+    log::error "go script is required"
+    exit 1
+  fi
+
+  # ZMICRO_DVM
+  if [ -z "$GOHOME" ]; then
+    export GOHOME=/usr/local/go
+    export GOPATH=$HOME/.go
+    export PATH=$GOHOME/bin:$GOPATH/bin:$PATH
+  fi
+
+  is_go_installed() {
+    which go >>/dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      echo "true"
+    else
+      echo "false"
+    fi
+  }
+
+  if [ "$(is_go_installed)" = "false" ]; then
+    log::info "[$(timestamps)] go is not installed, installing ..."
+    zpackage install go
+  fi
+
+  # go $script $args
+  go run "$@"
+}
+
 export -f run
 export -f run::js
 export -f run::deno
+export -f run::go
