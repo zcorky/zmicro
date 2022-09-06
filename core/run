@@ -141,5 +141,40 @@ run::js() {
   node "$@"
 }
 
+run::deno() {
+  local script=$1
+  local args=${@:2}
+
+  if [ -z "$script" ]; then
+    log::error "deno script is required"
+    exit 1
+  fi
+
+  # ZMICRO_DVM
+  if [ -z "$DENO_HOME" ]; then
+    export DENO_HOME=/usr/local/deno
+    export DENO_USER_HOME=$HOME/.deno
+    export PATH=$DENO_USER_HOME/bin:$DENO_HOME/bin:$PATH
+  fi
+
+  is_deno_installed() {
+    which deno >>/dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      echo "true"
+    else
+      echo "false"
+    fi
+  }
+
+  if [ "$(is_deno_installed)" = "false" ]; then
+    log::info "[$(timestamps)] deno is not installed, installing ..."
+    zpackage install deno
+  fi
+
+  # deno $script $args
+  deno run "$@" --allow-all
+}
+
 export -f run
 export -f run::js
+export -f run::deno
