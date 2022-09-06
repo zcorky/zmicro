@@ -26,7 +26,8 @@ core() {
 
   type $fn >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
-    eval "$fn $args"
+    # eval "$fn \"$args\""
+    $fn "$args"
   else
     log::error "$fn method is not not found"
   fi
@@ -36,7 +37,7 @@ core() {
 }
 
 run() {
-  core $@
+  core "$@"
 }
 
-run $@
+run "$@"
