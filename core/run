@@ -172,7 +172,7 @@ run::deno() {
   fi
 
   # deno $script $args
-  deno run "$@" --allow-all
+  deno run --allow-all $@
 }
 
 run::go() {
@@ -206,7 +206,7 @@ run::go() {
   fi
 
   # go $script $args
-  go run "$@"
+  go run $@
 }
 
 export -f run
