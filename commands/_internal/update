@@ -15,11 +15,18 @@ update_zmicro() {
   log::update CORE zmicro START
 
   cd $ZMICRO_HOME
-  git pull origin master >>$ZMICRO_LOG_UPDATE_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
+
+  local tmp_update_log=$(os::tmp_file) # $ZMICRO_LOG_ERROR_PATH
+  git pull origin master >>$tmp_update_log 2>&1
   if [ "$?" != "0" ]; then
-    echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
-    tail -n 50 $ZMICRO_LOG_ERROR_PATH
+    # echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
+    # tail -n 50 $tmp_update_log
+    cat $tmp_update_log
+
+    cat $tmp_update_log >>$ZMICRO_LOG_ERROR_PATH
     exit -1
+  else
+    cat $tmp_update_log >>$ZMICRO_LOG_UPDATE_PATH
   fi
 
   # ensure load core-utils
@@ -38,7 +45,7 @@ update_zmicro() {
   # Auto Register After Update
   plugin::register_all $ZMICRO_PLUGINS_PATH
 
-  log::update CORE zmicro END
+  log::update CORE zmicro END $origin_version $new_version
 
   # @TODO Ensure Global RC Created
   config::ensure_global_rc

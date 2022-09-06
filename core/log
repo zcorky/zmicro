@@ -190,7 +190,7 @@ log::update() {
     log::info "[$(timestamp)][${type}: ${name}][${stage}] ${current_version}" >>$ZMICRO_LOG_UPDATE_PATH
   else
     if [ "$origin_version" = "$current_version" ]; then
-      log::info "[$(timestamp)][${type}: ${name}][${stage}][version] ${origin_version} => ${current_version}" >>$ZMICRO_LOG_UPDATE_PATH
+      log::info "[$(timestamp)][${type}: ${name}][${stage}][version] ${origin_version} (no change)" >>$ZMICRO_LOG_UPDATE_PATH
     else
       log::info "[$(timestamp)][${type}: ${name}][${stage}][version] ${origin_version} => $(color::green ${current_version})" >>$ZMICRO_LOG_UPDATE_PATH
     fi
