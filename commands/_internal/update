@@ -6,9 +6,6 @@ update_zmicro() {
   local origin_version=$(version::zmicro)
   # log::update PREV
 
-  # @TODO add auto update
-  # zmicro auto update
-
   # Fix Permissions
   os::fix_permissions >>/dev/null 2>&1
 
@@ -48,6 +45,9 @@ update_zmicro() {
 
   # login notify check
   notify::login_register_check >/dev/null 2>&1 &
+
+  # @TODO add auto update
+  zmicro auto update >/dev/null 2>&1 &
 
   # update notify check
   notify::update_check $origin_version $new_version >/dev/null 2>&1 &
