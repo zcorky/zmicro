@@ -146,6 +146,7 @@ version::zmicro() {
 }
 
 os::fix_git_safe_directory() {
+  # root
   local origin=$(sudo git config --global --get safe.directory)
   if [ "$origin" != "*" ]; then
     if [ "$origin" = "" ]; then
@@ -154,6 +155,17 @@ os::fix_git_safe_directory() {
     fi
 
     sudo git config --global --replace-all safe.directory '*'
+  fi
+
+  # user
+  local origin=$(git config --global --get safe.directory)
+  if [ "$origin" != "*" ]; then
+    if [ "$origin" = "" ]; then
+      git config --global --add safe.directory '*'
+      return
+    fi
+
+    git config --global --replace-all safe.directory '*'
   fi
 }
 
