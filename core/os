@@ -169,6 +169,27 @@ os::fix_git_safe_directory() {
   fi
 }
 
+os::fn() {
+  local fn=$1
+  local args=${@:2}
+
+  if [ -z "$fn" ]; then
+    log::error "method is required"
+    exit 1
+  fi
+
+  # @TODO
+  # set +e
+
+  type $fn >>/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    # eval "$fn $args"
+    $fn $args
+  else
+    log::error "$fn method is not not found"
+  fi
+}
+
 export -f os::kernel
 export -f os::is_macos
 
@@ -186,3 +207,5 @@ export -f version::get
 export -f version::zmicro
 
 export -f os::fix_git_safe_directory
+
+export -f os::fn

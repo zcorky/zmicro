@@ -7,3 +7,11 @@ function test_os::kernel() {
     "$(uname -s)" \
     "$(os::kernel)"
 }
+
+function test_os::fn() {
+  testing::expect \
+    "${FUNCNAME[0]}" \
+    "to_equal" \
+    "a/b:v1,a/b:v1.2,a/b:v1.2.1" \
+    "$(os::fn tag::docker a/b v1.2.1)"
+}
