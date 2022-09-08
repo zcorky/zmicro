@@ -53,11 +53,15 @@ core() {
   fi
 
   log::debug "[$(timestamp)][plugin] add $plugin_name($plugin_version) ..."
-  git clone $plugin_url -b $plugin_version $plugin_path >>$ZMICRO_LOG_COMMON_PATH 2>>$ZMICRO_LOG_ERROR_PATH # 2>&1
+  local tmp_install_log=$(os::tmp_file) # $ZMICRO_LOG_ERROR_PATH
+  git clone $plugin_url -b $plugin_version $plugin_path >>$tmp_install_log 2>&1
   if [ "$?" != "0" ]; then
     log::error "[$(timestamp)][plugin] install error $plugin_name($plugin_version) ..."
-    tail -n 50 $ZMICRO_LOG_ERROR_PATH
+    cat $tmp_install_log >>$ZMICRO_LOG_ERROR_PATH
+    cat $tmp_install_log
     exit 1
+  else
+    cat $tmp_install_log >>$ZMICRO_LOG_COMMON_PATH
   fi
 
   # @TODO postinstall
