@@ -6,6 +6,9 @@ update_zmicro() {
   local origin_version=$(version::zmicro)
   # log::update PREV
 
+  # Fix Permissions
+  os::fix_permissions >>/dev/null 2>&1
+
   # @FIX core-utils plugin update missin path cause failed to update
   # @TODO will remove
   if [ -d "$ZMICRO_HOME/plugins/core-utils" ]; then
@@ -21,9 +24,6 @@ update_zmicro() {
     log::info "[$(timestamp)][env] reload core-utils ..."
     config::load_dir $ZMICRO_HOME/plugins/core-utils/core
   fi
-
-  # Fix Permissions
-  os::fix_permissions >>/dev/null 2>&1
 
   # fix git safe.directory
   os::fix_git_safe_directory >>/dev/null 2>&1
