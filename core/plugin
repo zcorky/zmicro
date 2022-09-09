@@ -1,0 +1,780 @@
+#!/bin/bash
+
+# @TODO
+if [ -z "$ZMICRO_PLUGIN_GLOBAL_PARENT" ]; then
+  export ZMICRO_PLUGIN_GLOBAL_PARENT="<IGNORE_ROOT_PLUGIN>"
+fi
+if [ -z "$ZMICRO_PLUGIN_GLOBAL_CURRENT" ]; then
+  export ZMICRO_PLUGIN_GLOBAL_CURRENT="<IGNORE_ROOT_PLUGIN>"
+fi
+
+plugin::register() {
+  local plugin_name=$1
+  if [ "$plugin_name" = "" ]; then
+    log::error "[$(timestamp)][plugin][register] plugin name is required"
+    exit 1
+  fi
+
+  # local plugin_path=$(plugin::get_path $plugin_name)
+  local plugin_bin_path=$(plugin::get_bin_path $plugin_name)
+
+  # Fix permission
+  if [ ! -w "$ZMICRO_HOME/bin" ]; then
+    sudo chown -R $(os::username) $ZMICRO_HOME/bin
+  fi
+
+  if [ ! -d $plugin_bin_path ]; then
+    # exit 0
+    return
+  fi
+
+  log::debug "[$(timestamp)][plugin] bins_path: $plugin_bin_path"
+  local bins=$(plugin::list_bins $plugin_name)
+  for bin in $bins; do
+    local bin_path=$ZMICRO_HOME/bin/$bin
+
+    if [ -d "$plugin_bin_path/$bin" ]; then
+      continue
+    fi
+
+    if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
+      log::debug "[$(timestamp)][plugin][$(color::red "remove")] old bin: $bin"
+      rm $bin_path
+    fi
+
+    log::success "[$(timestamp)][plugin][$(color::green "register")] $plugin_name bin: $(color::success $bin)"
+    ln -sf $plugin_bin_path/$bin $bin_path
+  done
+
+  local plugin_sub_bin_path=$(plugin::get_sub_bin_path $plugin_name)
+  if [ -d "$plugin_sub_bin_path" ]; then
+    log::debug "[$(timestamp)][plugin] sub_bins_path: $plugin_bin_path"
+    local sub_bins=$(ls $plugin_sub_bin_path)
+    for bin in $sub_bins; do
+      local bin_path=$ZMICRO_HOME/bin/sub/$bin
+
+      if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
+        log::debug "[$(timestamp)][plugin][$(color::red "remove")] old sub bin: $bin"
+        rm $bin_path
+      fi
+
+      log::success "[$(timestamp)][plugin][$(color::green "register")] $plugin_name sub bin: $(color::success $bin)"
+      ln -sf $plugin_sub_bin_path/$bin $bin_path
+    done
+  fi
+
+  # Initialize Dirs
+  plugin::get_app_configs_path $plugin_name >>/dev/null
+  plugin::get_app_logs_path $plugin_name >>/dev/null
+  plugin::get_app_data_path $plugin_name >>/dev/null
+}
+
+plugin::unregister() {
+  local plugin_name=$1
+  if [ "$plugin_name" = "" ]; then
+    log::error "[$(timestamp)][plugin][register] plugin name is required"
+    exit 1
+  fi
+
+  local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+
+  # Fix permission
+  if [ ! -w "$ZMICRO_HOME/bin" ]; then
+    sudo chown -R $(os::username) $ZMICRO_HOME/bin
+  fi
+
+  if [ ! -d $plugin_path/$plugin/bin ]; then
+    # exit 0
+    return
+  fi
+
+  log::debug "[$(timestamp)][plugin][unregister] bins_path: $plugin_path/$plugin/bin"
+  local bins=$(plugin::list_bins $plugin_name)
+  for bin in $bins; do
+    local bin_path=$ZMICRO_HOME/bin/$bin
+
+    if [ -f "$bin_path" ] || [ -x "$bin_path" ]; then
+      log::success "[$(timestamp)][plugin][$(color::red "unregister")] $plugin_name bin: $(color::red $bin)"
+      rm $bin_path
+    fi
+  done
+}
+
+plugin::register_all() {
+  local plugin_path=$1
+  if [ "$plugin_path" = "-" ]; then
+    return
+  fi
+
+  local plugins=$(ls $plugin_path)
+
+  log::debug "\n\n[$(timestamp)][plugin]"
+  for plugin in $plugins; do
+    log::debug "[$(timestamp)][plugin] find plugin: $plugin"
+
+    if [ ! -d "$plugin_path/$plugin/bin" ]; then
+      continue
+    fi
+
+    log::debug "[$(timestamp)][plugin] bins_path: $plugin_path/$plugin/bin"
+    local bins=$(ls $plugin_path/$plugin/bin)
+    for bin in $bins; do
+      local bin_path=$ZMICRO_HOME/bin/$bin
+      local plugin_bin_path=$plugin_path/$plugin/bin/$bin
+
+      if [ ! -f "$bin_path" ] && [ ! -x "$bin_path" ]; then
+        log::debug "[$(timestamp)][plugin][register] $plugin bin: $bin"
+
+        ln -sf $plugin_bin_path $bin_path
+        if [ "$?" != "0" ]; then
+          log::warn "[$(timestamp)][plugin][register] failed to register $plugin bin: $bin"
+        fi
+      fi
+    done
+  done
+}
+
+plugin::get_path() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log::error "[plugin::get_path] plugin name is required"
+    exit 1
+  fi
+
+  echo $ZMICRO_PLUGINS_PATH/$plugin_name
+}
+
+plugin::get_app_data_path() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log::error "[plugin::get_app_data_path] plugin name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_PLUGINS_DATA_PATH/$plugin_name
+  if [ ! -d $path ]; then
+    sudo mkdir -p $path
+    sudo chown $USER $path
+  fi
+
+  echo $path
+}
+
+plugin::get_app_logs_path() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log::error "[plugin::get_app_logs_path] plugin name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_PLUGINS_LOGS_PATH/$plugin_name
+  if [ ! -d $path ]; then
+    sudo mkdir -p $path
+    sudo chown $USER $path
+  fi
+
+  echo $path
+}
+
+plugin::get_app_configs_path() {
+  local plugin_name=$1
+  if [ -z $plugin_name ]; then
+    log::error "[plugin::get_app_configs_path] plugin name is required"
+    exit 1
+  fi
+
+  local path=$ZMICRO_PLUGINS_CONFIGS_PATH/$plugin_name
+  if [ ! -d $path ]; then
+    sudo mkdir -p $path
+    sudo chown $USER $path
+  fi
+
+  echo $path
+}
+
+plugin::get_mod_path() {
+  local plugin_name=$1
+  echo $(plugin::get_path $plugin_name)/mod
+}
+
+plugin::get_bin_path() {
+  local plugin_name=$1
+  echo $ZMICRO_PLUGINS_PATH/$plugin_name/bin
+}
+
+plugin::get_sub_bin_path() {
+  local plugin_name=$1
+  echo $ZMICRO_PLUGINS_PATH/$plugin_name/bin/zmicro
+}
+
+plugin::get_core_path() {
+  local plugin_name=$1
+  echo $(plugin::get_path $plugin_name)/core
+}
+
+plugin::get_config_path() {
+  local plugin_name=$1
+  echo $(plugin::get_path $plugin_name)/config
+}
+
+plugin::get_commands_path() {
+  local plugin_name=$1
+  echo $(plugin::get_path $plugin_name)/commands
+}
+
+plugin::exist() {
+  if [ -d $(plugin::get_path $1) ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+plugin::has() {
+  plugin::exist $@
+}
+
+plugin::has_command() {
+  local plugin_name=$1
+  local command=$2
+
+  if [ -f $(plugin::get_commands_path $plugin_name)/$command ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+plugin::get_command() {
+  local plugin_name=$1
+  local command=$2
+
+  echo $(plugin::get_commands_path $plugin_name)/$command
+}
+
+plugin::run_command() {
+  local plugin_name=$1
+  local command=$2
+  local args=${@:3}
+
+  if [ -z "$plugin_name" ] || [ -z "$command" ]; then
+    log::error "[$(timestamp)][plugin][run_command] plugin name and command are required"
+    return 1
+  fi
+
+  local command_path=$(plugin::get_command $plugin_name $command)
+  if [ -x "$command_path" ]; then
+    log::debug "[$(timestamp)][plugin][run_command] run command: $command_path $args"
+    $command_path $args
+  else
+    log::debug "[$(timestamp)][plugin][run_command] run command: $command_path $args"
+    bash $command_path $args
+  fi
+}
+
+plugin::try_to_run_command() {
+  local plugin_name=$1
+  local command=$2
+  local args=${@:3}
+  if [ -z "$plugin_name" ] || [ -z "$command" ]; then
+    return
+  fi
+
+  if [ "$(plugin::has_command $plugin_name $command)" = "false" ]; then
+    return
+  fi
+
+  plugin::run_command $plugin_name $command $args
+}
+
+plugin::bin_exist() {
+  if [ -d $(plugin::get_bin_path $1) ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+plugin::list_names() {
+  echo $(ls $ZMICRO_PLUGINS_PATH)
+}
+
+plugin::list_bins() {
+  local plugin_name=$1
+  if [ "$(plugin::exist $plugin_name)" != "true" ]; then
+    echo ""
+  else
+    local _all=$(ls $(plugin::get_bin_path $plugin_name))
+    local base_path=$(plugin::get_bin_path $plugin_name)
+
+    fn() {
+      local element=$1
+      if [ -f "$base_path/$element" ]; then
+        echo "true"
+      fi
+    }
+
+    array::filter fn $_all
+  fi
+}
+
+###
+plugin::load_configs() {
+  local plugin_name=$1
+  # file or dir
+  local config_path=$2
+
+  if [ -z "$plugin_name" ]; then
+    log::error "[$(timestamp)][plugin::load_configs] plugin name is required"
+  fi
+
+  if [ "$(plugin::has $plugin_name)" = "false" ]; then
+    log::error "$plugin_name is not a valid plugin"
+    exit 1
+  fi
+
+  # ignore if not found
+  if [ ! -r $config_path ]; then
+    return
+  fi
+
+  # is config file
+  if [ -f $config_path ]; then
+    log::debug "[$(timestamp)][plugin::load_configs][${plugin_name}][file] load: $config_path"
+    config::load_file $config_path
+    return
+  fi
+
+  # is config dir
+  log::debug "[$(timestamp)][plugin::load_configs][${plugin_name}][dir] load: $config_path"
+  local configs=$(ls $config_path)
+  for config in $configs; do
+    config::load_file $config_path/$config
+  done
+}
+
+plugin::load_mod() {
+  local plugin_name=$1
+  local plugin_mod_path=$(plugin::get_mod_path $plugin_name)
+
+  plugin::load_configs $plugin_name $plugin_mod_path
+
+  if [ -z "$VERSION" ] && [ -z "$PLUGIN_VERSION" ]; then
+    log::error "[$(timestamp)][plugin::load_mod] VERSION is required in mod ($plugin_mod_path)"
+    exit 1
+  fi
+}
+
+plugin::load_core() {
+  local plugin_name=$1
+  local plugin_core_path=$(plugin::get_core_path $plugin_name)
+
+  plugin::load_configs $plugin_name $plugin_core_path
+}
+
+plugin::load_config() {
+  local plugin_name=$1
+  local plugin_config_path="$(plugin::get_config_path $plugin_name)"
+
+  plugin::load_configs $plugin_name $plugin_config_path
+}
+
+plugin::load_override_config() {
+  local plugin_name=$1
+  # config/overrides/*
+  local plugin_overwrite_config_path="$(plugin::get_config_path $plugin_name)/overrides"
+
+  log::debug "[$(timestamp)][plugin::load_override_config][${plugin_name}] $plugin_overwrite_config_path"
+
+  plugin::load_configs $plugin_name $plugin_overwrite_config_path
+}
+
+plugin::load_parent_override_config() {
+  local plugin_name=$1
+  # config/overrides/*
+  local config_dir="$(plugin::get_config_path $plugin_name)/overrides"
+
+  log::debug "[$(timestamp)][plugin::load_parent_override_config] $config_dir"
+
+  # @TODO core <IGNORE_ROOT_PLUGIN>, ignore
+  if [ "$plugin_name" = "<IGNORE_ROOT_PLUGIN>" ]; then
+    return
+  fi
+
+  plugin::load_configs $plugin_name $config_dir
+}
+
+plugin::load_app_configs() {
+  local plugin_name=$1
+  # config/overrides/*
+  local config_path=$(plugin::get_app_configs_path $plugin_name)
+
+  log::debug "[$(timestamp)][plugin::load_app_configs][${plugin_name}] $config_path"
+
+  plugin::load_configs $plugin_name $config_path
+}
+
+plugin::get_version() {
+  plugin::load_mod $1
+
+  if [ "$PLUGIN_VERSION" = "" ]; then
+    echo "-"
+    return
+  fi
+
+  echo "$PLUGIN_VERSION"
+}
+
+plugin::get_description() {
+  plugin::load_mod $1
+
+  if [ "$PLUGIN_DESCRIPTION" = "" ]; then
+    echo "No Description"
+    return
+  fi
+
+  echo "$PLUGIN_DESCRIPTION"
+}
+
+plugin::get_dependencies() {
+  plugin::load_mod $1
+
+  if [ -z "$DEPENDENCIES" ]; then
+    echo "No Dependencies"
+    return
+  fi
+
+  echo "${DEPENDENCIES[@]}"
+}
+
+plugin::each() {
+  local fn=$1
+  local plugins=$(plugin::list_names)
+  array::each $fn $plugins
+}
+
+plugin::run() {
+  log::debug "[$(timestamp)][plugin::run] in plugin: $@"
+
+  local plugin_name=$1
+  local plugin_command=${@:2}
+
+  if [ -z "$plugin_name" ]; then
+    log::error "[$(timestamp)][plugin::run] plugin name is required"
+    exit 1
+  fi
+
+  if [ "$(plugin::exist $plugin_name)" != "true" ]; then
+    log::error "[$(timestamp)][plugin::run] plugin ($plugin_name) not found"
+    exit 1
+  fi
+
+  # @TODO
+  export ZMICRO_PLUGIN_GLOBAL_PARENT=$ZMICRO_PLUGIN_GLOBAL_CURRENT
+  export ZMICRO_PLUGIN_GLOBAL_CURRENT=$plugin_name
+
+  # Set Env
+  export PLUGIN_NAME=$plugin_name
+  export PLUGIN_DIR=$(plugin::get_path $plugin_name)
+  export PLUGIN_DATA=$(plugin::get_app_data_path $plugin_name)
+  export PLUGIN_LOGS=$(plugin::get_app_logs_path $plugin_name)
+  export PLUGIN_CONFIGS=$(plugin::get_app_configs_path $plugin_name)
+  export PLUGIN_CONFIG=$PLUGIN_CONFIGS/config
+  if [ ! -d "$PLUGIN_DATA" ]; then
+    mkdir -p $PLUGIN_DATA
+  fi
+  if [ ! -d "$PLUGIN_LOGS" ]; then
+    mkdir -p $PLUGIN_LOGS
+  fi
+  if [ ! -d "$PLUGIN_CONFIGS" ]; then
+    mkdir -p $PLUGIN_CONFIGS
+  fi
+
+  log::debug "[$(timestamp)][plugin::run] PARENT: $ZMICRO_PLUGIN_GLOBAL_PARENT, CURRENT: $ZMICRO_PLUGIN_GLOBAL_CURRENT"
+
+  # 插件配置加载顺序非常重要，相对于 core 配置加载，增加了插件配置
+  #   1. core config (默认已加载，不需要重新加载)
+  #
+  #   2. plugin config (加载插件配置)
+  plugin::load_config $plugin_name
+  #   3. user config (加载用户配置，可能会覆盖插件配置和核心配置)
+  config::load_user_config
+  #   4. override user config @TODO 这一步是为了应对需要强制使用插件自身配置的情况
+  #       比如，定制的插件有自己的 services 目录
+  plugin::load_override_config $plugin_name
+  #   5. mod 加载插件 mod
+  plugin::load_mod $plugin_name
+  #   6. parent override 覆盖变量
+  #     不是已经有 plugin::load_override_config，为什么还需要这个？
+  #       因为有可能一个插件使用 zmicro 命令调用了另一个插件的时候，加载第二个插件，
+  #         根据配置加载顺序，会加载 user_config，覆盖了第一个插件的 override 配置
+  #         也就是使得第一个配置的 override 配置失效
+  #         这时候的补救措施的就是：
+  #           父插件的 override 配置优先级 > 子配置
+  #             也就是要子配置重新加载父配置的 override 配置
+  #       可以打开 load_file_config 日志看看配置加载的顺序，会发现
+  plugin::load_parent_override_config $ZMICRO_PLUGIN_GLOBAL_PARENT
+  #   7. load app(user custom) config
+  plugin::load_app_configs $plugin_name
+
+  # help
+  if [ "$plugin_command" = "" ] || [ "$plugin_command" = "help" ]; then
+    plugin_command="--help"
+  fi
+
+  local plugin_command_real=$(array::first_element $plugin_command)
+  local plugin_command_args_real=$(array::slice 1 30 $plugin_command)
+
+  # internal commands
+  if [ "$plugin_command_real" = "version" ] || [ "$plugin_command_real" = "-v" ]; then
+    zmicro plugin version $plugin_name
+  elif [ "$plugin_command_real" = "description" ]; then
+    zmicro plugin description $plugin_name
+  elif [ "$plugin_command_real" = "dependencies" ]; then
+    zmicro plugin dependencies $plugin_name
+  elif [ "$plugin_command_real" = "update" ]; then
+    # @TODO
+    local option=$(echo $plugin_command_args_real | awk '{print $1}')
+    if [ "$option" = "-f" ] || [ "$option" = "--force" ]; then
+      sudo rm -rf /tmp/zmicro.${plugin_name}.lock.*
+      zmicro plugin update $plugin_name
+    else
+      zmicro plugin update $plugin_name
+    fi
+    if [ "$?" = "0" ]; then
+      plugin::try_to_run_command $plugin_name $plugin_command_real $plugin_command_args_real
+    fi
+  elif [ "$plugin_command_real" = "release" ]; then
+    zmicro plugin release $plugin_name
+  elif [ "$plugin_command_real" = "go" ]; then
+    zmicro go plugin $plugin_name
+  elif [ "$plugin_command_real" = "code" ]; then
+    zmicro code plugin $plugin_name
+  elif [ "$plugin_command_real" = "test" ]; then
+    local script_path=$plugin_command_args_real
+    if [ -z "$scipt_path" ]; then
+      script_path="core"
+    fi
+
+    zmicro test $script_path
+  elif [ "$(array::first_element $plugin_command)" = "fn" ]; then
+    # Examples:
+    #   1. zmicro plugin run daemon fn daemon_list => zmicro plugin fn daemon daemon_list
+    #   2. zdaemon fn daemon_list => zmicro plugin fn daemon daemon_list
+    #
+    # load plugin core(utils)
+    plugin::load_core $plugin_name
+
+    zmicro plugin fn $plugin_name ${plugin_command:2}
+  elif [ "$(array::first_element $plugin_command)" = "plugin" ]; then
+    export ZMICRO_PPLUGIN_NAME=$plugin_name
+
+    local pplugin_command=$(array::find_by_index 1 $plugin_command)
+    local pplugin_args=$(array::slice 2 30 $plugin_command)
+    if [ -z "$pplugin_command" ] || [ "$pplugin_command" = "--help" ] || [ "$pplugin_command" = "-h" ] || [ "$pplugin_command" = "help" ]; then
+      pplugin::help
+      return
+    fi
+
+    # echo "pplugin_command: $pplugin_command"
+    # echo "pplugin_args: $pplugin_args"
+    local pplugin_fn="pplugin::$pplugin_command"
+    if [ "$(os::has_command $pplugin_fn)" = "true" ]; then
+      $pplugin_fn $pplugin_args
+    else
+      log::error "[$(timestamp)][plugin::run] pplugin command not found: $pplugin_command"
+      return 1
+    fi
+  else
+    # load plugin core(utils)
+    plugin::load_core $plugin_name
+
+    local plugin_commands_path=$(plugin::get_commands_path $plugin_name)
+    # echo "plugin_commands_path:: $plugin_commands_path"
+
+    # try to load pplugin mod/config/core
+    if [ "$plugin_command" != "" ]; then
+      local pplugin_name=$(echo $plugin_command | awk -F ' ' '{print $1}')
+      export ZMICRO_PPLUGIN_NAME=$plugin_name
+      # echo "pplugin_name: $pplugin_name - $(pplugin::has $pplugin_name)"
+
+      # try to load mod plugin config
+      if [ "$(pplugin::has $pplugin_name)" = "true" ]; then
+        # load pplugin mod
+        pplugin::load_mod $pplugin_name
+        # load pplugin config
+        pplugin::load_config $pplugin_name
+        # load pplugin core
+        pplugin::load_core $pplugin_name
+        # ensure register command
+        pplugin::ensure_register $pplugin_name
+      fi
+
+      # echo "EUNOMIA_NAME: $EUNOMIA_NAME"
+      # echo "EUNOMIA_VERSION: $EUNOMIA_VERSION"
+      # echo "EUNOMIA_DESCRIPTION: $EUNOMIA_DESCRIPTION"
+    fi
+
+    run $plugin_commands_path "-" $plugin_command
+  fi
+}
+
+plugin::postinstall() {
+  local name=$1
+  local postinstall_file=$(plugin::get_path $name)/postinstall
+  if [ -f "$postinstall_file" ]; then
+    bash $postinstall_file
+  fi
+}
+
+plugin::version_echo() {
+  local name=$1
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)][plugin][version_echo] plugin name is required"
+    exit 1
+  fi
+
+  version::plugin $name
+}
+
+plugin::update() {
+  update_one() {
+    local plugin_name=$1
+    local is_force_update=false
+
+    if [ "$2" = "-f" ] || [ "$2" = "--force" ]; then
+      is_force_update=true
+    elif [ -n "$PLUGIN_FORCE_UPDATE" ]; then
+      is_force_update=true
+    fi
+
+    if [ "$is_force_update" = "true" ]; then
+      plugin::clean_lock $plugin_name
+    fi
+
+    local plugin_old_version=$(plugin::get_version $plugin_name)
+
+    if [ "$(plugin::is_plugin_need_update $plugin_name)" = "false" ]; then
+      log::info "[$(timestamp)][plugin][update] $plugin_name updated recently"
+      # log::info "[$(timestamp)][plugin][$(color::yellow "recently")] $plugin_name($plugin_old_version)"
+      # echo ""
+      # log::update plugin $plugin_name END
+      return
+    fi
+
+    local plugin_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+    if [ ! -d $plugin_path ]; then
+      log::error "[$(timestamp)][plugin] not found"
+      return 0
+    fi
+
+    local plugin_origin_version=$(plugin::get_version $plugin_name)
+    log::update plugin $plugin_name START $plugin_origin_version
+    log::info "[$(timestamp)][plugin] updating $plugin_name ..."
+
+    # Fix Git Pull Permission Denied
+    if [ ! -r "$plugin_path/.git/FETCH_HEAD" ] || [ ! -w "$plugin_path/.git/FETCH_HEAD" ]; then
+      sudo chown -R $USER $plugin_path
+    fi
+
+    cd $plugin_path
+    local tmp_update_log=$(os::tmp_file) # $ZMICRO_LOG_ERROR_PATH
+    git pull origin master >>$tmp_update_log 2>&1
+    if [ "$?" != "0" ]; then
+      log::error "[$(timestamp)][plugin: $plugin_name] update error $plugin_name ..."
+      log::update plugin $plugin_name ERROR
+      cat $tmp_update_log >>$ZMICRO_LOG_ERROR_PATH
+
+      # echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
+      # tail -n 50 $tmp_update_log
+      cat $tmp_update_log
+      exit -1
+    else
+      cat $tmp_update_log >>$ZMICRO_LOG_UPDATE_PATH
+    fi
+
+    # cd - >>/dev/null 2>&1
+
+    # install depdendencies
+    require::plugin_mod $plugin_name -u
+
+    # register
+    plugin::register $plugin_name
+
+    local plugin_new_version=$(plugin::get_version $plugin_name)
+
+    if [ "$plugin_old_version" != "$plugin_new_version" ]; then
+      log::success "[$(timestamp)][plugin] $plugin_name update success $plugin_name ($plugin_old_version => $(color::success $plugin_new_version))"
+    else
+      log::info "[$(timestamp)][plugin][$(color::green "no change")] $plugin_name($plugin_old_version)"
+      echo ""
+    fi
+
+    log::update plugin $plugin_name END $plugin_origin_version $plugin_new_version
+  }
+
+  local name=$1
+  if [ "$name" != "" ]; then
+    update_one $name
+    return 0
+  fi
+
+  fn() {
+    local name=$2
+
+    update_one $name
+  }
+
+  plugin::each fn
+}
+
+export -f plugin::register_all
+export -f plugin::register
+export -f plugin::unregister
+
+export -f plugin::list_names
+export -f plugin::list_bins
+export -f plugin::each
+
+export -f plugin::get_path
+export -f plugin::get_bin_path
+export -f plugin::get_sub_bin_path
+export -f plugin::get_mod_path
+export -f plugin::get_core_path
+export -f plugin::get_config_path
+export -f plugin::get_commands_path
+
+export -f plugin::get_app_data_path
+export -f plugin::get_app_logs_path
+export -f plugin::get_app_configs_path
+
+export -f plugin::exist
+export -f plugin::bin_exist
+export -f plugin::has
+
+export -f plugin::has_command
+export -f plugin::get_command
+export -f plugin::run_command
+export -f plugin::try_to_run_command
+
+export -f plugin::load_configs
+
+export -f plugin::load_mod
+export -f plugin::load_core
+export -f plugin::load_config
+export -f plugin::load_override_config
+export -f plugin::load_parent_override_config
+
+export -f plugin::load_app_configs
+
+export -f plugin::get_version
+export -f plugin::get_description
+export -f plugin::get_dependencies
+
+export -f plugin::run
+
+export -f plugin::postinstall
+
+export -f plugin::version_echo
+
+export -f plugin::update
