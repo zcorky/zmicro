@@ -19,6 +19,15 @@ env::ensure_core_utils() {
       echo "error: failed to install core-utils"
       exit 1
     fi
+  else
+    # @TODO will remove
+    echo "[env] update core-utils ..."
+    cd $ZMICRO_HOME/plugins/core-utils
+    git pull >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "error: failed to update core-utils"
+      exit 1
+    fi
   fi
 }
 
