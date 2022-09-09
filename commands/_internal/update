@@ -11,7 +11,7 @@ update_zmicro() {
   if [ -d "$ZMICRO_HOME/plugins/core-utils" ]; then
     echo "[$(timestamp)][env] update core-utils ..."
     cd $ZMICRO_HOME/plugins/core-utils
-    git pull >>/dev/null 2>&1
+    git pull origin master >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       echo "error: failed to update core-utils"
       exit 1
