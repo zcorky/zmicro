@@ -6,6 +6,18 @@ update_zmicro() {
   local origin_version=$(version::zmicro)
   # log::update PREV
 
+  # @FIX core-utils plugin update missin path cause failed to update
+  # @TODO will remove
+  if [ -d "$ZMICRO_HOME/plugins/core-utils" ]; then
+    echo "[$(timestamp)][env] update core-utils ..."
+    cd $ZMICRO_HOME/plugins/core-utils
+    git pull >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "error: failed to update core-utils"
+      exit 1
+    fi
+  fi
+
   # Fix Permissions
   os::fix_permissions >>/dev/null 2>&1
 
