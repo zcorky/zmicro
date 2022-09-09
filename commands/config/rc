@@ -148,12 +148,12 @@ disable_oh_my_zsh_update() {
     exit 1
   fi
 
-  cat $profile | grep "ZMICRO_DISABLE_AUTO_UPDATE" >>/dev/null 2>&1
+  cat $profile | grep "ZMICRO_ZSH_DISABLE_AUTO_UPDATE" >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     local text=$(
       cat <<-END
       
-# ZMICRO_DISABLE_AUTO_UPDATE
+# ZMICRO_ZSH_DISABLE_AUTO_UPDATE
 export DISABLE_AUTO_UPDATE="true"
 END
     )
