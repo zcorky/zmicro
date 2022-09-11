@@ -30,7 +30,7 @@ env() {
   # Load Base Config
   . $ZMICRO_CONFIG_PATH/config
 
-  echo "======== load env start ====================" >>$ZMICRO_LOG_COMMON_PATH
+  # echo "======== load env start ====================" >>$ZMICRO_LOG_COMMON_PATH
 
   # Load Doreamon Fns
   # load config
@@ -82,7 +82,7 @@ env() {
   # @TODO zmicro vscode will make env infect cause vscode can't find zsh
   # export ZMICRO_CORE_UTILS_LOADED=true
 
-  echo "======== load env end ====================" >>$ZMICRO_LOG_COMMON_PATH
+  # echo "======== load env end ====================" >>$ZMICRO_LOG_COMMON_PATH
 }
 
 env::load_core_utils() {
