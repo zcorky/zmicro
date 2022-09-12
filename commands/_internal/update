@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. $ZMICRO_HOME/core/env
-
 update_zmicro() {
   local origin_version=$(version::zmicro)
   # log::update PREV

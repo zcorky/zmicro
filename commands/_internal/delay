@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. $ZMICRO_HOME/core/env
-
 help() {
   echo "Delay 1s fn"
   echo ""

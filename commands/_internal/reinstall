@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. $ZMICRO_HOME/core/env
-
 help() {
   echo "reinstall zmicro"
   echo ""
@@ -23,4 +21,3 @@ run() {
 }
 
 run $@
-

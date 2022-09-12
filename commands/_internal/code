@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. $ZMICRO_HOME/core/env
-
 help() {
   echo "Usage:"
   echo "  zmicro code <where>"

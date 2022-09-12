@@ -2,8 +2,6 @@
 
 # set -e
 
-. $ZMICRO_HOME/core/env
-
 help() {
   echo "Usage:"
   echo "  zmicro plugin fn <plugin_name> <fn_name> <fn_args...>"

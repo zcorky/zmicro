@@ -1,7 +1,5 @@
 #!/bin/bash
 
-load inquirer
-
 required() {
   if [ "$1" = "" ]; then
     echo false

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. $ZMICRO_HOME/core/env
-
 help() {
   echo "Usage:"
   echo "  zmicro apply [option] <service>"
@@ -29,11 +27,10 @@ core() {
 
   local option_remove=false
   case $option in
-    -r | --remove)
-      option_remove=true
-      ;;
+  -r | --remove)
+    option_remove=true
+    ;;
   esac
-
 
   case $service in
   proxy)
