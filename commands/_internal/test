@@ -19,6 +19,11 @@ core() {
     exit 1
   fi
 
+  if [ "$filepath" = "--jest" ]; then
+    testing::jest
+    return
+  fi
+
   # @TODO load dependencies
   local config_dir=$PWD/config
   local core_dir=$PWD/core
