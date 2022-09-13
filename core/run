@@ -118,16 +118,7 @@ run::js() {
     export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
   fi
 
-  is_nodejs_installed() {
-    which node >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
-      echo "true"
-    else
-      echo "false"
-    fi
-  }
-
-  if [ "$(is_nodejs_installed)" = "false" ]; then
+  if [ "$(os::is_nodejs_installed)" = "false" ]; then
     log::info "[$(timestamps)] nodejs is not installed, installing ..."
     zpackage install nodejs
   fi
@@ -209,7 +200,44 @@ run::go() {
   go run $@
 }
 
+# run::zx runs scripts with zx
+run::zx() {
+  local script=$1
+  local args=${@:2}
+
+  if [ -z "$script" ]; then
+    log::error "js script is required"
+    exit 1
+  fi
+
+  # ZMICRO_NVM
+  if [ -z "$NODE_HOME" ]; then
+    export NODE_HOME=/usr/local/node
+    export NODE_USER_HOME=$HOME/.node
+    export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
+  fi
+
+  if [ "$(os::is_nodejs_installed)" = "false" ]; then
+    log::info "[$(timestamps)] nodejs is not installed, installing ..."
+    zpackage install nodejs
+  fi
+
+  # @TODO
+  if [ "$(net::is_google_visitable)" = "false" ]; then
+    export NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
+  fi
+
+  if [ "$(os::is_zx_installed)" = "false" ]; then
+    log::info "[$(timestamps)] zx is not installed, installing ..."
+    pm::npm i -g zx
+  fi
+
+  # node $script $args
+  zx "$@"
+}
+
 export -f run
 export -f run::js
 export -f run::deno
 export -f run::go
+export -f run::zx
