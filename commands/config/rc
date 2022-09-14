@@ -100,6 +100,10 @@ config_bashrc() {
 
   # HOME
   config_profile $HOME/.bashrc
+  # fix some macos use .bash_profile
+  if [ -f "$HOME/.bash_profile" ]; then
+    config_profile $HOME/.bash_profile
+  fi
 
   # Global
   if [ -f "/etc/bash.bashrc" ]; then
