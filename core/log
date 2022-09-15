@@ -320,6 +320,30 @@ log::fix_permissions() {
     # zmicro app(plugins,package,service,...) logs
     sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
   fi
+
+  if [ ! -w "$ZMICRO_LOG_COMMON_PATH" ]; then
+    sudo chmod 777 $ZMICRO_LOG_COMMON_PATH
+  fi
+
+  if [ ! -w "$ZMICRO_LOG_DEBUG_PATH" ]; then
+    sudo chmod 777 $ZMICRO_LOG_DEBUG_PATH
+  fi
+
+  if [ ! -w "$ZMICRO_LOG_ERROR_PATH" ]; then
+    sudo chmod 777 $ZMICRO_LOG_ERROR_PATH
+  fi
+
+  if [ ! -w "$ZMICRO_LOG_UPDATE_PATH" ]; then
+    sudo chmod 777 $ZMICRO_LOG_UPDATE_PATH
+  fi
+
+  if [ ! -w "$ZMICRO_LOG_VERSION_PATH" ]; then
+    sudo chmod 777 $ZMICRO_LOG_VERSION_PATH
+  fi
+
+  if [ ! -w "$ZMICRO_LOG_NOTIFY_PATH" ]; then
+    sudo chmod 777 $ZMICRO_LOG_NOTIFY_PATH
+  fi
 }
 
 export -f log::init
