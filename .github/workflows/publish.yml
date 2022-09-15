@@ -9,7 +9,7 @@ jobs:
   on-success:
     needs: publish
     runs-on: ubuntu-latest
-    container: whatwewant/zmicro:v1.16.5
+    container: whatwewant/zmicro:v1
     if: ${{ always() && needs.publish.result == 'success' }}
     steps:
       - name: Notification Feishu
@@ -26,7 +26,7 @@ jobs:
   on-failure:
     needs: publish
     runs-on: ubuntu-latest
-    container: whatwewant/zmicro:v1.16.5
+    container: whatwewant/zmicro:v1
     if: ${{ always() && needs.publish.result == 'failure' }}
     steps:
       - name: Notification Feishu
