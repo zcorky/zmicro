@@ -3,14 +3,14 @@ name: Test
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
     branches:
       - master
   pull_request:
     branches:
       - master
   schedule:
-    - cron: '0 2 * * *'
+    - cron: "0 2 * * *"
 
 jobs:
   on-success:
@@ -23,7 +23,7 @@ jobs:
         uses: whatwewant/action-robot-feishu@v0.0.13
         with:
           url: ${{ secrets.WORKFLOW_FEISHU_BOT_WEBHOOK_URL }}
-          title: '✅ 自动化测试：${{ github.repository }}'
+          title: "✅ 自动化测试：${{ github.repository }}"
           text: |
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
@@ -40,7 +40,7 @@ jobs:
         uses: whatwewant/action-robot-feishu@v0.0.13
         with:
           url: ${{ secrets.WORKFLOW_FEISHU_BOT_WEBHOOK_URL }}
-          title: '❌ 自动化测试：${{ github.repository }}'
+          title: "❌ 自动化测试：${{ github.repository }}"
           text: |
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
@@ -69,8 +69,30 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
-          fetch-depth: '0'
+          fetch-depth: "0"
 
       - name: Run test cases
         run: zmicro test core/
 
+  # # test old version upgrade
+  # test_v1_16:
+  #   runs-on: ubuntu-latest
+  #   container: whatwewant/zmicro:v1.16.32
+  #   steps:
+  #     - name: upgrade
+  #       run: zmicro update -a
+  #     - name: show version
+  #       run: zmicro -v
+  #     - name: show system info
+  #       run: zmicro info
+
+  # test_v1_9:
+  #   runs-on: ubuntu-latest
+  #   container: whatwewant/zmicro:v1.9.13
+  #   steps:
+  #     - name: upgrade
+  #       run: zmicro update -a
+  #     - name: show version
+  #       run: zmicro -v
+  #     - name: show system info
+  #       run: zmicro info
