@@ -1,0 +1,7 @@
+#!/bin/bash
+
+plugin::update() {
+  echo "@FIX v1.16 => latest plugin::update: command not found" >>/dev/null
+}
+
+export -f plugin::update
