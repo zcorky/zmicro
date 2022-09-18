@@ -5,6 +5,9 @@
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell/76171
 # http://www.ruanyifeng.com/blog/2017/11/bash-set.html
 
+# @FIX cron command not found
+export PATH=/usr/local/lib/zmicro/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH
+
 # @TODO fix sudo in docker
 command -v sudo >>/dev/null 2>&1
 if [ $? -ne 0 ]; then
