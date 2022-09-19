@@ -6,7 +6,14 @@
 # http://www.ruanyifeng.com/blog/2017/11/bash-set.html
 
 # @FIX cron command not found
-export PATH=/usr/local/lib/zmicro/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH
+# zmicro
+export PATH=/usr/local/lib/zmicro/bin:$PATH
+# node
+export PATH=$HOME/.node/bin:$PATH
+# go
+export PATH=$HOME/.go/bin:$PATH
+# common
+export PATH=$PATH:/usr/local/bin:/usr/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/sbin:/bin:/sbin
 
 # @TODO fix sudo in docker
 command -v sudo >>/dev/null 2>&1
