@@ -17,6 +17,11 @@ core() {
   local name=zmicro_auto_update
   local every_day_hour=$ZMICRO_AUTO_UPDATE_EVERY_DAY_HOUR
 
+  # for safe
+  if [ -z "$every_day_hour" ]; then
+    every_day_hour=11
+  fi
+
   # if [ "$(zmicro cron has $name)" = "true" ]; then
   #   zmicro cron status $name >>/dev/null 2>&1
   #   if [ "$?" != "0" ]; then
