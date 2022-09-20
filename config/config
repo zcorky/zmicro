@@ -86,4 +86,4 @@ export ZMICRO_LOGIN_REPORT_LOG_URL=https://api.zcorky.com/logs/zmicro-logins
 export ZMICRO_SCRIPT_RECORD_TIMESTAMP=/tmp/zmicro_script_record_tmp.timestamp
 export ZMICRO_SCRIPT_RECORD_COMMANDS=/tmp/zmicro_script_record_tmp.commands
 
-export ZMICRO_AUTO_UPDATE_EVERY_DAY_HOUR=14
+export ZMICRO_AUTO_UPDATE_EVERY_DAY_HOUR=11
