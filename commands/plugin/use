@@ -1,0 +1,50 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro plugin use <plugin_name> <plugin_version>"
+  echo ""
+}
+
+core() {
+  if [[ $# -eq 0 ]]; then
+    help
+    exit 0
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+    -h | --help)
+      help
+      shift # past key
+      exit 0
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  local name=$1
+  local version=$2
+
+  if [ "$name" = "" ]; then
+    log::error "[$(timestamp)][plugin][use] plugin name is required"
+    exit 1
+  fi
+
+  if [ "$version" = "" ]; then
+    log::error "[$(timestamp)][plugin][use] plugin version is required"
+    exit 1
+  fi
+
+  plugin::use $name $version
+}
+
+run() {
+  core $@
+}
+
+run $@
