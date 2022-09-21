@@ -127,23 +127,22 @@ path::is_file() {
   return 1
 }
 
-version::get() {
-  local path=$1
-  cd $path
+# version::get() {
+#   local path=$1/mod
 
-  config::load_mod $path
+#   local version=$(config::get VERSION $path)
+#   if [ -n "$version" ]; then
+#     echo $version
+#     return
+#   fi
 
-  # @TODO REMOVE patch next version
-  if [ "$PLUGIN_VERSION" ]; then
-    export VERSION=$PLUGIN_VERSION
-  fi
+#   # OLD PLUGINS
+#   config::get PLUGIN_VERSION $path
+# }
 
-  echo $VERSION
-}
-
-version::zmicro() {
-  version::get $ZMICRO_HOME
-}
+# version::zmicro() {
+#   version::get $ZMICRO_HOME
+# }
 
 os::fix_git_safe_directory() {
   # root
@@ -203,8 +202,8 @@ export -f array::join
 export -f help::list
 export -f path::is_file
 
-export -f version::get
-export -f version::zmicro
+# export -f version::get
+# export -f version::zmicro
 
 export -f os::fix_git_safe_directory
 
