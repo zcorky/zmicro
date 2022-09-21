@@ -35,6 +35,9 @@ core() {
   # echo "where: $where"
   # echo "name: $name"
 
+  # fix permissions
+  os::fix_permissions
+
   case $where in
   home)
     cd $ZMICRO_HOME
