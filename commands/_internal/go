@@ -2,12 +2,27 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro go <where>"
+  echo "  zmicro go <WHERE> [NAME] [MODULE]"
+  echo ""
+  echo "WHERE:"
+  echo "  home - open zmicro home"
+  echo "  plugin - open plugin"
+  echo "  service - open service"
+  echo "  package - open package"
+  echo ""
+  echo "NAME:"
+  echo "  plugin/service/package name"
+  echo ""
+  echo "MODULE:"
+  echo "  config - open config"
+  echo "  data   - open data"
+  echo "  log    - open log"
 }
 
 core() {
   local where=$1
   local name=$2
+  local module=$3
   if [ "$where" = "-h" ] || [ "$where" = "--help" ]; then
     help
     exit 1
@@ -28,6 +43,14 @@ core() {
   # echo "where: $where"
   # echo "name: $name"
 
+  # @TODO
+  #   zmicro go plugin service ... => zmicro go service ...
+  if [ "$name" = "service" ] || [ "$name" = "package" ]; then
+    where=$name
+    name=$module
+    module=$4
+  fi
+
   case $where in
   home)
     cd $ZMICRO_HOME
@@ -45,8 +68,18 @@ core() {
       exit 1
     fi
 
-    cd $plugin_path
+    if [ "$module" = "config" ]; then
+      cd $ZMICRO_PLUGINS_CONFIGS_PATH/$name
+    elif [ "$module" = "data" ]; then
+      cd $ZMICRO_PLUGINS_DATA_PATH/$name
+    elif [ "$module" = "log" ]; then
+      cd $ZMICRO_PLUGINS_LOGS_PATH/$name
+    else
+      cd $plugin_path
+    fi
+
     exec $SHELL
+    exit 0
     ;;
   service)
     local path=$ZMICRO_HOME/plugins/${where}
@@ -63,8 +96,18 @@ core() {
       exit 1
     fi
 
-    cd $path
+    if [ "$module" = "config" ]; then
+      cd $ZMICRO_PLUGINS_CONFIGS_PATH/service/config/$name
+    elif [ "$module" = "data" ]; then
+      cd $ZMICRO_PLUGINS_DATA_PATH/service/$name
+    elif [ "$module" = "log" ]; then
+      cd $ZMICRO_PLUGINS_LOGS_PATH/service/$name
+    else
+      cd $path
+    fi
+
     exec $SHELL
+    exit 0
     ;;
   package)
     local path=$ZMICRO_HOME/plugins/${where}
@@ -81,8 +124,18 @@ core() {
       exit 1
     fi
 
-    cd $path
+    if [ "$module" = "config" ]; then
+      cd $ZMICRO_PLUGINS_CONFIGS_PATH/package/$name
+    elif [ "$module" = "data" ]; then
+      cd $ZMICRO_PLUGINS_DATA_PATH/package/$name
+    elif [ "$module" = "log" ]; then
+      cd $ZMICRO_PLUGINS_LOGS_PATH/package/$name
+    else
+      cd $path
+    fi
+
     exec $SHELL
+    exit 0
     ;;
   *)
     # fallback to plugin
