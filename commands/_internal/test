@@ -56,6 +56,7 @@ test_one_dir() {
 test_one_file() {
   local filepath=$1
   local fn=$2
+  local context=$PWD
 
   # feat: auto detect test file name
   # zmicro test core/os => core/os_test
@@ -87,6 +88,7 @@ test_one_file() {
   if [ -n "$fn" ]; then
     test_one_fn $fn
 
+    cd $context
     return
   fi
 
@@ -95,8 +97,11 @@ test_one_file() {
     echo $fn | grep "^test_" >>/dev/null 2>&1
     if [ $? -eq 0 ]; then
       test_one_fn $fn
+      cd $context
     fi
   done
+
+  cd $context
 }
 
 test_one_fn() {
