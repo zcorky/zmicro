@@ -42,7 +42,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    container: whatwewant/zmicro:v1.16.5
+    container: whatwewant/zmicro:v1
 
     steps:
       - name: Update zmicro to latest
