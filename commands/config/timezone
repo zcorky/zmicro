@@ -76,7 +76,10 @@ core() {
       if [ "$?" = "0" ]; then
         # fix interactive mode
         export DEBIAN_FRONTEND=noninteractive
-        sudo apt install -y tzdata
+        export TZ=Asia/Shanghai
+        # @TODO cannot add sudo
+        # sudo apt install -y tzdata
+        apt install -y tzdata
       fi
 
       # centos
