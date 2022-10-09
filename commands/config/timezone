@@ -74,6 +74,8 @@ core() {
       # ubuntu
       which apt >>/dev/null 2>&1
       if [ "$?" = "0" ]; then
+        # fix interactive mode
+        export DEBIAN_FRONTEND=noninteractive
         sudo apt install -y tzdata
       fi
 
