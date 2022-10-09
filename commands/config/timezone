@@ -22,7 +22,7 @@ is_timezone_seted() {
 
   # @2 /etc/timezone
   if [ -f "/etc/timezone" ]; then
-    cat /etc/timezone | grep $tz >> /dev/null 2>&1
+    cat /etc/timezone | grep $tz >>/dev/null 2>&1
     if [ "$?" = "0" ]; then
       echo "true"
       return
@@ -30,9 +30,9 @@ is_timezone_seted() {
   fi
 
   # @3 timedatectl
-  which timedatectl >> /dev/null 2>&1
+  which timedatectl >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
-    sudo timedatectl show | grep $tz >> /dev/null 2>&1
+    sudo timedatectl show | grep $tz >>/dev/null 2>&1
     if [ "$?" = "0" ]; then
       echo "true"
       return
@@ -60,18 +60,50 @@ core() {
 
   # Set timezone
   if [ "$(os::is_docker)" = "true" ]; then
-    # @FIX TimeZone in Docker
+    # @TODO 兼容性不好，目前优先支持 alpine/ubuntu
+
+    # @FIX TimeZone in Docker (alpine)
     #  https://www.cnblogs.com/flipped/p/15808681.html
-    sudo cp /usr/share/zoneinfo/${TZ} /etc/localtime >> /dev/null 2>&1
-    echo ${TZ} | sudo tee /etc/timezone >> /dev/null 2>&1
+    if [ ! -f "/usr/share/zoneinfo/${TZ}" ]; then
+      # alpine
+      which apk >>/dev/null 2>&1
+      if [ "$?" = "0" ]; then
+        sudo apk add tzdata
+      fi
+
+      # ubuntu
+      which apt >>/dev/null 2>&1
+      if [ "$?" = "0" ]; then
+        sudo apk install -y tzdata
+      fi
+
+      # centos
+      which apt >>/dev/null 2>&1
+      if [ "$?" = "0" ]; then
+        sudo yum install -y tzdata
+      fi
+
+      # @TODO support more
+    fi
+
+    if [ -f "/usr/share/zoneinfo/${TZ}" ]; then
+      sudo cp /usr/share/zoneinfo/${TZ} /etc/localtime >>/dev/null # 2>&1
+    fi
+
+    echo ${TZ} | sudo tee /etc/timezone >>/dev/null 2>&1
+
+    # which apk >>/dev/null 2>&1
+    # if [ "$?" = "0" ]; then
+    #   sudo apk del tzdata
+    # fi
 
     local BASHRC_PATH=$HOME/.bashrc
     if [ -f $BASHRC_PATH ]; then
       cat $BASHRC_PATH | grep "ZMICRO TIMEZONE" >>/dev/null 2>&1
       if [ "$?" != "0" ]; then
-        echo "# ZMICRO TIMEZONE" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
-        echo "TZ=\"${TZ}\"" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
-        echo "" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
+        echo "# ZMICRO TIMEZONE" | sudo tee -a $BASHRC_PATH >>/dev/null 2>&1
+        echo "TZ=\"${TZ}\"" | sudo tee -a $BASHRC_PATH >>/dev/null 2>&1
+        echo "" | sudo tee -a $BASHRC_PATH >>/dev/null 2>&1
       fi
     fi
 
@@ -79,12 +111,12 @@ core() {
     if [ -f $ZSHRC_PATH ]; then
       cat $ZSHRC_PATH | grep "ZMICRO TIMEZONE" >>/dev/null 2>&1
       if [ "$?" != "0" ]; then
-        echo "# ZMICRO TIMEZONE" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
-        echo "TZ=\"${TZ}\"" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
-        echo "" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
+        echo "# ZMICRO TIMEZONE" | sudo tee -a $ZSHRC_PATH >>/dev/null 2>&1
+        echo "TZ=\"${TZ}\"" | sudo tee -a $ZSHRC_PATH >>/dev/null 2>&1
+        echo "" | sudo tee -a $ZSHRC_PATH >>/dev/null 2>&1
       fi
     fi
-    return 
+    return
   fi
 
   if [ "$(is_timezone_seted $timezone)" = "true" ]; then
