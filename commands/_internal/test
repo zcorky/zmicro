@@ -47,6 +47,12 @@ core() {
 test_one_dir() {
   local dir=$1
 
+  ls $dir/*_test >>/dev/null 2>&1
+  if [ "$?" != "0" ]; then
+    log::info "no test cases found in dir($dir)"
+    return
+  fi
+
   for filepath in $dir/*_test; do
     # echo "filepath: $filepath"
     test_one_file $filepath
@@ -70,6 +76,12 @@ test_one_file() {
 
     filepath=$filepath_test
   fi
+
+  # # @TODO if no testcase, exit
+  # cat $filepath >>/dev/null 2>&1
+  # if [ "$?" != "0" ]; then
+  #   return 0
+  # fi
 
   # remove suffix: core/os_test => core/os
   local core_filepath=${filepath%_test}
