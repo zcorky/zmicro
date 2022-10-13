@@ -20,6 +20,9 @@ core() {
     exit 0
   fi
 
+  # using smart proxy
+  net::using_smart_proxy 2>&1
+
   # is plugin release
   if [ "$1" != "" ]; then
     if [ "$1" = "." ] && [ "$PWD" = "$ZMICRO_HOME" ]; then
