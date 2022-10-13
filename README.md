@@ -1,6 +1,6 @@
 # Zero's Micro Server Tools Framework
 
-Zmicro is a linux server tools framework, also, manager, designed to manage linux server(packags/services) easily.
+Zmicro is a linux server tools framework, also, manager, designed to manage linux server(packags/services) easily, also support MacOS.
 
 
 ## Install
