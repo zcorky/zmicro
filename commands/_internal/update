@@ -172,12 +172,19 @@ core() {
         if [ "$?" = "0" ]; then
           PROXY_IP="127.0.0.1"
           PROXY_PORT="7890"
+        else
+          # ShadowsocksX-NG
+          nc -z -v -n -w 1 127.0.0.1 1087 >>/dev/null 2>&1
+          if [ "$?" = "0" ]; then
+            PROXY_IP="127.0.0.1"
+            PROXY_PORT="1087"
+          fi
         fi
       fi
     fi
 
     if [ -n "$PROXY_IP" ] && [ -n "$PROXY_PORT" ]; then
-      log::info "[$(timestamp)] using proxy: $PROXY_IP:$PROXY_PORT"
+      log::debug "[$(timestamp)] using proxy: $PROXY_IP:$PROXY_PORT"
       export https_proxy=http://$PROXY_IP:$PROXY_PORT http_proxy=http://$PROXY_IP:$PROXY_PORT all_proxy=socks5://$PROXY_IP:$PROXY_PORT
       export HTTPS_PROXY=http://$PROXY_IP:$PROXY_PORT HTTP_PROXY=http://$PROXY_IP:$PROXY_PORT ALL_PROXY=socks5://$PROXY_IP:$PROXY_PORT
     fi
