@@ -1,6 +1,6 @@
-# Zero's Service Manager
+# Zero's Micro Server Tools Framework
 
-zmicro is a linux service manager, designed to manage linux packages and services easily.
+Zmicro is a linux server tools framework, also, manager, designed to manage linux server(packags/services) easily.
 
 
 ## Install
