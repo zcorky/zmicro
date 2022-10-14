@@ -18,26 +18,26 @@ log::init() {
   fi
 
   # @TODO
-  if [ -z "$ZMICRO_LOG_PATH" ]; then
-    ZMICRO_LOG_PATH=/var/log/zmicro
+  if [ -z "$ZMICRO_LOG_DIR" ]; then
+    ZMICRO_LOG_DIR=/var/log/zmicro
   fi
 
   # # echo "[init] config log"
-  if [ ! -d $ZMICRO_LOG_PATH ]; then
-    sudo mkdir -p $ZMICRO_LOG_PATH
-    # sudo chown -R $current_user $ZMICRO_LOG_PATH
-    # sudo chmod -R 777 $ZMICRO_LOG_PATH
+  if [ ! -d $ZMICRO_LOG_DIR ]; then
+    sudo mkdir -p $ZMICRO_LOG_DIR
+    # sudo chown -R $current_user $ZMICRO_LOG_DIR
+    # sudo chmod -R 777 $ZMICRO_LOG_DIR
     # # @TODO load core os utils
-    # log::debug "[log::init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
+    # log::debug "[log::init] internal log current User: sudo chown -R $current_user $ZMICRO_LOG_DIR"
   fi
 
   if [ ! -d $ZMICRO_APP_LOGS_PATH ]; then
     sudo mkdir -p $ZMICRO_APP_LOGS_PATH
     # sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
-    # log::debug "[log::init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_PATH"
+    # log::debug "[log::init] logs current User: sudo chown -R $current_user $ZMICRO_LOG_DIR"
   fi
 
-  if [ ! -w $ZMICRO_LOG_PATH ] || [ ! -w $ZMICRO_APP_LOGS_PATH ]; then
+  if [ ! -w $ZMICRO_LOG_DIR ] || [ ! -w $ZMICRO_APP_LOGS_PATH ]; then
     os::fix_permissions
   fi
 
@@ -243,7 +243,7 @@ log::plugin_update_lock() {
 
 # keep in 90d
 log::clean_check() {
-  local log_last_check=$ZMICRO_LOG_PATH/.last_clean
+  local log_last_check=$ZMICRO_LOG_DIR/.last_clean
 
   # initialize
   if [ ! -f $log_last_check ]; then
@@ -279,13 +279,13 @@ log::clean_check() {
 }
 
 log::clean() {
-  # if [ ! -d $ZMICRO_LOG_PATH ]; then
-  #   export ZMICRO_LOG_PATH=${LOG_CLEAN_DIR}
+  # if [ ! -d $ZMICRO_LOG_DIR ]; then
+  #   export ZMICRO_LOG_DIR=${LOG_CLEAN_DIR}
   # fi
 
-  local LOG_CLEAN_DIR=$ZMICRO_LOG_PATH
+  local LOG_CLEAN_DIR=$ZMICRO_LOG_DIR
   # ensure log dir permissions
-  if [ ! -w $ZMICRO_LOG_PATH ] || [ ! -w $ZMICRO_APP_LOGS_PATH ]; then
+  if [ ! -w $ZMICRO_LOG_DIR ] || [ ! -w $ZMICRO_APP_LOGS_PATH ]; then
     os::fix_permissions
   fi
 
@@ -295,7 +295,7 @@ log::clean() {
   fi
 
   local LOG_CLEAN_BACKUP_FILE=${LOG_CLEAN_DIR}/backup.$(date +%Y-%m-%d_%H_%M_%S).gz
-  log::debug "[timestamps][log::clean] clean logs dir: ${ZMICRO_LOG_PATH}"
+  log::debug "[timestamps][log::clean] clean logs dir: ${ZMICRO_LOG_DIR}"
 
   # backup
   log::debug "[timestamps][log::clean] backup ${LOG_CLEAN_BACKUP_FILE}"
@@ -309,19 +309,19 @@ log::clean() {
   fi
 
   # retimestamp
-  local log_last_check=$ZMICRO_LOG_PATH/.last_clean
+  local log_last_check=$ZMICRO_LOG_DIR/.last_clean
   echo "$(timestamp)" | tee $log_last_check >>/dev/null 2>&1
   chmod 777 $log_last_check
 }
 
 log::fix_permissions() {
-  local tag=$ZMICRO_LOG_PATH/.permission_fixed
+  local tag=$ZMICRO_LOG_DIR/.permission_fixed
   if [ ! -f $tag ] || [ ! -x $tag ]; then
     # create
     sudo touch $tag
 
     # zmicro logs
-    sudo chmod -R 777 $ZMICRO_LOG_PATH
+    sudo chmod -R 777 $ZMICRO_LOG_DIR
     # zmicro app(plugins,package,service,...) logs
     sudo chmod -R 777 $ZMICRO_APP_LOGS_PATH
   fi

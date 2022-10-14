@@ -22,7 +22,13 @@ export ZMICRO_RC=$HOME/.zmicrorc
 export ZMICRO_MOD=$ZMICRO_HOME/mod
 
 # Log
-export ZMICRO_LOG_PATH=/var/log/${ZMICRO_NAME} #/tmp/zmicro
+export ZMICRO_LOG_DIR=${ZMICRO_LOG_DIR:-"/var/log/${ZMICRO_NAME}"}
+# @TODO
+if [ "$ZMICRO_HOME" != "/usr/local/lib/zmicro" ]; then
+  ZMICRO_LOG_DIR=/tmp/zmicro
+fi
+# @DEPRECIATED ZMICRO_LOG_DIR
+export ZMICRO_LOG_PATH=$ZMICRO_LOG_DIR #/tmp/zmicro
 
 # Lock
 export ZMICRO_LOCK_UPDATE_PATH=$ZMICRO_LOG_PATH/update.lock
