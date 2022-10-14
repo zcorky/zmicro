@@ -45,12 +45,22 @@ export ZMICRO_LOG_UPDATE_PATH=$ZMICRO_LOG_PATH/update.log
 export ZMICRO_LOG_VERSION_PATH=$ZMICRO_LOG_PATH/version.log
 export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
 
+# Global Data Dir Parent Directory
+export ZMICRO_DATA_PARENT=${ZMICRO_DATA_PARENT}
+# @TODO
+if [ "$ZMICRO_DATA_PARENT" != "/usr/local/lib/zmicro" ]; then
+  ZMICRO_DATA_PARENT=$HOME/.config/data
+  if [ ! -d "$ZMICRO_DATA_PARENT" ]; then
+    mkdir -p $ZMICRO_DATA_PARENT
+  fi
+fi
+
 # Data
-export ZMICRO_APP_DATA_PATH=/data
+export ZMICRO_APP_DATA_PATH=$ZMICRO_DATA_PARENT/data
 # Logs
-export ZMICRO_APP_LOGS_PATH=/logs
+export ZMICRO_APP_LOGS_PATH=$ZMICRO_DATA_PARENT/logs
 # Configs
-export ZMICRO_APP_CONFIGS_PATH=/configs
+export ZMICRO_APP_CONFIGS_PATH=$ZMICRO_DATA_PARENT/configs
 
 # @TODO MAC
 [[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
