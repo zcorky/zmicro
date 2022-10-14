@@ -87,3 +87,12 @@ export ZMICRO_SCRIPT_RECORD_TIMESTAMP=/tmp/zmicro_script_record_tmp.timestamp
 export ZMICRO_SCRIPT_RECORD_COMMANDS=/tmp/zmicro_script_record_tmp.commands
 
 export ZMICRO_AUTO_UPDATE_EVERY_DAY_HOUR=11
+
+# LOG_LEVEL is the log level, default: info
+#  available:
+#    info
+#    warn
+#    debug
+#    error
+#    fatal
+export LOG_LEVEL=${LOG_LEVEL:-info}

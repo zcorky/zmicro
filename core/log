@@ -58,6 +58,11 @@ log::debug() {
     return
   fi
 
+  if [ "$LOG_LEVEL" = "debug" ]; then
+    echo -e $@
+    return
+  fi
+
   if [ -w $ZMICRO_LOG_DEBUG_PATH ]; then
     echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
   fi
