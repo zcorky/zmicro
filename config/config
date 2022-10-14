@@ -8,7 +8,21 @@ export TODAY=$(date +%Y-%m-%d)
 export ZMICRO_NAME=zmicro
 export ZMICRO_HOME=${ZMICRO_HOME:-"/usr/local/lib/zmicro"}
 export ZMICRO_BIN=$ZMICRO_HOME/bin/zmicro
-export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
+
+# USR LOCAL BIN DIR - store binary bins
+#   default: /usr/local/bin
+export ZMICRO_USER_LOCAL_BIN_DIR=${ZMICRO_USER_LOCAL_BIN_DIR:-"/usr/local/bin"}
+# @TODO
+if [ "$ZMICRO_HOME" != "/usr/local/lib/zmicro" ]; then
+  export ZMICRO_USER_LOCAL_BIN_DIR=$HOME/.zmicro/usr/local/bin
+  if [ ! -d "$ZMICRO_USER_LOCAL_BIN_DIR" ]; then
+    mkdir -p $ZMICRO_USER_LOCAL_BIN_DIR
+  fi
+fi
+# @TODO add to env PATH
+export PATH=$ZMICRO_USER_LOCAL_BIN_DIR:$PATH
+
+export ZMICRO_LOCAL_BIN=$ZMICRO_USER_LOCAL_BIN_DIR/zmicro
 
 # Repo
 export ZMICRO_GIT=https://github.com/zcorky/zmicro
@@ -90,6 +104,9 @@ export ZMICRO_PLUGINS_CONFIGS_PATH=$ZMICRO_APP_CONFIGS_PATH/plugins
 
 # PATHS
 export ZMICRO_BIN_PATH=$ZMICRO_HOME/bin #$(realpath $(dirname "$0"))
+# @TODO add to env PATH
+export PATH=$ZMICRO_BIN_PATH:$PATH
+
 export ZMICRO_SUB_BIN_PATH=$ZMICRO_BIN_PATH/sub
 export ZMICRO_USER_BIN_PATH=$ZMICRO_BIN_PATH/user
 export ZMICRO_CORE_PATH=$ZMICRO_HOME/core
