@@ -26,7 +26,11 @@ export ZMICRO_LOG_DIR=${ZMICRO_LOG_DIR:-"/var/log/${ZMICRO_NAME}"}
 # @TODO
 if [ "$ZMICRO_HOME" != "/usr/local/lib/zmicro" ]; then
   ZMICRO_LOG_DIR=/tmp/zmicro
+  if [ ! -d "$ZMICRO_LOG_DIR" ]; then
+    mkdir -p $ZMICRO_LOG_DIR
+  fi
 fi
+
 # @DEPRECIATED ZMICRO_LOG_DIR
 export ZMICRO_LOG_PATH=$ZMICRO_LOG_DIR #/tmp/zmicro
 
