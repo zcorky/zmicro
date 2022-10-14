@@ -6,7 +6,7 @@ export TODAY=$(date +%Y-%m-%d)
 
 # Core
 export ZMICRO_NAME=zmicro
-export ZMICRO_HOME=/usr/local/lib/zmicro
+export ZMICRO_HOME=${ZMICRO_HOME:-"/usr/local/lib/zmicro"}
 export ZMICRO_BIN=$ZMICRO_HOME/bin/zmicro
 export ZMICRO_LOCAL_BIN=/usr/local/bin/zmicro
 

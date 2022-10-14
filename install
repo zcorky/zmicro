@@ -81,28 +81,30 @@ depends() {
 
 set -e
 
-export USR_LOCAL_BIN=/usr/local/bin
+export ZMICRO_HOME_PARENT_DIR=${ZMICRO_HOME_PARENT_DIR:-"/usr/local/lib"}
+export ZMICRO_HOME=${ZMICRO_HOME:-"${ZMICRO_HOME_PARENT_DIR}/zmicro"}
 
-export ZMICRO_HOME=/usr/local/lib/zmicro
-export ZMICRO_GLOBAL_RC_DIR=/etc/zmicro
+export USR_LOCAL_BIN=${USR_LOCAL_BIN:-"/usr/local/bin"}
+
+export ZMICRO_GLOBAL_RC_DIR=${ZMICRO_GLOBAL_RC_DIR:-"/etc/zmicro"}
 export ZMICRO_GLOBAL_RC=$ZMICRO_GLOBAL_RC_DIR/.zmicrorc
-export ZMICRO_LOG_DIR=/var/log/zmicro
+export ZMICRO_LOG_DIR=${ZMICRO_LOG_DIR:-"/var/log/zmicro"}
 export ZMICRO_LOCAL_BIN=$USR_LOCAL_BIN/zmicro
 
 export OLD_ZMICRO_HOME=$HOME/.zmicro
-export OLD_ZMICRO_HOME_BAK=/usr/local/lib/zmicro.bak
+export OLD_ZMICRO_HOME_BAK=${ZMICRO_HOME}.bak
 
 if [ ! -d "$USR_LOCAL_BIN" ]; then
   sudo mkdir -p $USR_LOCAL_BIN
 fi
 
 # @TO_REMOVE
-if [ ! -d "/usr/local/lib" ]; then
-  sudo mkdir -p /usr/local/lib
+if [ ! -d "$ZMICRO_HOME_PARENT_DIR" ]; then
+  sudo mkdir -p $ZMICRO_HOME_PARENT_DIR
 fi
 
 # Backup
-if [ -d $OLD_ZMICRO_HOME ]; then
+if [ -d "$OLD_ZMICRO_HOME" ]; then
   sudo mv $OLD_ZMICRO_HOME $OLD_ZMICRO_HOME_BAK
 fi
 
@@ -111,7 +113,7 @@ depends git
 # depends wget
 
 # Create
-if [ ! -d $ZMICRO_HOME ]; then
+if [ ! -d "$ZMICRO_HOME" ]; then
   sudo git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
   if [ "$?" != "0" ]; then
     echo "error: failed to install zmicro (1)"
@@ -120,7 +122,7 @@ if [ ! -d $ZMICRO_HOME ]; then
 fi
 
 # Permission
-if [ ! -w $ZMICRO_HOME ]; then
+if [ ! -w "$ZMICRO_HOME" ]; then
   sudo chown -R $USER $ZMICRO_HOME
 fi
 
