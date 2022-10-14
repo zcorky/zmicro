@@ -89,13 +89,13 @@ export ZMICRO_USER_LOCAL_BIN_DIR=${ZMICRO_USER_LOCAL_BIN_DIR:-"/usr/local/bin"}
 export ZMICRO_GLOBAL_RC_DIR=${ZMICRO_GLOBAL_RC_DIR:-"/etc/zmicro"}
 export ZMICRO_GLOBAL_RC=$ZMICRO_GLOBAL_RC_DIR/.zmicrorc
 export ZMICRO_LOG_DIR=${ZMICRO_LOG_DIR:-"/var/log/zmicro"}
-export ZMICRO_LOCAL_BIN=$USR_LOCAL_BIN/zmicro
+export ZMICRO_LOCAL_BIN=$ZMICRO_USER_LOCAL_BIN_DIR/zmicro
 
 export OLD_ZMICRO_HOME=$HOME/.zmicro
 export OLD_ZMICRO_HOME_BAK=${ZMICRO_HOME}.bak
 
-if [ ! -d "$USR_LOCAL_BIN" ]; then
-  sudo mkdir -p $USR_LOCAL_BIN
+if [ ! -d "$ZMICRO_USER_LOCAL_BIN_DIR" ]; then
+  sudo mkdir -p $ZMICRO_USER_LOCAL_BIN_DIR
 fi
 
 # @TO_REMOVE
