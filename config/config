@@ -6,14 +6,15 @@ export TODAY=$(date +%Y-%m-%d)
 
 # Core
 export ZMICRO_NAME=zmicro
-export ZMICRO_HOME=${ZMICRO_HOME:-"/usr/local/lib/zmicro"}
+export ZMICRO_HOME_DEFAULT=/usr/local/lib/zmicro
+export ZMICRO_HOME=${ZMICRO_HOME:-"$ZMICRO_HOME_DEFAULT"}
 export ZMICRO_BIN=$ZMICRO_HOME/bin/zmicro
 
 # USR LOCAL BIN DIR - store binary bins
 #   default: /usr/local/bin
 export ZMICRO_USER_LOCAL_BIN_DIR=${ZMICRO_USER_LOCAL_BIN_DIR:-"/usr/local/bin"}
 # @TODO
-if [ "$ZMICRO_HOME" != "/usr/local/lib/zmicro" ]; then
+if [ "$ZMICRO_HOME" != "$ZMICRO_HOME_DEFAULT" ]; then
   export ZMICRO_USER_LOCAL_BIN_DIR=$HOME/.zmicro/usr/local/bin
   if [ ! -d "$ZMICRO_USER_LOCAL_BIN_DIR" ]; then
     mkdir -p $ZMICRO_USER_LOCAL_BIN_DIR
@@ -30,7 +31,7 @@ export ZMICRO_GIT=https://github.com/zcorky/zmicro
 # RC
 export ZMICRO_GLOBAL_RC_DIR=${ZMICRO_GLOBAL_RC_DIR:-"/etc/zmicro"}
 # @TODO
-if [ "$ZMICRO_HOME" != "/usr/local/lib/zmicro" ]; then
+if [ "$ZMICRO_HOME" != "$ZMICRO_HOME_DEFAULT" ]; then
   export ZMICRO_GLOBAL_RC_DIR=$HOME/.zmicro
   if [ ! -d "$ZMICRO_GLOBAL_RC_DIR" ]; then
     mkdir -p $ZMICRO_GLOBAL_RC_DIR
@@ -46,7 +47,7 @@ export ZMICRO_MOD=$ZMICRO_HOME/mod
 # Log
 export ZMICRO_LOG_DIR=${ZMICRO_LOG_DIR:-"/var/log/${ZMICRO_NAME}"}
 # @TODO
-if [ "$ZMICRO_HOME" != "/usr/local/lib/zmicro" ]; then
+if [ "$ZMICRO_HOME" != "$ZMICRO_HOME_DEFAULT" ]; then
   export ZMICRO_LOG_DIR=/tmp/zmicro
   if [ ! -d "$ZMICRO_LOG_DIR" ]; then
     mkdir -p $ZMICRO_LOG_DIR
@@ -70,7 +71,7 @@ export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
 # Global Data Dir Parent Directory
 export ZMICRO_DATA_PARENT=${ZMICRO_DATA_PARENT}
 # @TODO
-if [ "$ZMICRO_DATA_PARENT" != "/usr/local/lib/zmicro" ]; then
+if [ "$ZMICRO_HOME" != "$ZMICRO_HOME_DEFAULT" ]; then
   export ZMICRO_DATA_PARENT=$HOME/.config/data
   if [ ! -d "$ZMICRO_DATA_PARENT" ]; then
     mkdir -p $ZMICRO_DATA_PARENT
