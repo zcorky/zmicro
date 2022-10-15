@@ -18,6 +18,12 @@ if [ $? -ne 0 ]; then
   export -f tput
 fi
 
+# fix env USER not found
+if [ -z "$USER" ]; then
+  # export USER=root
+  export USER=$(id -u)
+fi
+
 depends() {
   local cli=$1
 
