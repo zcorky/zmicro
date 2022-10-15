@@ -29,7 +29,7 @@ core() {
       port="17890"
     fi
   elif [ "$ip" = "remove" ]; then
-  # zmicro proxy remove
+    # zmicro proxy remove
     unset HTTPS_PROXY
     unset HTTP_PROXY
     unset https_proxy
@@ -61,6 +61,8 @@ core() {
     exit 0
   fi
 
+  export PROXY_IP=$ip
+  export PROXY_PORT=$port
   export https_proxy=http://$ip:$port http_proxy=http://$ip:$port all_proxy=socks5://$ip:$port
   export HTTPS_PROXY=http://$ip:$port HTTP_PROXY=http://$ip:$port ALL_PROXY=socks5://$ip:$port
 
