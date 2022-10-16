@@ -2,9 +2,7 @@ FROM ubuntu:22.04
 
 LABEL Author=Zero<tobewhatwewant@gmail.com>
 
-# RUN   echo "199.232.68.133 raw.githubusercontent.com" >> /etc/hosts
-
-ARG   DEBIAN_FRONTEND=noninteractive
+ARG  DEBIAN_FRONTEND=noninteractive
 
 RUN   sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
