@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Smart SSH with Proxy"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro ssh <args ...>"
+}
+
+core() {
+  os::ssh "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
