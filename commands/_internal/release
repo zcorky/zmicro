@@ -34,6 +34,9 @@ core() {
     fi
   fi
 
+  # zmicro self
+  cd $ZMICRO_HOME
+
   local origin_version=$(version::zmicro)
   local default_new_version=$(version::next $origin_version)
 
