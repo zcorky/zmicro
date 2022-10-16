@@ -114,9 +114,9 @@ if [ -d "$OLD_ZMICRO_HOME" ]; then
   sudo mv $OLD_ZMICRO_HOME $OLD_ZMICRO_HOME_BAK
 fi
 
+depends curl
+depends wget
 depends git
-# depends curl
-# depends wget
 
 # Create
 if [ ! -d "$ZMICRO_HOME" ]; then
