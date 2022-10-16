@@ -4,4 +4,4 @@ RUN apk update && apk add curl bash
 
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
-RUN zmicro update -a
+RUN zmicro update -f

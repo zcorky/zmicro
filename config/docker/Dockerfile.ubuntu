@@ -6,4 +6,4 @@ RUN apt update && apt install -y curl
 
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
-RUN zmicro update -a
+RUN zmicro update -f
