@@ -24,58 +24,59 @@ if [ -z "$USER" ]; then
   export USER=$(id -u)
 fi
 
+has_command() {
+  command -v $1 >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 depends() {
   local cli=$1
 
-  command -v $cli >>/dev/null 2>&1
-  if [ "$?" != "0" ]; then
-    echo "install dependencies: $cli ..."
+  if [ "$(has_command $cli)" = "false" ]; then
+    echo "[dependencies] install $cli ..."
 
     # macos
-    command -v brew >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
-      sudo brew install -y $cli
+    if [ "$(has_command brew)" = "true" ]; then
+      brew install -y $cli
       return
     fi
 
     # ubuntu
-    command -v apt >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
+    if [ "$(has_command apt)" = "true" ]; then
       sudo apt install -y $cli
       return
     fi
 
     # debian
-    command -v apt-get >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
+    if [ "$(has_command apt-get)" = "true" ]; then
       sudo apt-get install -y $cli
       return
     fi
 
     # centos
-    command -v yum >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
+    if [ "$(has_command yum)" = "true" ]; then
       sudo yum install -y $cli
       return
     fi
 
     # alpine
-    command -v apk >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
+    if [ "$(has_command apk)" = "true" ]; then
       sudo apk add $cli
       return
     fi
 
     # federa
-    command -v dnf >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
+    if [ "$(has_command dnf)" = "true" ]; then
       sudo dnf install -y $cli
       return
     fi
 
     # archlinux
-    command -v pacman >>/dev/null 2>&1
-    if [ "$?" = "0" ]; then
+    if [ "$(has_command pacman)" = "true" ]; then
       sudo pacman install -y $cli
       return
     fi
