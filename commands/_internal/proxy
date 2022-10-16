@@ -4,82 +4,166 @@ help() {
   echo "Usage:"
   echo "  zmicro proxy <ip>"
   echo ""
+  echo "Action:"
+  echo "  set           Set proxy config"
+  echo "  get           Get proxy config"
+  echo "  remove        Remove proxy config"
+  echo ""
+  echo "  apply         Apply proxy"
+  echo "  exit          Exit proxy"
+  echo ""
+  echo "  activate      Activate proxy, same as apply"
+  echo "  deactivate    Unset proxy, same as exit"
+  echo ""
+  echo "  status         Get status of proxy"
+  echo ""
   echo "Example:"
+  echo "    zmicro proxy get"
   echo "    zmicro proxy apply"
-  echo "    zmicro proxy 127.0.0.1:17890"
+  echo "    zmicro proxy activate"
+  echo "    zmicro proxy deactivate"
+  echo "    zmicro proxy set 127.0.0.1 17890"
 }
 
 core() {
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "" ]; then
     help
     exit 0
   fi
 
-  local ip=$1
-  local port=$2
-
-  # @TODO
-  # zmicro proxy apply
-  if [ "$ip" = "apply" ]; then
-    ip=$(zmicro config get PROXY_IP)
-    port=$(zmicro config get PROXY_PORT)
-
-    if [ "$ip" = "" ]; then
-      ip="127.0.0.1"
-      port="17890"
+  local action=$1
+  case "$action" in
+  set)
+    local ip=$2
+    local port=$3
+    if [ -z "$ip" ]; then
+      log::error "[$(timestamp)] proxy ip is required"
+      exit 1
     fi
-  elif [ "$ip" = "remove" ]; then
+
+    if [ -z "$port" ]; then
+      log::error "[$(timestamp)] proxy port is required"
+      exit 1
+    fi
+
+    config::set PROXY_IP $ip
+    config::set PROXY_PORT $port
+
+    zmicro proxy apply
+    return
+    ;;
+  get)
+    local ip=$(config::get PROXY_IP)
+    local port=$(config::get PROXY_PORT)
+
+    echo "PROXY_IP: $ip"
+    echo "PROXY_PORT: $port"
+    return
+    ;;
+  remove)
+    config::remove PROXY_IP
+    config::remove PROXY_PORT
+    log::success "You have removed proxy config."
+    ;;
+  exit | deactivate)
+    if [ -z "$HTTPS_PROXY" ]; then
+      log::info "You have not in proxy."
+      return
+    fi
+
     # zmicro proxy remove
     unset HTTPS_PROXY
     unset HTTP_PROXY
+    unset ALL_PROXY
     unset https_proxy
     unset http_proxy
+    unset all_proxy
 
     log::success "You have removed proxy commandline."
     exec $SHELL
-    exit 0
-  fi
+    return
+    ;;
+  apply | activate)
+    local ip=$(config::get PROXY_IP)
+    local port=$(config::get PROXY_PORT)
 
-  if [ -z "$ip" ]; then
-    log::error "proxy ip is required"
-    exit 1
-  fi
+    if [ "$(net::is_port_visitable $ip $port)" != "true" ]; then
+      log::error "[$(timestamp)] ClashZ is not running, please check"
+      exit 1
+    fi
 
-  if [ -z "$port" ]; then
-    log::error "proxy port is required"
-    exit 1
-  fi
+    # already running
+    if [ "$HTTPS_PROXY" = "http://$ip:$port" ]; then
+      log::info "You have already applied proxy commandline."
+      return
+    fi
 
-  if [ "$(net::is_port_visitable $ip $port)" != "true" ]; then
-    log::error "ClashZ is not running, please check"
-    exit 1
-  fi
+    export PROXY_IP=$ip
+    export PROXY_PORT=$port
+    export https_proxy=http://$ip:$port http_proxy=http://$ip:$port all_proxy=socks5://$ip:$port
+    export HTTPS_PROXY=http://$ip:$port HTTP_PROXY=http://$ip:$port ALL_PROXY=socks5://$ip:$port
 
-  # already running
-  if [ "$HTTPS_PROXY" = "http://$ip:$port" ]; then
-    log::info "You have already applied proxy commandline."
-    exit 0
-  fi
+    # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
+    export LC_CTYPE=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
 
-  export PROXY_IP=$ip
-  export PROXY_PORT=$port
-  export https_proxy=http://$ip:$port http_proxy=http://$ip:$port all_proxy=socks5://$ip:$port
-  export HTTPS_PROXY=http://$ip:$port HTTP_PROXY=http://$ip:$port ALL_PROXY=socks5://$ip:$port
+    # @TODO apply in new shell
+    #   @TODO can apply current shell ???
+    log::success "You have applied proxy commandline."
 
-  # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
-  export LC_CTYPE=en_US.UTF-8
-  export LC_ALL=en_US.UTF-8
-  export LANG=en_US.UTF-8
+    exec $SHELL
+    ;;
+  status)
+    if [ -n "$HTTPS_PROXY" ]; then
+      echo "in proxy"
+    else
+      echo "not in proxy"
+    fi
+    ;;
+  *)
+    # proxy command
+    local command=$1
+    local args=${@:2}
+    if [ -z "$command" ]; then
+      log::error "[$(timestamp)] command is required"
+      exit 1
+    fi
 
-  # @TODO apply in new shell
-  #   @TODO can apply current shell ???
-  log::success "You have applied proxy commandline."
+    which $command >>/dev/null 2>/dev/null
+    if [ "$?" != "0" ]; then
+      log::error "[$(timestamp)] command($command) not found"
+      exit 1
+    fi
 
-  exec $SHELL
+    local ip=$(config::get PROXY_IP)
+    local port=$(config::get PROXY_PORT)
+
+    if [ "$(net::is_port_visitable $ip $port)" != "true" ]; then
+      log::error "[$(timestamp)] ClashZ is not running, please check"
+      exit 1
+    fi
+
+    # log
+    log::info "Run command with Proxy($ip:$port) ..."
+
+    export PROXY_IP=$ip
+    export PROXY_PORT=$port
+    export https_proxy=http://$ip:$port http_proxy=http://$ip:$port all_proxy=socks5://$ip:$port
+    export HTTPS_PROXY=http://$ip:$port HTTP_PROXY=http://$ip:$port ALL_PROXY=socks5://$ip:$port
+
+    # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
+    export LC_CTYPE=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+
+    exec $command $args
+    ;;
+  esac
 }
 
 run() {
-  core $@
+  core "$@"
 }
 
-run $@
+run "$@"
