@@ -1,5 +1,4 @@
-name: Test
-
+name: Test in MacOS
 on:
   push:
     tags:

@@ -1,9 +1,11 @@
-name: Test
+name: Test in Linux Distributions
 
 on:
   push:
     tags:
       - "v*"
+    # branches:
+    #   - master
   pull_request:
     branches:
       - master
