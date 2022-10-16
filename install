@@ -62,7 +62,7 @@ depends() {
     # alpine
     which apk >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
-      sudo apk install -y $cli
+      sudo apk add $cli
       return
     fi
 

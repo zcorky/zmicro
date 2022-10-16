@@ -1,6 +1,6 @@
 FROM fedora:37
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN dnf update && dnf install -y curl
 
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 

@@ -1,6 +1,6 @@
 FROM archlinux:latest
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN pacman update && pacman install -y curl
 
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
