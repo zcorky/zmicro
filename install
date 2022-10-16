@@ -27,54 +27,54 @@ fi
 depends() {
   local cli=$1
 
-  which $cli >>/dev/null 2>&1
+  command -v $cli >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     echo "install dependencies: $cli ..."
 
     # macos
-    which brew >>/dev/null 2>&1
+    command -v brew >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       sudo brew install -y $cli
       return
     fi
 
     # ubuntu
-    which apt >>/dev/null 2>&1
+    command -v apt >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       sudo apt install -y $cli
       return
     fi
 
     # debian
-    which apt-get >>/dev/null 2>&1
+    command -v apt-get >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       sudo apt-get install -y $cli
       return
     fi
 
     # centos
-    which yum >>/dev/null 2>&1
+    command -v yum >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       sudo yum install -y $cli
       return
     fi
 
     # alpine
-    which apk >>/dev/null 2>&1
+    command -v apk >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       sudo apk add $cli
       return
     fi
 
     # federa
-    which dnf >>/dev/null 2>&1
+    command -v dnf >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       sudo dnf install -y $cli
       return
     fi
 
     # archlinux
-    which pacman >>/dev/null 2>&1
+    command -v pacman >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
       sudo pacman install -y $cli
       return
