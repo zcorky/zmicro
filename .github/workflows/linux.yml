@@ -23,7 +23,7 @@ jobs:
         uses: whatwewant/action-robot-feishu@v0.0.13
         with:
           url: ${{ secrets.WORKFLOW_FEISHU_BOT_WEBHOOK_URL }}
-          title: "✅ 自动化测试：${{ github.repository }}"
+          title: "✅ 测试 Linux 发行版：${{ github.repository }}"
           text: |
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
@@ -40,7 +40,7 @@ jobs:
         uses: whatwewant/action-robot-feishu@v0.0.13
         with:
           url: ${{ secrets.WORKFLOW_FEISHU_BOT_WEBHOOK_URL }}
-          title: "❌ 自动化测试：${{ github.repository }}"
+          title: "❌ 测试 Linux 发行版：${{ github.repository }}"
           text: |
             分支: ${{ github.ref }}
             提交信息: ${{ github.event.head_commit.message }}
