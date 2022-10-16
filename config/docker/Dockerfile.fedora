@@ -1,6 +1,6 @@
 FROM fedora:37
 
-RUN dnf update && dnf install -y curl
+RUN dnf update -y && dnf install -y curl
 
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 

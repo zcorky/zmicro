@@ -77,7 +77,7 @@ depends() {
 
     # archlinux
     if [ "$(has_command pacman)" = "true" ]; then
-      sudo pacman install -y $cli
+      sudo pacman -Syu --noconfirm $cli
       return
     fi
 

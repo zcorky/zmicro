@@ -1,6 +1,6 @@
 FROM archlinux:latest
 
-RUN pacman update && pacman install -y curl
+RUN pacman -Sy && pacman -Syu --noconfirm curl
 
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 

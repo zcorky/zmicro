@@ -68,11 +68,8 @@ jobs:
       - name: Install in alpine
         run: docker build -t zmicro:alpine -f config/docker/Dockerfile.alpine .
 
-      - name: Install in centos
-        run: docker build -t zmicro:centos -f config/docker/Dockerfile.centos .
-
-      - name: Install in centos
-        run: docker build -t zmicro:centos -f config/docker/Dockerfile.centos .
+      # - name: Install in centos
+      #   run: docker build -t zmicro:centos -f config/docker/Dockerfile.centos .
 
       - name: Install in fedora
         run: docker build -t zmicro:fedora -f config/docker/Dockerfile.fedora .
