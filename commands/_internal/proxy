@@ -130,14 +130,21 @@ core() {
     net::using_smart_proxy
 
     # log
-    log::info "Run command with Proxy($PROXY_IP:$PROXY_PORT) ..."
+    log::debug "Run command with Proxy($PROXY_IP:$PROXY_PORT) ..."
 
     # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
     export LC_CTYPE=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
     export LANG=en_US.UTF-8
 
-    exec $command $args
+    case $command in
+    ssh)
+      os::ssh $args
+      ;;
+    *)
+      exec $command $args
+      ;;
+    esac
     ;;
   esac
 }
