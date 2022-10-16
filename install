@@ -33,49 +33,49 @@ depends() {
 
     # macos
     command -v brew >>/dev/null 2>&1
-    if [ "$?" != "0" ]; then
+    if [ "$?" = "0" ]; then
       sudo brew install -y $cli
       return
     fi
 
     # ubuntu
     command -v apt >>/dev/null 2>&1
-    if [ "$?" != "0" ]; then
+    if [ "$?" = "0" ]; then
       sudo apt install -y $cli
       return
     fi
 
     # debian
     command -v apt-get >>/dev/null 2>&1
-    if [ "$?" != "0" ]; then
+    if [ "$?" = "0" ]; then
       sudo apt-get install -y $cli
       return
     fi
 
     # centos
     command -v yum >>/dev/null 2>&1
-    if [ "$?" != "0" ]; then
+    if [ "$?" = "0" ]; then
       sudo yum install -y $cli
       return
     fi
 
     # alpine
     command -v apk >>/dev/null 2>&1
-    if [ "$?" != "0" ]; then
+    if [ "$?" = "0" ]; then
       sudo apk add $cli
       return
     fi
 
     # federa
     command -v dnf >>/dev/null 2>&1
-    if [ "$?" != "0" ]; then
+    if [ "$?" = "0" ]; then
       sudo dnf install -y $cli
       return
     fi
 
     # archlinux
     command -v pacman >>/dev/null 2>&1
-    if [ "$?" != "0" ]; then
+    if [ "$?" = "0" ]; then
       sudo pacman install -y $cli
       return
     fi
