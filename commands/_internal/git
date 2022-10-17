@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Smart Git with Proxy"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro git <args ...>"
+}
+
+core() {
+  os::git "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
