@@ -107,6 +107,8 @@ core() {
 
   # @TODO add auto update
   zmicro auto update
+
+  notify::install
 }
 
 run() {
