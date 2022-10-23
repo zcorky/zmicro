@@ -29,8 +29,8 @@ initialize_config() {
   fi
 
   # $ZMICRO_BIN_PATH/zmicro config git $USER $USER"@local"
-  local origin_user=$(git config --global user.name)
-  local origin_email=$(git config --global user.email)
+  local origin_user=$(git::global_user)
+  local origin_email=$(git::global_email)
   zmicro config git $origin_user $origin_email
 }
 
