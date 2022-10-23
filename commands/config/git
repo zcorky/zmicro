@@ -1,71 +1,12 @@
 #!/bin/bash
 
-config_git() {
-  USERNAME=$1
-  EMAIL=$2
-
-  # credential
-  git config --global credential.helper store
-  # git config --global credential.helper 'cache --timeout=604800'
-  # editor
-  git config --global core.editor "vim"
-  # default branch
-  git config --global init.defaultbranch master
-  # pull reabse
-  git config --global pull.rebase false
-
-  # if [ "$USERNAME" = "" ] || [ "$EMAIL" = "" ]; then
-  #   log::warn "Config Git: USERNAME and EMAIL is required"
-  #   exit 0
-  # fi
-
-  # local origin_name=$(git config --get user.name)
-  if [ "$USERNAME" != "" ]; then
-    git config --global user.name "${USERNAME}"
-  else
-    local origin=$(git config --global user.name)
-    if [ -z "$origin" ]; then
-      # Default
-      git config --global user.name "${DEFAULT_GIT_USERNAME}"
-    fi
-  fi
-
-  # local origin_email=$(git config --get user.name)
-  if [ "$EMAIL" != "" ]; then
-    git config --global user.email "${EMAIL}"
-  else
-    local origin=$(git config --global user.email)
-    if [ -z "$origin" ]; then
-      git config --global user.email "${DEFAULT_GIT_EMAIL}"
-    fi
-  fi
-
-  # pull strategies
-  #   hint: Pulling without specifying how to reconcile divergent branches is
-  #   hint: discouraged. You can squelch this message by running one of the following
-  #   hint: commands sometime before your next pull:
-  #   hint:
-  #   hint:   git config pull.rebase false  # merge (the default strategy)
-  #   hint:   git config pull.rebase true   # rebase
-  #   hint:   git config pull.ff only       # fast-forward only
-  #   hint:
-  #   hint: You can replace "git config" with "git config --global" to set a default
-  #   hint: preference for all repositories. You can also pass --rebase, --no-rebase,
-  #   hint: or --ff-only on the command line to override the configured default per
-  #   hint: invocation.
-  git config --global pull.rebase false
-
-  # fix git permissions
-  git::fix_permissions
-}
-
 help() {
   echo "Usage:"
   echo "  zmicro config git [git_user] [git_email]"
 }
 
 core() {
-  config_git $@
+  git::global_setup "$@"
 }
 
 run() {
@@ -74,7 +15,7 @@ run() {
     exit 0
   fi
 
-  core $@
+  core "$@"
 }
 
-run $@
+run "$@"

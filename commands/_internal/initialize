@@ -28,10 +28,7 @@ initialize_config() {
     zmicro config timezone
   fi
 
-  # $ZMICRO_BIN_PATH/zmicro config git $USER $USER"@local"
-  local origin_user=$(git::global_user)
-  local origin_email=$(git::global_email)
-  zmicro config git $origin_user $origin_email
+  zmicro config git
 }
 
 initialize_depdendencies() {
