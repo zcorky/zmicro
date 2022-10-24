@@ -5,3 +5,5 @@ RUN dnf update -y && dnf install -y which curl cronie cronie-anacron
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
 RUN zmicro update -f
+
+RUN zmicro info

@@ -8,3 +8,5 @@ RUN yum update -y && yum install -y curl
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
 RUN zmicro update -f
+
+RUN zmicro info
