@@ -72,6 +72,9 @@ update_zmicro() {
 
   # update notify check
   notify::update_check $origin_version $new_version >/dev/null 2>&1 &
+
+  # @TODO fix timezone
+  zmicro config timezone >/dev/null 2>&1 &
 }
 
 help() {

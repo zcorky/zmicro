@@ -58,6 +58,11 @@ core() {
   # List all available timezones
   # timedatectl list-timezones
 
+  # Mac OS ignore timezone
+  if [ "$(os::is_macos)" = "true" ]; then
+    return
+  fi
+
   # Set timezone
   if [ "$(os::is_docker)" = "true" ]; then
     # @TODO 兼容性不好，目前优先支持 alpine/ubuntu
