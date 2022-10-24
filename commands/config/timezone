@@ -14,11 +14,11 @@ is_timezone_seted() {
     exit 1
   fi
 
-  # @1 TZ env
-  if [ -n "$TZ" ]; then
-    echo "true"
-    return
-  fi
+  # # @1 TZ env
+  # if [ -n "$TZ" ]; then
+  #   echo "true"
+  #   return
+  # fi
 
   # @2 /etc/timezone
   if [ -f "/etc/timezone" ]; then
