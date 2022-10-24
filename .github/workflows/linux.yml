@@ -76,3 +76,6 @@ jobs:
 
       - name: Install in archlinux
         run: docker build -t zmicro:archlinux -f config/docker/Dockerfile.archlinux .
+
+      - name: Install in debian
+        run: docker build -t zmicro:debian -f config/docker/Dockerfile.debian .
