@@ -144,8 +144,8 @@ export ZMICRO_AUTO_UPDATE_EVERY_DAY_HOUR=11
 #    fatal
 export LOG_LEVEL=${LOG_LEVEL:-info}
 
-# fix env USER not found
-if [ -z "$USER" ]; then
-  # export USER=root
-  export USER=$(id -u)
-fi
+# # fix env USER not found
+# if [ -z "$USER" ]; then
+#   # export USER=root
+#   export USER=$(id -u)
+# fi

@@ -64,7 +64,7 @@ env() {
   config::load_dir $ZMICRO_CONFIG_PATH
   # 3. Load User Config .zmicrorc
   [[ ! -f $ZMICRO_RC ]] && touch $ZMICRO_RC
-  [[ ! -w $ZMICRO_RC ]] && sudo chown $USER $ZMICRO_RC
+  [[ ! -w $ZMICRO_RC ]] && sudo chown $(os::username) $ZMICRO_RC
 
   config::load_file $ZMICRO_RC
 

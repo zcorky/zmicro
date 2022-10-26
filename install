@@ -18,10 +18,12 @@ if [ $? -ne 0 ]; then
   export -f tput
 fi
 
-# fix env USER not found
-if [ -z "$USER" ]; then
-  # export USER=root
-  export USER=$(id -u)
+CHOWN_USER=$CHOWN_USER
+
+# fix env CHOWN_USER not found
+if [ -z "$CHOWN_USER" ]; then
+  # export CHOWN_USER=root
+  CHOWN_USER=$(id -u)
 fi
 
 has_command() {
@@ -130,7 +132,7 @@ fi
 
 # Permission
 if [ ! -w "$ZMICRO_HOME" ]; then
-  sudo chown -R $USER $ZMICRO_HOME
+  sudo chown -R $CHOWN_USER $ZMICRO_HOME
 fi
 
 # Logs
@@ -149,13 +151,13 @@ if [ ! -d "$ZMICRO_GLOBAL_RC_DIR" ]; then
   sudo mkdir -p $ZMICRO_GLOBAL_RC_DIR
 fi
 if [ ! -w "$ZMICRO_GLOBAL_RC_DIR" ]; then
-  sudo chown -R $USER $ZMICRO_GLOBAL_RC_DIR
+  sudo chown -R $CHOWN_USER $ZMICRO_GLOBAL_RC_DIR
 fi
 if [ ! -f "$ZMICRO_GLOBAL_RC" ]; then
   sudo touch $ZMICRO_GLOBAL_RC
 fi
 if [ ! -w "$ZMICRO_GLOBAL_RC" ]; then
-  sudo chown $USER $ZMICRO_GLOBAL_RC
+  sudo chown $CHOWN_USER $ZMICRO_GLOBAL_RC
 fi
 
 # Bin
