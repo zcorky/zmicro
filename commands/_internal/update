@@ -1,6 +1,8 @@
 #!/bin/bash
 
 update_zmicro() {
+  export ZMICRO_IS_UPGRADING=true
+
   local origin_version=$(version::zmicro)
   # log::update PREV
 
@@ -25,6 +27,9 @@ update_zmicro() {
 
   # fix git safe.directory
   os::fix_git_safe_directory >>/dev/null 2>&1
+
+  # record update timestamp
+  echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP 2>/dev/null
 
   log::update CORE zmicro START
 

@@ -81,6 +81,11 @@ log::clean_check # & >> /dev/null 2>&1
 #   $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
 # fi
 
+# @TODO check update
+if [ "$1" != "update" ] && [ "$1" != "upgrade" ]; then
+  check::upgrade
+fi
+
 # @TODO
 #  1. AS A Executor: #!/usr/bin/env zmicro
 #  2. Execute Local Script: zmicro ./xxx.sh

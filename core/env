@@ -43,6 +43,8 @@ env() {
   . $ZMICRO_CORE_PATH/color
   # load log
   . $ZMICRO_CORE_PATH/log
+  # load check
+  . $ZMICRO_CORE_PATH/check
   # load commander
   . $ZMICRO_CORE_PATH/commander
   # load run

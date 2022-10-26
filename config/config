@@ -68,6 +68,9 @@ export ZMICRO_LOG_UPDATE_PATH=$ZMICRO_LOG_PATH/update.log
 export ZMICRO_LOG_VERSION_PATH=$ZMICRO_LOG_PATH/version.log
 export ZMICRO_LOG_NOTIFY_PATH=$ZMICRO_LOG_PATH/notify.log
 
+export ZMICRO_LOG_UPDATE_TIMESTAMP=$ZMICRO_LOG_PATH/update.timestamp
+export ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK=/tmp/zmicro.check.upgrade.lock
+
 # Global Data Dir Parent Directory
 export ZMICRO_DATA_PARENT=${ZMICRO_DATA_PARENT}
 # @TODO

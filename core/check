@@ -1,0 +1,58 @@
+#!/bin/bash
+
+check::upgrade() {
+  if [ "$ZMICRO_IS_UPGRADING" = "true" ] || [ "$ZMICRO_IS_UPGRADING_CHECKING" = "true" ]; then
+    return
+  fi
+
+  if [ -f "$ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK" ]; then
+    local lock_time=$(cat $ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK)
+    local now=$(date +%s)
+    # in 5 minutes
+    if [ -n "$lock_time" ] && [ "$((now - lock_time))" -lt "300" ]; then
+      return
+    fi
+  fi
+
+  # lock
+  echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK
+
+  export ZMICRO_IS_UPGRADING_CHECKING=true
+  local should_upgrade=false
+  if [ ! -f "$ZMICRO_LOG_UPDATE_TIMESTAMP" ]; then
+    should_upgrade=true
+  else
+    local last_update=$(cat $ZMICRO_LOG_UPDATE_TIMESTAMP)
+    if [ -z "$last_update" ]; then
+      should_upgrade=true
+    else
+      local now=$(date +%s)
+      local delta=$((now - last_update))
+      if [ "$?" != "0" ]; then
+        delta=0
+      fi
+
+      # 30d not upgrade
+      local max_delta=2592000
+      if [ "$delta" -gt "$max_delta" ]; then
+        should_upgrade=true
+      fi
+    fi
+  fi
+
+  if [ "$should_upgrade" = "true" ]; then
+    if [ -n "$NO_LOG" ]; then
+      zmicro update >>/dev/null 2>&1
+    else
+      log::warn "[$(timestamp)] zmicro version($(version::zmicro)) is too old, it must upgrade before run commands ..."
+      log::info "[$(timestamp)] upgrading zmicro ..."
+      zmicro update
+      log::success "[$(timestamp)] upgrade zmicro done, run the command."
+    fi
+  fi
+
+  # release lock
+  rm -rf $ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK
+}
+
+export -f check::upgrade
