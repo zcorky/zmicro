@@ -50,6 +50,11 @@ env() {
   # load core-utils
   env::load_core_utils
 
+  # fix
+  if [ -z "$USER" ]; then
+    export USER=$(os::username)
+  fi
+
   if [ ! -w "$ZMICRO_LOG_PATH" ]; then
     os::ensure_logs_permission
   fi
@@ -64,7 +69,7 @@ env() {
   config::load_dir $ZMICRO_CONFIG_PATH
   # 3. Load User Config .zmicrorc
   [[ ! -f $ZMICRO_RC ]] && touch $ZMICRO_RC
-  [[ ! -w $ZMICRO_RC ]] && sudo chown $(os::username) $ZMICRO_RC
+  [[ ! -w $ZMICRO_RC ]] && sudo chown $USER $ZMICRO_RC
 
   config::load_file $ZMICRO_RC
 

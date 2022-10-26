@@ -6,7 +6,7 @@ config_data_dir() {
   fi
 
   if [ ! -r $ZMICRO_APP_DATA_PATH ] || [ ! -w $ZMICRO_APP_DATA_PATH ]; then
-    sudo chown -R $(os::username) $ZMICRO_APP_DATA_PATH
+    sudo chown -R $USER $ZMICRO_APP_DATA_PATH
   fi
 }
 
