@@ -15,6 +15,7 @@ core() {
     log::info "  $name: $version"
   done
 
+  log::info ""
   log::info "os:"
   log::info "  release: $(os::release)"
   log::info "  arch: $(os::arch)"
@@ -22,6 +23,10 @@ core() {
   log::info "  distribution: $(os::distribution)"
   log::info "  platform: $(os::platform)"
   log::info "  device: $(os::device_config)"
+  log::info ""
+  log::info "network:"
+  log::info "  internal ip: $(net::get_ip_internal)"
+  log::info "  external ip: $(net::get_ip)"
 }
 
 run() {
