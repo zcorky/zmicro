@@ -2,6 +2,8 @@ FROM archlinux:latest
 
 RUN pacman -Sy && pacman -Syu --noconfirm curl cron
 
+ENV CI=true
+
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
 RUN zmicro update -f

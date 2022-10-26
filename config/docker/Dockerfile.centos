@@ -5,6 +5,8 @@ RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|
 
 RUN yum update -y && yum install -y curl
 
+ENV CI=true
+
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
 RUN zmicro update -f

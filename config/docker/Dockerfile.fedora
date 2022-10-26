@@ -2,6 +2,8 @@ FROM fedora:37
 
 RUN dnf update -y && dnf install -y which curl cronie cronie-anacron
 
+ENV CI=true
+
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
 RUN zmicro update -f

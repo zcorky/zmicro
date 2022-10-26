@@ -2,6 +2,8 @@ FROM alpine:3.16
 
 RUN apk update && apk add curl bash
 
+ENV CI=true
+
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
 RUN zmicro update -f
