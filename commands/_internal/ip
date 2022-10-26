@@ -1,12 +1,43 @@
 #!/bin/bash
 
 help() {
+  echo "Get IP address, default public address"
+  echo ""
   echo "Usage:"
-  echo "  zmicro ip"
+  echo "  zmicro ip [options...]"
+  echo ""
+  echo "Options:"
+  echo "   -i,--internal   Get internal IP address"
+  echo "   -e,--external   Get external IP address"
+  echo "   -p,--public     Get public IP address"
+  echo "   -a,--all        Get internal and external IP addresses"
 }
 
 core() {
-  os::network_ip
+  if [ -z "$1" ]; then
+    os::network_ip
+    return
+  fi
+
+  case $1 in
+  -h | --help | help)
+    help
+    ;;
+  -i | --internal | internal)
+    net::get_ip_internal
+    ;;
+  -e | --external | external | -p | --public | public)
+    os::network_ip
+    ;;
+  -a | --all | all)
+    echo "Internal: $(net::get_ip_internal)"
+    echo "Public: $(os::network_ip)"
+    ;;
+  *)
+    log::info "unknown options: $1"
+    help
+    ;;
+  esac
 }
 
 run() {
