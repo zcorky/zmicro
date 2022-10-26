@@ -9,6 +9,9 @@ update_zmicro() {
   # Fix Permissions
   os::fix_permissions >>/dev/null 2>&1
 
+  # record update timestamp
+  echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP 2>/dev/null
+
   # @FIX core-utils plugin update missin path cause failed to update
   # @TODO will remove
   if [ -d "$ZMICRO_HOME/plugins/core-utils" ]; then
@@ -27,9 +30,6 @@ update_zmicro() {
 
   # fix git safe.directory
   os::fix_git_safe_directory >>/dev/null 2>&1
-
-  # record update timestamp
-  echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP 2>/dev/null
 
   log::update CORE zmicro START
 

@@ -82,7 +82,7 @@ log::clean_check # & >> /dev/null 2>&1
 # fi
 
 # @TODO check update
-if [ "$1" != "update" ] && [ "$1" != "upgrade" ]; then
+if [ "$1" != "update" ] && [ "$1" != "upgrade" ] && [ "$1" != "initialize" ]; then
   check::upgrade
 fi
 

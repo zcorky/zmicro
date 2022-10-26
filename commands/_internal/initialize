@@ -112,6 +112,12 @@ core() {
 }
 
 run() {
+  # Fix Permissions
+  os::fix_permissions >>/dev/null 2>&1
+
+  # record update timestamp
+  echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP 2>/dev/null
+
   core $@
 }
 
