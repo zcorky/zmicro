@@ -96,6 +96,25 @@ env() {
   # @TODO zmicro vscode will make env infect cause vscode can't find zsh
   # export ZMICRO_CORE_UTILS_LOADED=true
 
+  # @TODO check update
+  case $1 in
+  update | upgrade)
+    # update
+    ;;
+  install | initialize)
+    # install
+    ;;
+  version | -v)
+    # show version
+    ;;
+  code)
+    # open code
+    ;;
+  *)
+    check::upgrade
+    ;;
+  esac
+
   # echo "======== load env end ====================" >>$ZMICRO_LOG_COMMON_PATH
 }
 

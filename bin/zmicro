@@ -81,25 +81,6 @@ log::clean_check # & >> /dev/null 2>&1
 #   $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
 # fi
 
-# @TODO check update
-case $1 in
-update | upgrade)
-  # update
-  ;;
-install | initialize)
-  # install
-  ;;
-version | -v)
-  # show version
-  ;;
-code)
-  # open code
-  ;;
-*)
-  check::upgrade
-  ;;
-esac
-
 # @TODO
 #  1. AS A Executor: #!/usr/bin/env zmicro
 #  2. Execute Local Script: zmicro ./xxx.sh
