@@ -32,11 +32,8 @@ check::upgrade() {
         delta=0
       fi
 
-      # # 30d not upgrade
-      # local max_delta=2592000
-      # 7d not upgrade
-      local max_delta=604800
-      if [ "$delta" -gt "$max_delta" ]; then
+      # max days
+      if [ "$delta" -gt "$ZMICRO_CHECK_UPGRADE_MAX_DAYS" ]; then
         should_upgrade=true
       fi
     fi
