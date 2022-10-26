@@ -15,9 +15,9 @@ check::upgrade() {
   fi
 
   # lock
+  export ZMICRO_IS_UPGRADING_CHECKING=true
   echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK
 
-  export ZMICRO_IS_UPGRADING_CHECKING=true
   local should_upgrade=false
   if [ ! -f "$ZMICRO_LOG_UPDATE_TIMESTAMP" ]; then
     should_upgrade=true
@@ -53,6 +53,7 @@ check::upgrade() {
 
   # release lock
   rm -rf $ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK
+  export ZMICRO_IS_UPGRADING_CHECKING=false
 }
 
 export -f check::upgrade
