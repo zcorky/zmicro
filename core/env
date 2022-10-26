@@ -96,7 +96,7 @@ env() {
   # @TODO zmicro vscode will make env infect cause vscode can't find zsh
   # export ZMICRO_CORE_UTILS_LOADED=true
 
-  # @TODO check update
+  # @TODO check upgrade
   case $1 in
   update | upgrade)
     # update

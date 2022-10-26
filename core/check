@@ -43,7 +43,7 @@ check::upgrade() {
     if [ -n "$NO_LOG" ]; then
       zmicro update >>/dev/null 2>&1
     else
-      log::warn "[$(timestamp)] zmicro version($(version::zmicro)) is too old, it must upgrade before run commands ..."
+      log::warn "[$(timestamp)] zmicro version($(version::zmicro)) is too old to run, upgrading now ..."
       log::info "[$(timestamp)] upgrading zmicro ..."
       zmicro update
       log::success "[$(timestamp)] upgrade zmicro done, run the command."
