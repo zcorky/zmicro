@@ -107,7 +107,7 @@ env() {
   version | -v)
     # show version
     ;;
-  code)
+  code | go | fn)
     # open code
     ;;
   *)
