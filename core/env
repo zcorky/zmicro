@@ -136,7 +136,8 @@ env::load_core_utils() {
   # fi
 
   # check core utils whether loaded or not
-  command -v version::main >/dev/null 2>&1
+  # command -v version::main >/dev/null 2>&1
+  command -v plugin::update >/dev/null 2>&1
   if [ "$?" != "0" ]; then
     if [ -d "$ZMICRO_PLUGINS_PATH/core-utils/core" ]; then
       config::load_dir $ZMICRO_PLUGINS_PATH/core-utils/core
