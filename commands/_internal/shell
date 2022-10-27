@@ -1,0 +1,26 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro shell"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  # @TODO override help
+  help() {
+    zmicro help
+  }
+
+  os::repl
+}
+
+run() {
+  core $@
+}
+
+run $@
