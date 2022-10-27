@@ -110,6 +110,15 @@ env() {
   code | go | fn)
     # open code
     ;;
+  proxy)
+    # use proxy
+    ;;
+  config)
+    # use config
+    ;;
+  apply)
+    # use apply
+    ;;
   *)
     check::upgrade
     ;;
