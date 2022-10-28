@@ -10,6 +10,12 @@ update_zmicro() {
   os::fix_permissions >>/dev/null 2>&1
 
   # record update timestamp
+  if [ ! -f "$ZMICRO_LOG_UPDATE_TIMESTAMP" ]; then
+    sudo touch $ZMICRO_LOG_UPDATE_TIMESTAMP
+  fi
+  if [ ! -w "$ZMICRO_LOG_UPDATE_TIMESTAMP" ] || [ ! -r "$ZMICRO_LOG_UPDATE_TIMESTAMP" ]; then
+    sudo chmod a+rw $ZMICRO_LOG_UPDATE_TIMESTAMP
+  fi
   echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP 2>/dev/null
 
   # @FIX core-utils plugin update missin path cause failed to update
