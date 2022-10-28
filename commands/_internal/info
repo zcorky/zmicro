@@ -15,6 +15,13 @@ core() {
     log::info "  $name: $version"
   done
 
+  local cron=$(sudo crontab -l | grep zmicro_auto_update | tail -n 1)
+  local cron_pattern=$(echo "$cron" | awk -F ' ' '{p=sprintf("%s %s %s %s %s", $1, $2, $3, $4, $5); print p}')
+  local is_cron_enable=false
+  if [ -n "$cron" ]; then
+    is_cron_enable=true
+  fi
+
   log::info ""
   log::info "os:"
   log::info "  release: $(os::release)"
@@ -27,6 +34,10 @@ core() {
   log::info "network:"
   log::info "  internal ip: $(net::get_ip_internal)"
   log::info "  external ip: $(net::get_ip)"
+  log::info ""
+  log::info "update:"
+  log::info "  work: ${is_cron_enable}"
+  log::info "  cron: ${cron_pattern}"
 }
 
 run() {
