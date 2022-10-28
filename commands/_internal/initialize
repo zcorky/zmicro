@@ -106,7 +106,7 @@ core() {
   initialize_notifies
 
   # @TODO add auto update
-  zmicro auto update
+  zmicro auto update >>/dev/null # 2>&1
 
   notify::install
 }
