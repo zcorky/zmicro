@@ -52,6 +52,12 @@ initialize_notifies() {
   fi
 }
 
+initialize_ci() {
+  # if is ci environment
+  # 1. install docker cli
+  zmicro package install docker
+}
+
 help() {
   echo "update zmicro"
   echo ""
@@ -104,6 +110,10 @@ core() {
   fi
 
   initialize_notifies
+
+  if [ "$(os::is_ci)" = "true" ]; then
+    initialize_ci
+  fi
 
   # @TODO add auto update
   zmicro auto update >>/dev/null # 2>&1
