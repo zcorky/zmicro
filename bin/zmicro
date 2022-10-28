@@ -61,6 +61,8 @@ if [ "$action" = "update" ]; then
   safe_update_background >>/dev/null 2>&1 &
 fi
 
+export ZMICRO_MAIN_ACTION=$1
+
 . $ZMICRO_CORE_PATH/env
 
 # if [ ! -w "$ZMICRO_APP_CONFIGS_PATH" ]; then
