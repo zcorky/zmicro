@@ -55,7 +55,7 @@ initialize_notifies() {
 initialize_ci() {
   # if is ci environment
   # 1. install docker cli
-  log::info "[$(timstamp)][ci] installing docker cli ..."
+  log::info "[$(timestamp)][ci] installing docker cli ..."
   zmicro package install docker
 }
 
