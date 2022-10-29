@@ -6,6 +6,18 @@ help() {
 }
 
 core() {
+  local cron=$(sudo crontab -l | grep zmicro_auto_update | tail -n 1)
+  if [ "$?" != "0" ]; then
+    log::error "failed to get info."
+    return 1
+  fi
+
+  local cron_pattern=$(echo "$cron" | awk -F ' ' '{p=sprintf("%s %s %s %s %s", $1, $2, $3, $4, $5); print p}')
+  local is_cron_enable=false
+  if [ -n "$cron" ]; then
+    is_cron_enable=true
+  fi
+
   log::info "zmicro: $(zmicro version)"
 
   config::load_file $ZMICRO_HOME/mod
@@ -15,13 +27,6 @@ core() {
     log::info "  $name: $version"
   done
 
-  local cron=$(sudo crontab -l | grep zmicro_auto_update | tail -n 1)
-  local cron_pattern=$(echo "$cron" | awk -F ' ' '{p=sprintf("%s %s %s %s %s", $1, $2, $3, $4, $5); print p}')
-  local is_cron_enable=false
-  if [ -n "$cron" ]; then
-    is_cron_enable=true
-  fi
-
   log::info ""
   log::info "os:"
   log::info "  release: $(os::release)"
@@ -30,6 +35,7 @@ core() {
   log::info "  distribution: $(os::distribution)"
   log::info "  platform: $(os::platform)"
   log::info "  device: $(os::device_config)"
+  log::info "  cpu brand: $(os::cpu_brand)"
   log::info ""
   log::info "network:"
   log::info "  internal ip: $(net::get_ip_internal)"
