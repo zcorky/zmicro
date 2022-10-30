@@ -53,6 +53,16 @@ core() {
   #   stackoverflow: https://stackoverflow.com/questions/55077450/linode-lish-bash-warning-setlocale-lc-all-cannot-change-locale-en-us-utf-8
   # linux
   if [ "$(os::is_macos)" != "true" ]; then
+    # @TODO alpine
+    #  reference:
+    #    - https://gist.github.com/alextanhongpin/aa55c082a47b9a1b0060a12d85ae7923
+    #    - https://grrr.tech/posts/2020/add-locales-to-alpine-linux-docker-image/
+    #    - https://github.com/gliderlabs/docker-alpine/issues/144
+    #    - https://stackoverflow.com/questions/61761085/python-locale-not-working-on-alpine-linux/63602822#63602822
+    if [ "$(os::is_alpine)" = "true" ]; then
+      return
+    fi
+
     if [ "$(os::has_command locale-gen)" != "true" ]; then
       if [ "$(os::is_archlinux)" = "true" ]; then
         pm install -yqq glibc
@@ -64,8 +74,7 @@ core() {
         pm install -yqq locales
       fi
     fi
-
-    log::info "[$(timestamp)] generating locale en_US.UTF-8 ..."
+    log::info "[$(timestamp)][locale] generating locale en_US.UTF-8 ..."
     sudo locale-gen en_US.UTF-8 >>/dev/null
   fi
 }
