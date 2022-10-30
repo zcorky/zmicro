@@ -66,6 +66,9 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 
+      - name: Show Env
+        run: env
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: "0"
