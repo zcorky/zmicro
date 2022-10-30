@@ -19,10 +19,10 @@ core() {
   if [ -f $ENV_PATH ]; then
     cat $ENV_PATH | grep "ZMICRO LOCALE" >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
-      echo "# ZMICRO LOCALE" | sudo tee -a $ENV_PATH >> /dev/null 2>&1
-      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH >> /dev/null 2>&1
-      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH >> /dev/null 2>&1
-      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH >> /dev/null 2>&1
+      echo "# ZMICRO LOCALE" | sudo tee -a $ENV_PATH >>/dev/null 2>&1
+      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH >>/dev/null 2>&1
+      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH >>/dev/null 2>&1
+      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $ENV_PATH >>/dev/null 2>&1
     fi
   fi
 
@@ -31,10 +31,10 @@ core() {
   if [ -f $BASHRC_PATH ]; then
     cat $BASHRC_PATH | grep "ZMICRO LOCALE" >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
-      echo "# ZMICRO LOCALE" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
-      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
-      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
-      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH >> /dev/null 2>&1
+      echo "# ZMICRO LOCALE" | sudo tee -a $BASHRC_PATH >>/dev/null 2>&1
+      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH >>/dev/null 2>&1
+      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH >>/dev/null 2>&1
+      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $BASHRC_PATH >>/dev/null 2>&1
     fi
   fi
 
@@ -42,11 +42,31 @@ core() {
   if [ -f $ZSHRC_PATH ]; then
     cat $ZSHRC_PATH | grep "ZMICRO LOCALE" >>/dev/null 2>&1
     if [ "$?" != "0" ]; then
-      echo "# ZMICRO LOCALE" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
-      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
-      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
-      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH >> /dev/null 2>&1
+      echo "# ZMICRO LOCALE" | sudo tee -a $ZSHRC_PATH >>/dev/null 2>&1
+      echo "LC_CTYPE=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH >>/dev/null 2>&1
+      echo "LC_ALL=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH >>/dev/null 2>&1
+      echo "LANG=\"en_US.UTF-8\"" | sudo tee -a $ZSHRC_PATH >>/dev/null 2>&1
     fi
+  fi
+
+  # fix: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
+  #   stackoverflow: https://stackoverflow.com/questions/55077450/linode-lish-bash-warning-setlocale-lc-all-cannot-change-locale-en-us-utf-8
+  # linux
+  if [ "$(os::is_macos)" != "true" ]; then
+    if [ "$(os::has_command locale-gen)" != "true" ]; then
+      if [ "$(os::is_archlinux)" = "true" ]; then
+        pm install -yqq glibc
+      elif [ "$(os::is_centos)" = "true" ]; then
+        pm install -yqq glibc
+      elif [ "$(os::is_fedora)" = "true" ]; then
+        pm install -yqq glibc
+      else
+        pm install -yqq locales
+      fi
+    fi
+
+    log::info "[$(timestamp)] generating locale en_US.UTF-8 ..."
+    sudo locale-gen en_US.UTF-8 >>/dev/null
   fi
 }
 
