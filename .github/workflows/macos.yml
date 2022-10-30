@@ -56,6 +56,9 @@ jobs:
           - macOS-latest
 
     steps:
+      - name: Show Env
+        run: env
+
       - name: Install Zmicro
         run: curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
@@ -65,9 +68,6 @@ jobs:
       - name: Get Current Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-
-      - name: Show Env
-        run: env
 
       - uses: actions/checkout@v2
         with:
