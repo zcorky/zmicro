@@ -68,6 +68,9 @@ core() {
         pm install -yqq glibc
       elif [ "$(os::is_centos)" = "true" ]; then
         pm install -yqq glibc
+        # q: [error] character map file `UTF-8' not found: No such file or directory
+        # stackoverflow: https://stackoverflow.com/questions/58304278/how-to-fix-character-map-file-utf-8-not-found
+        pm install -yqq glibc-locale-source glibc-langpack-en
       elif [ "$(os::is_fedora)" = "true" ]; then
         pm install -yqq glibc
       else
