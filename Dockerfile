@@ -10,12 +10,10 @@ RUN   apt update && apt install -y curl wget git sudo systemd make gcc g++
 
 ARG   VERSION
 
-ARG   CI
-
 ENV   ZMICRO_VERSION=${VERSION}
 
 RUN   echo "ZMICRO_VERSION => ${VERSION}"
 
 ENV   USER=root
 
-RUN   curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
+RUN   CI=true curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
