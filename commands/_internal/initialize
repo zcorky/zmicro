@@ -117,7 +117,9 @@ core() {
   fi
 
   # @TODO add auto update
-  zmicro auto update >>/dev/null # 2>&1
+  if [ "$CI" != "true" ]; then
+    zmicro auto update >>/dev/null # 2>&1
+  fi
 
   notify::install
 }

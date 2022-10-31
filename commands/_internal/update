@@ -79,7 +79,9 @@ update_zmicro() {
   notify::login_register_check >/dev/null 2>&1 &
 
   # @TODO add auto update
-  zmicro auto update >/dev/null 2>&1 &
+  if [ "$CI" != "true" ]; then
+    zmicro auto update >/dev/null 2>&1 &
+  fi
 
   # update notify check
   notify::update_check $origin_version $new_version >/dev/null 2>&1 &
