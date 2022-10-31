@@ -97,33 +97,37 @@ env() {
   # export ZMICRO_CORE_UTILS_LOADED=true
 
   # @TODO check upgrade
-  if [ -n "ZMICRO_MAIN_ACTION" ]; then
-    case $ZMICRO_MAIN_ACTION in
-    update | upgrade)
-      # update
-      ;;
-    install | initialize)
-      # install
-      ;;
-    version | -v)
-      # show version
-      ;;
-    code | go | fn)
-      # open code
-      ;;
-    proxy)
-      # use proxy
-      ;;
-    config)
-      # use config
-      ;;
-    apply)
-      # use apply
-      ;;
-    *)
-      check::upgrade
-      ;;
-    esac
+  # CI ignore check upgrade ...
+  if [ "$CI" != "true" ]; then
+    # Need has ZMICRO_MAIN_ACTION
+    if [ -n "ZMICRO_MAIN_ACTION" ]; then
+      case $ZMICRO_MAIN_ACTION in
+      update | upgrade)
+        # update
+        ;;
+      install | initialize)
+        # install
+        ;;
+      version | -v)
+        # show version
+        ;;
+      code | go | fn)
+        # open code
+        ;;
+      proxy)
+        # use proxy
+        ;;
+      config)
+        # use config
+        ;;
+      apply)
+        # use apply
+        ;;
+      *)
+        check::upgrade
+        ;;
+      esac
+    fi
   fi
 
   # echo "======== load env end ====================" >>$ZMICRO_LOG_COMMON_PATH
