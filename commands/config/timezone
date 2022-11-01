@@ -97,7 +97,11 @@ core() {
     fi
 
     if [ -f "/usr/share/zoneinfo/${TZ}" ]; then
-      sudo cp /usr/share/zoneinfo/${TZ} /etc/localtime >>/dev/null # 2>&1
+      if [ ! -f "/etc/localtime" ]; then
+        sudo cp /usr/share/zoneinfo/${TZ} /etc/localtime >>/dev/null # 2>&1
+      else
+        sudo cat /usr/share/zoneinfo/${TZ} >/etc/localtime >>/dev/null # 2>&1
+      fi
     fi
 
     echo ${TZ} | sudo tee /etc/timezone >>/dev/null 2>&1
