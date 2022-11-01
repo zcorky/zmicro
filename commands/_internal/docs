@@ -1,0 +1,35 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro docs <namespace | method> <name>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local module=$1
+  local name=$2
+
+  case $module in
+  namespace)
+    docs::namespace $name
+    ;;
+  method)
+    docs::method $name
+    ;;
+  *)
+    log::error "[$(timestamp)] unknown module: $module"
+    help
+    ;;
+  esac
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
