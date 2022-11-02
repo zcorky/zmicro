@@ -50,6 +50,10 @@ log::info() {
     return
   fi
 
+  if [ -f "$ZMICRO_LOG_COMMON_PATH" ] && [ ! -w "$ZMICRO_LOG_COMMON_PATH" ]; then
+    sudo chmod a+w $ZMICRO_LOG_COMMON_PATH
+  fi
+
   echo -e "$(color::green ℹ) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
@@ -63,6 +67,10 @@ log::debug() {
     return
   fi
 
+  if [ -f "$ZMICRO_LOG_DEBUG_PATH" ] && [ ! -w "$ZMICRO_LOG_DEBUG_PATH" ]; then
+    sudo chmod a+w $ZMICRO_LOG_DEBUG_PATH
+  fi
+
   if [ -w $ZMICRO_LOG_DEBUG_PATH ]; then
     echo -e $@ >>$ZMICRO_LOG_DEBUG_PATH
   fi
@@ -74,6 +82,10 @@ log::success() {
     return
   fi
 
+  if [ -f "$ZMICRO_LOG_COMMON_PATH" ] && [ ! -w "$ZMICRO_LOG_COMMON_PATH" ]; then
+    sudo chmod a+w $ZMICRO_LOG_COMMON_PATH
+  fi
+
   echo "$(color::green ✔) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
@@ -81,6 +93,10 @@ log::error() {
   if [ "$NO_LOG" = "true" ]; then
     echo "$(color::red ✖) ${@}"
     return
+  fi
+
+  if [ -f "$ZMICRO_LOG_ERROR_PATH" ] && [ ! -w "$ZMICRO_LOG_ERROR_PATH" ]; then
+    sudo chmod a+w $ZMICRO_LOG_ERROR_PATH
   fi
 
   echo "$(color::red ✖) ${@}" | tee -a $ZMICRO_LOG_ERROR_PATH
@@ -92,6 +108,10 @@ log::warn() {
     return
   fi
 
+  if [ -f "$ZMICRO_LOG_COMMON_PATH" ] && [ ! -w "$ZMICRO_LOG_COMMON_PATH" ]; then
+    sudo chmod a+w $ZMICRO_LOG_COMMON_PATH
+  fi
+
   echo -e "$(color::yellow ⚠) ${@}" | tee -a $ZMICRO_LOG_COMMON_PATH
 }
 
@@ -99,6 +119,10 @@ log() {
   if [ "$NO_LOG" = "true" ]; then
     echo -e $@
     return
+  fi
+
+  if [ -f "$ZMICRO_LOG_COMMON_PATH" ] && [ ! -w "$ZMICRO_LOG_COMMON_PATH" ]; then
+    sudo chmod a+w $ZMICRO_LOG_COMMON_PATH
   fi
 
   # @TODO will remove custum blanks
@@ -184,6 +208,10 @@ log::update() {
   local stage=$3 # START | END | ERROR
   local origin_version=$4
   local current_version=$5
+
+  if [ -f "$ZMICRO_LOG_UPDATE_PATH" ] && [ ! -w "$ZMICRO_LOG_UPDATE_PATH" ]; then
+    sudo chmod a+w $ZMICRO_LOG_UPDATE_PATH
+  fi
 
   if [ "$stage" = "START" ]; then
     if [ "$type" = "CORE" ]; then
