@@ -54,8 +54,15 @@ initialize_notifies() {
 
 initialize_ci() {
   # if is ci environment
+
   # 1. install docker cli
-  if [ "$IGNORE_DOCKER_CLI" != "true" ]; then
+  if [ "$IGNORE_DOCKER_CLI" = "true" ]; then
+    # ignore if env is set
+    echo "" >>/dev/null
+  elif [ "$GITHUB_ACTIONS" = "true" ]; then
+    # ignore github action because it already has docker cli
+    echo "" >>/dev/null
+  else
     log::info "[$(timestamp)][ci] installing docker cli ..."
     zmicro package install docker
   fi
@@ -114,6 +121,7 @@ core() {
 
   initialize_notifies
 
+  # is ci
   if [ "$(os::is_ci)" = "true" ]; then
     initialize_ci
   fi
