@@ -164,7 +164,7 @@ fi
 
 # Bin
 if [ -f $ZMICRO_LOCAL_BIN ]; then
-  sudo rm -rf $ZMICRO_LOCAL_BIN
+  sudo rm -f $ZMICRO_LOCAL_BIN
 fi
 sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
 
