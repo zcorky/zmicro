@@ -19,7 +19,9 @@ core() {
   fi
 
   log::info "zmicro: $(zmicro version)"
+  log::info ""
 
+  log::info "components:"
   config::load_file $ZMICRO_HOME/mod
   for dependency in ${DEPENDENCIES[@]}; do
     local name=$(echo $dependency | awk -F '@' '{print $1}')
