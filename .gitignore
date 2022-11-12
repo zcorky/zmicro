@@ -14,3 +14,4 @@ code
 config/deb/usr/local/lib/zmicro/*
 
 *.deb
+tmp/
