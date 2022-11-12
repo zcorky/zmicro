@@ -99,6 +99,7 @@ export ZMICRO_GLOBAL_RC_DIR=${ZMICRO_GLOBAL_RC_DIR:-"/etc/zmicro"}
 export ZMICRO_GLOBAL_RC=$ZMICRO_GLOBAL_RC_DIR/.zmicrorc
 export ZMICRO_LOG_DIR=${ZMICRO_LOG_DIR:-"/var/log/zmicro"}
 export ZMICRO_LOCAL_BIN=$ZMICRO_USER_LOCAL_BIN_DIR/zmicro
+export ZMICRO_ROOT_BIN_DIR=${ZMICRO_ROOT_BIN_DIR:-"/bin"}
 
 export OLD_ZMICRO_HOME=$HOME/.zmicro
 export OLD_ZMICRO_HOME_BAK=${ZMICRO_HOME}.bak
@@ -165,8 +166,15 @@ fi
 if [ -f $ZMICRO_LOCAL_BIN ]; then
   sudo rm -rf $ZMICRO_LOCAL_BIN
 fi
-
 sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
+
+if [ "$(uname -s)" != "Darwin" ]; then
+  # MacOS cannot ln to /bin
+  if [ ! -d "$ZMICRO_ROOT_BIN_DIR" ]; then
+    sudo mkdir -p $ZMICRO_ROOT_BIN_DIR
+  fi
+  sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_ROOT_BIN_DIR >>/dev/null 2>&1
+fi
 
 # . $ZMICRO_HOME/config/config
 
