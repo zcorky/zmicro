@@ -59,6 +59,14 @@ jobs:
       - name: Show Env
         run: env
 
+      - name: Get Current Date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+
       - name: Install zmicro (local)
         run: ./install
 
@@ -67,14 +75,6 @@ jobs:
 
       - name: Update Zmicro
         run: zmicro update -a
-
-      - name: Get Current Date
-        id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: "0"
 
       - name: Run test cases
         run: zmicro test core/
