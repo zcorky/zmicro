@@ -70,8 +70,8 @@ jobs:
       - name: Install zmicro (local)
         run: ./install
 
-      - name: Install Zmicro (remote)
-        run: curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
+      # - name: Install Zmicro (remote)
+      #   run: curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
       - name: Update Zmicro
         run: zmicro update -a
