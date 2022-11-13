@@ -59,7 +59,10 @@ jobs:
       - name: Show Env
         run: env
 
-      - name: Install Zmicro
+      - name: Install zmicro (local)
+        run: ./install
+
+      - name: Install Zmicro (remote)
         run: curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
       - name: Update Zmicro
