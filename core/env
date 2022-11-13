@@ -75,11 +75,11 @@ env() {
 
   config::load_file $ZMICRO_RC
 
-  # Do for mac os
-  if [ "$(os::is_macos)" = "true" ]; then
-    export ZMICRO_APP_LOGS_PATH=$HOME/.local/zmicro/logs
-    export ZMICRO_APP_DATA_PATH=$HOME/.local/zmicro/data
-  fi
+  # # Do for mac os
+  # if [ "$(os::is_macos)" = "true" ]; then
+  #   export ZMICRO_APP_LOGS_PATH=$HOME/.local/zmicro/logs
+  #   export ZMICRO_APP_DATA_PATH=$HOME/.local/zmicro/data
+  # fi
 
   # @TODO fix log permissions
   if [ ! -f $ZMICRO_LOG_COMMON_PATH ]; then

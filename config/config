@@ -81,6 +81,13 @@ if [ "$ZMICRO_HOME" != "$ZMICRO_HOME_DEFAULT" ]; then
   fi
 fi
 
+if [ "$(uname -s)" = "Darwin" ]; then
+  export ZMICRO_DATA_PARENT=/opt
+  if [ ! -d "$ZMICRO_DATA_PARENT" ]; then
+    mkdir -p $ZMICRO_DATA_PARENT
+  fi
+fi
+
 # Data
 export ZMICRO_APP_DATA_PATH=$ZMICRO_DATA_PARENT/data
 # Logs
@@ -88,20 +95,31 @@ export ZMICRO_APP_LOGS_PATH=$ZMICRO_DATA_PARENT/logs
 # Configs
 export ZMICRO_APP_CONFIGS_PATH=$ZMICRO_DATA_PARENT/configs
 
-# @TODO MAC
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_DATA_PATH=/opt/data
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_LOGS_PATH=/opt/logs
-[[ "$(uname -s)" = "Darwin" ]] && export ZMICRO_APP_CONFIGS_PATH=/opt/configs
+# echo "ZMICRO_APP_DATA_PATH: $ZMICRO_APP_DATA_PATH"
+# echo "ZMICRO_APP_LOGS_PATH: $ZMICRO_APP_LOGS_PATH"
+# echo "ZMICRO_APP_CONFIGS_PATH: $ZMICRO_APP_CONFIGS_PATH"
+
+# # @TODO MAC
+# if [ "$(uname -s)" = "Darwin" ]; then
+#   export ZMICRO_APP_DATA_PATH=/opt/data
+#   export ZMICRO_APP_LOGS_PATH=/opt/logs
+#   export ZMICRO_APP_CONFIGS_PATH=/opt/configs
+# fi
 
 # Plugin
 export ZMICRO_PLUGINS_PATH=$ZMICRO_HOME/plugins
 
-export ZMICRO_REPO_ORGANIZATION=zmicro-design
-export ZMICRO_PLUGIN_GITHUB="https://github.com"
-# export ZMICRO_PLUGIN_GITHUB_DEFAULT_PROXY="https://github.whateverhappens.org"
-export ZMICRO_PLUGIN_GITHUB_DEFAULT_PROXY=${ZMICRO_PLUGIN_GITHUB}
-export ZMICRO_PLUGIN_GITHUB_PROXY=${ZMICRO_PLUGIN_GITHUB_PROXY}
-export ZMICRO_PLUGIN_REPO_PREFIX="${ZMICRO_PLUGIN_GITHUB_PROXY:-$ZMICRO_PLUGIN_GITHUB}/${ZMICRO_REPO_ORGANIZATION}/plugin-"
+# Registry
+#   default
+export ZMICRO_REGISTRY_DEFAULT="https://github.com"
+export ZMICRO_REPO_ORGANIZATION_DEFAULT=zmicro-design
+#   dynamic
+export ZMICRO_REGISTRY=${ZMICRO_REGISTRY:-$ZMICRO_REGISTRY_DEFAULT}
+export ZMICRO_REPO_ORGANIZATION=${ZMICRO_REPO_ORGANIZATION:-$ZMICRO_REPO_ORGANIZATION_DEFAULT}
+# export ZMICRO_REGISTRY_PROXY="https://github.whateverhappens.org"
+export ZMICRO_REGISTRY_DEFAULT_PROXY=${ZMICRO_REGISTRY}
+#
+export ZMICRO_PLUGIN_REPO_PREFIX="${ZMICRO_REGISTRY}/${ZMICRO_REPO_ORGANIZATION}/plugin-"
 
 export ZMICRO_PLUGINS_DATA_PATH=$ZMICRO_APP_DATA_PATH/plugins
 export ZMICRO_PLUGINS_LOGS_PATH=$ZMICRO_APP_LOGS_PATH/plugins

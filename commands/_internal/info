@@ -30,6 +30,14 @@ core() {
   done
 
   log::info ""
+  log::info "config:"
+  log::info "  Registry: $ZMICRO_REGISTRY"
+  log::info "  Origanzation: $ZMICRO_REPO_ORGANIZATION"
+  log::info "  Root Dir:"
+  log::info "    Data: ${ZMICRO_APP_DATA_PATH}"
+  log::info "    Logs: ${ZMICRO_APP_LOGS_PATH}"
+  log::info "    configs: ${ZMICRO_APP_CONFIGS_PATH}"
+  log::info ""
   log::info "os:"
   log::info "  distribution: $(os::distribution)"
   log::info "  kernel: $(os::kernel)"
