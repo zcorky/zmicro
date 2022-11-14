@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Smart Curl with Proxy"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro curl <args ...>"
+}
+
+core() {
+  os::curl "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"

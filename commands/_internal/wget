@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Smart WGet with Proxy"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro wget <args ...>"
+}
+
+core() {
+  os::wget "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
