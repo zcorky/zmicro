@@ -13,6 +13,16 @@ curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 wget -qO- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 ```
 
+### Short URL
+
+```bash
+# CURL
+curl -L -o- https://t.zcorky.com/3D4MFa | bash
+
+# WGET
+wget -qO- https://t.zcorky.com/3D4MFa | bash
+```
+
 ## Support
 
 - [x] Ubuntu
