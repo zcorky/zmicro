@@ -1,0 +1,28 @@
+#!/bin/bash
+
+help() {
+  echo "Cross platform package manager"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro pm <action> [options...]"
+  echo ""
+  echo "Action:"
+  echo "  install     <name> - Install a package"
+  echo "  uninstall   <name> - Uninstall a package"
+  echo "  reinstall   <name> - Reinstall a package"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  pm "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
