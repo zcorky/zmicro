@@ -39,6 +39,11 @@ check::upgrade() {
     fi
   fi
 
+  # if NO_LOG found, not upgrade
+  if [ "$NO_LOG" = "true" ]; then
+    should_upgrade=false
+  fi
+
   if [ "$should_upgrade" = "true" ]; then
     if [ -n "$NO_LOG" ]; then
       zmicro update >>/dev/null 2>&1
