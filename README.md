@@ -31,6 +31,8 @@ wget -qO- https://t.zcorky.com/3D4MFa | bash
 - [x] CentOS
   - 8
   - 7.9.2009
+- [x] Rockylinux
+  - 9.0
 - [x] MacOS
   - 12
   - 11
