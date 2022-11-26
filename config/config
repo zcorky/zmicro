@@ -158,9 +158,9 @@ export ZMICRO_SCRIPT_RECORD_COMMANDS=/tmp/zmicro_script_record_tmp.commands
 export ZMICRO_AUTO_UPDATE_EVERY_DAY_HOUR=11
 
 # # 30d not upgrade
-# export ZMICRO_CHECK_UPGRADE_MAX_DAYS=2592000
+export ZMICRO_CHECK_UPGRADE_MAX_DAYS=2592000
 # 7d not upgrade
-export ZMICRO_CHECK_UPGRADE_MAX_DAYS=604800
+# export ZMICRO_CHECK_UPGRADE_MAX_DAYS=604800
 
 # LOG_LEVEL is the log level, default: info
 #  available:
