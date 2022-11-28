@@ -43,7 +43,7 @@ depends() {
 
     # macos
     if [ "$(has_command brew)" = "true" ]; then
-      brew install -y $cli
+      brew install -f $cli
       return
     fi
 
