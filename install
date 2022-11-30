@@ -44,7 +44,7 @@ depends() {
     # macos
     if [ "$(uname -s)" = "Darwin" ]; then
       if [ "$(has_command brew)" = "false" ]; then
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        sudo curl -o- https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
       fi
 
       brew install -f $cli
