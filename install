@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+# set -e
 
 # @TODO fix sudo in docker
 command -v sudo >>/dev/null 2>&1
@@ -50,42 +50,63 @@ depends() {
       fi
 
       brew install -f $cli
+      if [ "$?" != "0" ]; then
+        exit 1
+      fi
       return
     fi
 
     # ubuntu
     if [ "$(has_command apt)" = "true" ]; then
       sudo apt install -y $cli
+      if [ "$?" != "0" ]; then
+        exit 1
+      fi
       return
     fi
 
     # debian
     if [ "$(has_command apt-get)" = "true" ]; then
       sudo apt-get install -y $cli
+      if [ "$?" != "0" ]; then
+        exit 1
+      fi
       return
     fi
 
     # centos
     if [ "$(has_command yum)" = "true" ]; then
       sudo yum install -y $cli
+      if [ "$?" != "0" ]; then
+        exit 1
+      fi
       return
     fi
 
     # alpine
     if [ "$(has_command apk)" = "true" ]; then
       sudo apk add $cli
+      if [ "$?" != "0" ]; then
+        exit 1
+      fi
       return
     fi
 
     # federa
     if [ "$(has_command dnf)" = "true" ]; then
       sudo dnf install -y $cli
+      if [ "$?" != "0" ]; then
+        exit 1
+      fi
       return
     fi
 
     # archlinux
     if [ "$(has_command pacman)" = "true" ]; then
       sudo pacman -Syu --noconfirm $cli
+      if [ "$?" != "0" ]; then
+        exit 1
+      fi
       return
     fi
 
