@@ -6,7 +6,7 @@ check::upgrade() {
   fi
 
   if [ -f "$ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK" ]; then
-    local lock_time=$(cat $ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK)
+    local lock_time=$(cat $ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK 2>/dev/null)
     local now=$(date +%s)
     # in 5 minutes
     if [ -n "$lock_time" ] && [ "$((now - lock_time))" -lt "300" ]; then
@@ -22,7 +22,7 @@ check::upgrade() {
   if [ ! -f "$ZMICRO_LOG_UPDATE_TIMESTAMP" ]; then
     should_upgrade=true
   else
-    local last_update=$(cat $ZMICRO_LOG_UPDATE_TIMESTAMP)
+    local last_update=$(cat $ZMICRO_LOG_UPDATE_TIMESTAMP 2>/dev/null)
     if [ -z "$last_update" ]; then
       should_upgrade=true
     else
