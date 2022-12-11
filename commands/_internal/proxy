@@ -93,6 +93,17 @@ core() {
     # use smart proxy
     net::using_smart_proxy
 
+    if [ -z "$HTTPS_PROXY" ]; then
+      zmicro config proxy
+      if [ "$?" != "0" ]; then
+        log::error "[$(timestamp)] failed to config proxy."
+        exit 1
+      fi
+
+      # use smart proxy
+      net::using_smart_proxy
+    fi
+
     # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
     export LC_CTYPE=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
