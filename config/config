@@ -84,7 +84,8 @@ fi
 if [ "$(uname -s)" = "Darwin" ]; then
   export ZMICRO_DATA_PARENT=/opt
   if [ ! -d "$ZMICRO_DATA_PARENT" ]; then
-    mkdir -p $ZMICRO_DATA_PARENT
+    sudo mkdir -p $ZMICRO_DATA_PARENT
+    sudo chmod 666 $ZMICRO_DATA_PARENT
   fi
 fi
 
