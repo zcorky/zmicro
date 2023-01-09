@@ -11,5 +11,6 @@ DEPENDENCIES=(
   "daemon@latest"
   "cron@latest"
   "workspace@latest"
+  "project@latest"
   # "^nodejs@latest" # ^ => package
 )
