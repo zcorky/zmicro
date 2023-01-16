@@ -19,14 +19,12 @@ initialize_config() {
   zmicro config version
   zmicro config logs
   zmicro config data
-  # zmicro config git
-  # zmicro config timezone
 
-  # Do for MacOS
-  if [ "$(os::is_macos)" != "true" ]; then
-    zmicro config locale
-    zmicro config timezone
-  fi
+  # # Do for MacOS
+  # if [ "$(os::is_macos)" != "true" ]; then
+  #   zmicro config locale
+  #   zmicro config timezone
+  # fi
 
   zmicro config git
 }
