@@ -1,0 +1,27 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro plugin code [name]"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local name="$1"
+  if [ -z "$name" ]; then
+    log::error "[$(timestamp)] name is required"
+    return 1
+  fi
+
+  zmicro code plugin $name
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
