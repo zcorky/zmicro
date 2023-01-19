@@ -48,7 +48,7 @@ run() {
     local last_arg=$(array::last_element $commands)
     if [ "$last_arg" = "-h" ] || [ "$last_arg" = "--help" ]; then
       help $base_command_path $command ${@:4} # $sub_command
-      exit 1
+      exit 0
     fi
 
     # Help
