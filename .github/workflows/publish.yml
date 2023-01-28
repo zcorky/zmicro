@@ -95,7 +95,7 @@ jobs:
 
       - name: Set up Docker Buildx
         # uses: docker/setup-buildx-action@v1
-        run: zmicro package install docker-buildx
+        run: zmicro package install --bootstrap-service docker-buildx
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
