@@ -88,7 +88,6 @@ jobs:
           echo "Docker Tags: ${{ steps.meta.outputs.tags }}"
 
       - name: Setup Docker
-        if: matrix.os == 'ubuntu-latest'
         uses: zmicro-design/action-setup-docker@v1
 
       - name: Login to DockerHub
