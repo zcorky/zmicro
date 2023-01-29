@@ -200,13 +200,16 @@ if [ -f $ZMICRO_LOCAL_BIN ]; then
 fi
 sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_LOCAL_BIN
 
-if [ "$(uname -s)" != "Darwin" ]; then
-  # MacOS cannot ln to /bin
-  if [ ! -d "$ZMICRO_ROOT_BIN_DIR" ]; then
-    sudo mkdir -p $ZMICRO_ROOT_BIN_DIR
-  fi
-  sudo ln -s $ZMICRO_HOME/bin/zmicro $ZMICRO_ROOT_BIN_DIR >>/dev/null 2>&1
+if [ "$(uname -s)" = "Darwin" ]; then
+  export ZMICRO_ROOT_BIN_DIR=/usr/local/bin
 fi
+
+# MacOS cannot ln to /bin
+if [ ! -d "$ZMICRO_ROOT_BIN_DIR" ]; then
+  sudo mkdir -p $ZMICRO_ROOT_BIN_DIR
+fi
+
+sudo ln -sf $ZMICRO_HOME/bin/zmicro $ZMICRO_ROOT_BIN_DIR/zmicro >>/dev/null # 2>&1
 
 # . $ZMICRO_HOME/config/config
 
