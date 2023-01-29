@@ -165,8 +165,32 @@ END
   fi
 }
 
-config_common
-config_bashrc
-config_zshrc
+core() {
+  config_common
+  # config_bashrc
+  # config_zshrc
 
-disable_oh_my_zsh_update
+  local envs=$(
+    cat <<-END
+export ZMICRO_HOME=${ZMICRO_HOME}
+export PATH=\$ZMICRO_HOME/bin:\$PATH 
+END
+  )
+  config::profile "# ZMICRO_CORE" "$envs"
+
+  # Global
+  if [ -f "/etc/bash.bashrc" ]; then
+    config_global_rc /etc/bash.bashrc
+  fi
+  if [ -f "/etc/zsh/zshrc" ]; then
+    config_global_rc /etc/zsh/zshrc
+  fi
+
+  disable_oh_my_zsh_update
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
