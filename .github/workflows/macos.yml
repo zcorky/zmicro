@@ -73,6 +73,9 @@ jobs:
       # - name: Install Zmicro (remote)
       #   run: curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
+      - name: Show version
+        run: zmicro -v
+
       - name: Update Zmicro
         run: zmicro update -a
 

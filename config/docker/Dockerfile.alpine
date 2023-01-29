@@ -6,6 +6,8 @@ ENV CI=true
 
 RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 
+RUN zmicro -v
+
 RUN zmicro update -f
 
 RUN zmicro info
