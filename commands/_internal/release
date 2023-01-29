@@ -63,6 +63,7 @@ core() {
     rm mod-e >>/dev/null 2>&1
   fi
 
+  git pull origin master
   git add mod
   git commit -m "chore(release): bumped version to ${new_version}"
   git tag ${new_version}
