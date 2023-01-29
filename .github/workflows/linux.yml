@@ -49,18 +49,16 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    container: whatwewant/zmicro:v1
+    # container: whatwewant/zmicro:v1
 
     steps:
-      - name: Update Zmicro
-        run: zmicro update -a
-
       - uses: actions/checkout@v2
         with:
           fetch-depth: "0"
 
-      - name: Install Docker CLI
-        run: zmicro package install docker
+      - name: Setup Docker
+        if: matrix.os == 'ubuntu-latest'
+        uses: zmicro-design/action-setup-docker@v1
 
       - name: Install in ubuntu
         run: docker build -t zmicro:ubuntu -f config/docker/Dockerfile.ubuntu .
