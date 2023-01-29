@@ -113,9 +113,13 @@ run::js() {
 
   # ZMICRO_NVM
   if [ -z "$NODE_HOME" ]; then
-    export NODE_HOME=/usr/local/node
-    export NODE_USER_HOME=$HOME/.node
-    export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
+    if [ -s "$ZMICRO_HOME/plugins/nvm/source" ]; then
+      \. $ZMICRO_HOME/plugins/nvm/source
+    else
+      export NODE_HOME=/usr/local/node
+      export NODE_USER_HOME=$HOME/.node
+      export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
+    fi
   fi
 
   if [ "$(os::is_nodejs_installed)" = "false" ]; then
@@ -177,9 +181,13 @@ run::go() {
 
   # ZMICRO_DVM
   if [ -z "$GOHOME" ]; then
-    export GOHOME=/usr/local/go
-    export GOPATH=$HOME/.go
-    export PATH=$GOHOME/bin:$GOPATH/bin:$PATH
+    if [ -s "$ZMICRO_HOME/plugins/gvm/source" ]; then
+      \. $ZMICRO_HOME/plugins/gvm/source
+    else
+      export GOHOME=/usr/local/go
+      export GOPATH=$HOME/.go
+      export PATH=$GOHOME/bin:$GOPATH/bin:$PATH
+    fi
   fi
 
   is_go_installed() {
@@ -212,9 +220,13 @@ run::zx() {
 
   # ZMICRO_NVM
   if [ -z "$NODE_HOME" ]; then
-    export NODE_HOME=/usr/local/node
-    export NODE_USER_HOME=$HOME/.node
-    export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
+    if [ -s "$ZMICRO_HOME/plugins/nvm/source" ]; then
+      \. $ZMICRO_HOME/plugins/nvm/source
+    else
+      export NODE_HOME=/usr/local/node
+      export NODE_USER_HOME=$HOME/.node
+      export PATH=$NODE_USER_HOME/bin:$NODE_HOME/bin:$PATH
+    fi
   fi
 
   if [ "$(os::is_nodejs_installed)" = "false" ]; then

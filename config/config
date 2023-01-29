@@ -20,8 +20,12 @@ if [ "$ZMICRO_HOME" != "$ZMICRO_HOME_DEFAULT" ]; then
     mkdir -p $ZMICRO_USER_LOCAL_BIN_DIR
   fi
 fi
-# @TODO add to env PATH
-export PATH=$ZMICRO_USER_LOCAL_BIN_DIR:$PATH
+
+# @TODO add ZMICRO_USER_LOCAL_BIN_DIR to env PATH
+echo "$PATH" | grep "$ZMICRO_USER_LOCAL_BIN_DIR" >>/dev/null 2>&1
+if [ "$?" != "0" ]; then
+  export PATH=$ZMICRO_USER_LOCAL_BIN_DIR:$PATH
+fi
 
 export ZMICRO_LOCAL_BIN=$ZMICRO_USER_LOCAL_BIN_DIR/zmicro
 

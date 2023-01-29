@@ -11,9 +11,19 @@ export ZMICRO_HOME=${ZMICRO_HOME:-"/usr/local/lib/zmicro"}
 # zmicro
 export PATH=$ZMICRO_HOME/bin:$PATH
 # node
-export PATH=$HOME/.node/bin:$PATH
+if [ -s "$ZMICRO_HOME/plugins/nvm/source" ]; then
+  \. $ZMICRO_HOME/plugins/nvm/source
+else
+  export PATH=$HOME/.node/bin:$PATH
+fi
 # go
 export PATH=$HOME/.go/bin:$PATH
+if [ -s "$ZMICRO_HOME/plugins/gvm/source" ]; then
+  \. $ZMICRO_HOME/plugins/gvm/source
+else
+  export PATH=$HOME/.go/bin:$PATH
+fi
+
 # common
 export PATH=$PATH:/usr/local/bin:/usr/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/sbin:/bin:/sbin
 
