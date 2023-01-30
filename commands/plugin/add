@@ -59,7 +59,7 @@ core() {
 
   log::debug "[$(timestamp)][plugin] add $plugin_name($plugin_version) ..."
   local tmp_install_log=$(os::tmp_file) # $ZMICRO_LOG_ERROR_PATH
-  git clone $plugin_url -b $plugin_version $plugin_path >>$tmp_install_log 2>&1
+  os::git clone $plugin_url -b $plugin_version $plugin_path >>$tmp_install_log 2>&1
   if [ "$?" != "0" ]; then
     log::error "[$(timestamp)][plugin] install error $plugin_name($plugin_version) ..."
     cat $tmp_install_log >>$ZMICRO_LOG_ERROR_PATH

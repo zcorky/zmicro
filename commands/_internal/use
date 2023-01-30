@@ -2,7 +2,7 @@
 
 fetch_git() {
   cd $ZMICRO_HOME
-  git fetch origin >> $ZMICRO_LOG_UPDATE_PATH 2>&1
+  os::git fetch origin >>$ZMICRO_LOG_UPDATE_PATH 2>&1
   if [ "$?" != "0" ]; then
     log "Fetch ZMicro Error"
     exit 1
@@ -11,13 +11,13 @@ fetch_git() {
 
 checkout_git() {
   cd $ZMICRO_HOME
-  
-  git checkout $@ >> /dev/null 2>&1
+
+  git checkout $@ >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     return 1
   fi
 
-  git fetch origin $@ >> /dev/null 2>&1
+  os::git fetch origin $@ >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     return 1
   fi
@@ -37,7 +37,7 @@ use_version() {
 
   fetch_git
   checkout_git $version
-    if [ "$?" != "0" ]; then
+  if [ "$?" != "0" ]; then
     log "Cannot Find Version: ${version}"
     exit 1
   fi
