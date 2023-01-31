@@ -113,6 +113,7 @@ core() {
     rm mod-e >>/dev/null 2>&1
   fi
 
+  local is_first_release=false
   local tmp_error_log=$(os::tmp_file)
   log::info "[$(timestamp)] checking with remote master ..."
   if [ "$(git::has_branch master)" = "true" ]; then
@@ -125,11 +126,22 @@ core() {
     fi
   else
     echo "new empty repo => no merge" >>/dev/null
+    is_first_release=true
   fi
 
   log::info "[$(timestamp)] creating new version: ${new_version} ..."
   git add mod
   git commit -m "chore(release): bumped version to ${new_version}" >>/dev/null
+
+  if [ "$is_first_release" = "true" ]; then
+    log::info "[$(timestamp)] pushing version to master ..."
+    git push origin master >>/dev/null 2>$tmp_error_log
+    if [ "$?" != "0" ]; then
+      log::error "[$(timestamp)] failed to release ${new_version}: push master error"
+      cat $tmp_error_log
+      return 1
+    fi
+  fi
 
   git tag | grep "${new_version}" >>/dev/null 2>&1
   if [ "$?" = "0" ]; then
@@ -148,12 +160,14 @@ core() {
         return 1
       fi
 
-      log::info "[$(timestamp)] pushing version to master ..."
-      git push origin master >>/dev/null 2>$tmp_error_log
-      if [ "$?" != "0" ]; then
-        log::error "[$(timestamp)] failed to release ${new_version}: push master error"
-        cat $tmp_error_log
-        return 1
+      if [ "$is_first_release" != "true" ]; then
+        log::info "[$(timestamp)] pushing version to master ..."
+        git push origin master >>/dev/null 2>$tmp_error_log
+        if [ "$?" != "0" ]; then
+          log::error "[$(timestamp)] failed to release ${new_version}: push master error"
+          cat $tmp_error_log
+          return 1
+        fi
       fi
 
       log::success "[plugin][release] ${plugin_name} ${new_version}"
@@ -172,12 +186,14 @@ core() {
       return 1
     fi
 
-    log::info "[$(timestamp)] pushing version to master ..."
-    git push origin master >>/dev/null 2>$tmp_error_log
-    if [ "$?" != "0" ]; then
-      log::error "[$(timestamp)] failed to release ${new_version}: push master error"
-      cat $tmp_error_log
-      return 1
+    if [ "$is_first_release" != "true" ]; then
+      log::info "[$(timestamp)] pushing version to master ..."
+      git push origin master >>/dev/null 2>$tmp_error_log
+      if [ "$?" != "0" ]; then
+        log::error "[$(timestamp)] failed to release ${new_version}: push master error"
+        cat $tmp_error_log
+        return 1
+      fi
     fi
 
     log::success "[$(timestamp)] succeed to release($(color::green ${plugin_name}.${plugin_child_name})): $(color::green ${new_version})"
