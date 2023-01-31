@@ -46,10 +46,14 @@ depends() {
     # macos
     if [ "$(uname -s)" = "Darwin" ]; then
       if [ "$(has_command brew)" = "false" ]; then
-        # mirror: https://github.com/eryajf/Thanks-Mirror#homebrew
-        export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-        export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
-        export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+        if [ "$GITHUB_ACTIONS" = "true" ]; then
+          echo "in GitHub Actions, not necessary to change homebrew mirror"
+        else
+          # mirror: https://github.com/eryajf/Thanks-Mirror#homebrew
+          export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+          export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+          export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+        fi
 
         sudo curl -o- https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
       fi
