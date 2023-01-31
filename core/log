@@ -185,10 +185,19 @@ log::command() {
   # @TODO if use log command, donot record log, caused bug
   echo "$command_path" | grep "commands/_internal/log" >>/dev/null
   if [ "$?" = "0" ]; then
-    $command_path $command_args
+    if [ -x "$command_path" ]; then
+      $command_path $command_args
+    else
+      bash $command_path $command_args
+    fi
     exit_code=${PIPESTATUS[0]}
   else
-    $command_path $command_args # | tee -a $ZMICRO_LOG_COMMON_PATH
+    if [ -x "$command_path" ]; then
+      $command_path $command_args # | tee -a $ZMICRO_LOG_COMMON_PATH
+    else
+      bash $command_path $command_args
+    fi
+
     exit_code=${PIPESTATUS[0]}
     # echo "exit_code: $exit_code($command)"
   fi
