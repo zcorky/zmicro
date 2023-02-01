@@ -73,16 +73,17 @@ core() {
     sudo apk add tzdata
   fi
 
-  # ubuntu
-  which apt >>/dev/null 2>&1
-  if [ "$?" = "0" ]; then
-    # fix interactive mode
-    export DEBIAN_FRONTEND=noninteractive
-    # export TZ=Asia/Shanghai
-    # @TODO cannot add sudo
-    sudo apt install -y tzdata
-    # apt install -y tzdata
-  fi
+  # @TODO ubuntu tzdate will hang up
+  # # ubuntu
+  # which apt >>/dev/null 2>&1
+  # if [ "$?" = "0" ]; then
+  #   # fix interactive mode
+  #   export DEBIAN_FRONTEND=noninteractive
+  #   export TZ=Asia/Shanghai
+  #   # @TODO cannot add sudo
+  #   # sudo apt install -y tzdata
+  #   apt install -y tzdata
+  # fi
 
   # centos
   which yum >>/dev/null 2>&1
@@ -96,6 +97,17 @@ core() {
   #  https://www.cnblogs.com/flipped/p/15808681.html
   if [ "$(os::is_docker)" = "true" ]; then
     log::info "[$(timestamp)] configing in docker ..."
+
+    # ubuntu
+    which apt >>/dev/null 2>&1
+    if [ "$?" = "0" ]; then
+      # fix interactive mode
+      export DEBIAN_FRONTEND=noninteractive
+      export TZ=Asia/Shanghai
+      # @TODO cannot add sudo
+      # sudo apt install -y tzdata
+      apt install -y tzdata
+    fi
 
     if [ -f "/usr/share/zoneinfo/${TZ}" ]; then
       if [ ! -f "/etc/localtime" ]; then
