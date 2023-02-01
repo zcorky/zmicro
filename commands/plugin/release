@@ -196,6 +196,7 @@ core() {
       fi
     fi
 
+    log::info "[$(timestamp)] repository: $(git::repo_url)"
     log::success "[$(timestamp)] succeed to release($(color::green ${plugin_name}.${plugin_child_name})): $(color::green ${new_version})"
   fi
 }
