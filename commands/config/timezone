@@ -60,41 +60,42 @@ core() {
 
   # Mac OS ignore timezone
   if [ "$(os::is_macos)" = "true" ]; then
+    log::warn "[$(timestamp)] timezone not support MacOS current, ignore."
     return
   fi
 
+  # install tzdata
+  log::info "[$(timestamp)] installing tzdata ..."
+  # @TODO 兼容性不好，目前优先支持 alpine/ubuntu
+  # alpine
+  which apk >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sudo apk add tzdata
+  fi
+
+  # ubuntu
+  which apt >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    # fix interactive mode
+    export DEBIAN_FRONTEND=noninteractive
+    # export TZ=Asia/Shanghai
+    # @TODO cannot add sudo
+    sudo apt install -y tzdata
+    # apt install -y tzdata
+  fi
+
+  # centos
+  which yum >>/dev/null 2>&1
+  if [ "$?" = "0" ]; then
+    sudo yum install -y tzdata
+  fi
+
+  log::info "[$(timestamp)] configing timezone ..."
   # Set timezone
+  # @FIX TimeZone in Docker (alpine)
+  #  https://www.cnblogs.com/flipped/p/15808681.html
   if [ "$(os::is_docker)" = "true" ]; then
-    # @TODO 兼容性不好，目前优先支持 alpine/ubuntu
-
-    # @FIX TimeZone in Docker (alpine)
-    #  https://www.cnblogs.com/flipped/p/15808681.html
-    if [ ! -f "/usr/share/zoneinfo/${TZ}" ]; then
-      # alpine
-      which apk >>/dev/null 2>&1
-      if [ "$?" = "0" ]; then
-        sudo apk add tzdata
-      fi
-
-      # ubuntu
-      which apt >>/dev/null 2>&1
-      if [ "$?" = "0" ]; then
-        # fix interactive mode
-        export DEBIAN_FRONTEND=noninteractive
-        export TZ=Asia/Shanghai
-        # @TODO cannot add sudo
-        # sudo apt install -y tzdata
-        apt install -y tzdata
-      fi
-
-      # centos
-      which yum >>/dev/null 2>&1
-      if [ "$?" = "0" ]; then
-        sudo yum install -y tzdata
-      fi
-
-      # @TODO support more
-    fi
+    log::info "[$(timestamp)] configing in docker ..."
 
     if [ -f "/usr/share/zoneinfo/${TZ}" ]; then
       if [ ! -f "/etc/localtime" ]; then
@@ -133,10 +134,13 @@ core() {
     return
   fi
 
+  log::info "[$(timestamp)] checking is timezone set ..."
   if [ "$(is_timezone_seted $timezone)" = "true" ]; then
+    log::info "[$(timestamp)] found timezone setted, ignore."
     return
   fi
 
+  log::info "[$(timestamp)] set timezone to $timezone ..."
   sudo timedatectl set-timezone $timezone
   if [ "$?" != "0" ]; then
     log::error "[$(timestamp)][config] Failed to set timezone: $timezone"
