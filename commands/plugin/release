@@ -75,7 +75,9 @@ core() {
 
   # @TODO
   local project_path=$ZMICRO_PLUGINS_PATH/$plugin_name
+  local project_name="plugin.${plugin_name}"
   if [ -n "$plugin_child_name" ]; then
+    project_name="${plugin_name}.${plugin_child_name}"
     project_path=$project_path/${plugin_name}s/$plugin_child_name
   fi
 
@@ -197,7 +199,7 @@ core() {
     fi
 
     log::info "[$(timestamp)] repository: $(git::repo_url)"
-    log::success "[$(timestamp)] succeed to release($(color::green ${plugin_name}.${plugin_child_name})): $(color::green ${new_version})"
+    log::success "[$(timestamp)] succeed to release($(color::green ${project_name})): $(color::green ${new_version})"
   fi
 }
 
