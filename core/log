@@ -185,6 +185,7 @@ log::command() {
   # @TODO if use log command, donot record log, caused bug
   echo "$command_path" | grep "commands/_internal/log" >>/dev/null
   if [ "$?" = "0" ]; then
+    # log command
     if [ -x "$command_path" ]; then
       $command_path $command_args
     else
@@ -192,6 +193,17 @@ log::command() {
     fi
     exit_code=${PIPESTATUS[0]}
   else
+    # all command not log command
+
+    # @TODO alias
+    local parent_path=$(dirname $command_path)
+    local pparent_path=$(dirname $parent_path)
+    local last_second_command_part_name=${parent_path#$pparent_path/}
+    if [ "$last_second_command_part_name" = "_alias" ]; then
+      local alias_command_name=$(cat $command_path)
+      command_path=$pparent_path/$alias_command_name
+    fi
+
     if [ -x "$command_path" ]; then
       $command_path $command_args # | tee -a $ZMICRO_LOG_COMMON_PATH
     else

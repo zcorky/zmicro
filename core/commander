@@ -87,6 +87,12 @@ commander::has_command_path() {
     return 0
   fi
 
+  # 1.0.1 alias
+  local alias_base_path=$base_command_path/_alias
+  if commander::has_command_path_internal $alias_base_path $command; then
+    return 0
+  fi
+
   # 1.1 internal sub
   #   only for zmicro core, not plugin
   if [ "$base_command_path" = "$ZMICRO_COMMANDS_PATH" ]; then
@@ -191,6 +197,13 @@ commander::get_command_path() {
   local internal_base_path=$base_command_path/_internal
   if commander::has_command_path_internal $internal_base_path $command; then
     echo $(commander::get_command_path_internal $internal_base_path $command)
+    return 0
+  fi
+
+  # 1. alias
+  local alias_base_path=$base_command_path/_alias
+  if commander::has_command_path_internal $alias_base_path $command; then
+    echo $(commander::get_command_path_internal $alias_base_path $command)
     return 0
   fi
 
