@@ -201,7 +201,13 @@ log::command() {
     local last_second_command_part_name=${parent_path#$pparent_path/}
     if [ "$last_second_command_part_name" = "_alias" ]; then
       local alias_command_name=$(cat $command_path)
-      command_path=$pparent_path/$alias_command_name
+      # try commands/_internal/X
+      if [ -f "$pparent_path/_internal/$alias_command_name" ]; then
+        command_path=$pparent_path/_internal/$alias_command_name
+      else
+        # try commands/X
+        command_path=$pparent_path/$alias_command_name
+      fi
     fi
 
     if [ -x "$command_path" ]; then
