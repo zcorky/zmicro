@@ -61,8 +61,9 @@ initialize_ci() {
     # ignore github action because it already has docker cli
     echo "" >>/dev/null
   else
-    log::info "[$(timestamp)][ci] installing docker cli ..."
-    zmicro package install docker
+    # log::info "[$(timestamp)][ci] installing docker cli ..."
+    # zmicro package install docker
+    echo "do not auto install docker" >>/dev/null
   fi
 }
 
