@@ -163,7 +163,15 @@ env::get() {
   echo ${!key}
 }
 
+env::set() {
+  local key=$1
+  local value=$2
+  eval "export $key=\"$value\""
+}
+
 export -f env::get
+export -f env::set
+
 export -f env::load_core_utils
 
 export -f env::ensure_vars
