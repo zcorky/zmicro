@@ -56,54 +56,15 @@ jobs:
         with:
           fetch-depth: "0"
 
-      # - name: Docker meta
-      #   id: meta
-      #   uses: docker/metadata-action@v3
-      #   with:
-      #     # Custom Image: https://github.com/docker/metadata-action#inputs
-      #     # images: whatwewant/zmicro,ghcr.io/whatwewant/zmicro
-      #     images: whatwewant/zmicro
-      #     tags: |
-      #       type=ref,event=branch
-      #       type=semver,pattern=v{{version}}
-      #       type=semver,pattern=v{{major}}
-      #       type=semver,pattern=v{{major}}.{{minor}}
-
       - name: Docker Meta
+        uses: zmicro-design/action-build-docker-image-tags@v1
         id: meta
-        run: |
-          ACTION_IMAGE_NAME=$(echo $GITHUB_REPOSITORY | awk -F "/" '{print $2}')
-          IMAGE_VERSION=$(echo ${GITHUB_REF} | sed -e "s%refs/tags/%%g")
-          IMAGE_NAME=${ACTION_IMAGE_NAMESPACE}/${ACTION_IMAGE_NAME}
-          IMAGE_TAGS=$(zmicro fn tag::docker $IMAGE_NAME $IMAGE_VERSION)
-          echo "::set-output name=version::${IMAGE_VERSION}"
-          echo "::set-output name=name::${IMAGE_NAME}"
-          echo "::set-output name=tags::${IMAGE_TAGS}"
-        shell: bash
-        env:
-          ACTION_IMAGE_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
 
       - name: Show Docker Tags
         run: |
           echo "Docker Tags: ${{ steps.meta.outputs.tags }}"
-
-      - name: Setup Docker
-        uses: zmicro-design/action-setup-docker@v1
-
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # - name: Login to GHCR
-      #   if: github.event_name != 'pull_request'
-      #   uses: docker/login-action@v1
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.repository_owner }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         # uses: docker/build-push-action@v2
@@ -118,3 +79,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           # labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
+          #
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
