@@ -2,7 +2,7 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro login docker <registry> <username> <password>"
+  echo "  zmicro login docker <username> <password> <registry>"
 }
 
 core() {
