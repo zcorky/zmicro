@@ -57,7 +57,7 @@ jobs:
           fetch-depth: "0"
 
       - name: Docker Meta
-        uses: zmicro-design/action-build-docker-image-tags@v1
+        uses: zmicro-design/action-docker-image-meta@v1
         id: meta
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
