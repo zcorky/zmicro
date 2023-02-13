@@ -130,6 +130,24 @@ core() {
     cd $path
     code .
     ;;
+  desktop)
+    local path=$ZMICRO_HOME/plugins/${where}
+    if [ ! -d $path ]; then
+      log::error "desktop(${where}) not found (2)"
+      exit 1
+    fi
+
+    if [ -n "$name" ]; then
+      path=$path/${where}s/$name
+    fi
+    if [ ! -d $path ]; then
+      log::error "${where}(${name}) not found"
+      exit 1
+    fi
+
+    cd $path
+    code .
+    ;;
   *)
     # fallback to plugin
     name=$where
