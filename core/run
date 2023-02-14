@@ -248,8 +248,14 @@ run::zx() {
   zx "$@"
 }
 
+run::nodejs() {
+  run::js "$@"
+}
+
 export -f run
 export -f run::js
 export -f run::deno
 export -f run::go
 export -f run::zx
+
+export -f run::nodejs

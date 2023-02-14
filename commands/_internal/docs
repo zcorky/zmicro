@@ -2,7 +2,11 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro docs <namespace | method> <name>"
+  echo "  zmicro docs <module | method> <name>"
+  echo ""
+  echo "Examples:"
+  echo "  zmicro docs module plugin"
+  echo "  zmicro docs method plugin::run_nodejs"
 }
 
 core() {
@@ -15,8 +19,8 @@ core() {
   local name=$2
 
   case $module in
-  namespace)
-    docs::namespace $name
+  module)
+    docs::module $name
     ;;
   method)
     docs::method $name
