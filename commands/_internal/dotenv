@@ -1,0 +1,26 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro dotenv <command> <args...>"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
+    help
+    exit 0
+  fi
+
+  dotenv::try_load
+
+  # local command=$1
+  # local args="${@:2}"
+
+  eval "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
