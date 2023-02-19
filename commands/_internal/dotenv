@@ -13,10 +13,19 @@ core() {
 
   dotenv::try_load
 
+  local is_forever=false
+  if [ "$FOREVER" = "true" ] || [ "$SUPERVISOR" = "true" ]; then
+    is_forever=true
+  fi
+
   # local command=$1
   # local args="${@:2}"
 
-  eval "$@"
+  if [ "$is_forever" = "true" ]; then
+    os::forever "$@"
+  else
+    eval "$@"
+  fi
 }
 
 run() {

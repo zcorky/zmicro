@@ -15,11 +15,20 @@ core() {
 
   local shell_script=$1
   local shell_script_args=${@:2}
+  local is_forever=false
+  if [ "$FOREVER" = "true" ] || [ "$SUPERVISOR" = "true" ]; then
+    is_forever=true
+  fi
 
   command -v $shell_script >>/dev/null 2>&1
   if [ $? -eq 0 ]; then
     local built_in_command=$shell_script
-    $built_in_command $shell_script_args
+
+    if [ "$is_forever" = "true" ]; then
+      os::forever $built_in_command $shell_script_args
+    else
+      $built_in_command $shell_script_args
+    fi
     return
   fi
 
@@ -35,7 +44,11 @@ core() {
   set +e
 
   if [ -f "$shell_script" ]; then
-    bash $shell_script $shell_script_args
+    if [ "$is_forever" = "true" ]; then
+      os::forever bash $shell_script $shell_script_args
+    else
+      bash $shell_script $shell_script_args
+    fi
     return
   fi
 
