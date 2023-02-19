@@ -11,6 +11,8 @@ core() {
     exit 0
   fi
 
+  dotenv::try_load
+
   local shell_script=$1
   local shell_script_args=${@:2}
 
@@ -44,7 +46,7 @@ core() {
 }
 
 run() {
-  core $@
+  core "$@"
 }
 
-run $@
+run "$@"
