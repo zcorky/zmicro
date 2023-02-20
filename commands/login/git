@@ -13,7 +13,7 @@ core() {
 
   login::git $@
   if [ "$?" != "0" ]; then
-    log:error "failed to login git"
+    log::error "failed to login git"
   else
     log::success "success to login git"
   fi
