@@ -39,6 +39,8 @@ core() {
 
   local origin_version=$(version::zmicro)
   local default_new_version=$(version::next $origin_version)
+
+  local current_branch=$(git::branch)
   local tmp_error_log=$(os::tmp_file)
 
   local is_valid="false"
@@ -64,7 +66,14 @@ core() {
     rm mod-e >>/dev/null 2>&1
   fi
 
-  git pull origin master
+  log::info "[$(timestamp)] start to fetch remote branch: $current_branch ..."
+  git pull origin $current_branch >>/dev/null 2>$tmp_error_log
+  if [ "$?" != "0" ]; then
+    log::error "[$(timestamp)] failed to fetch remote branch: $current_branch."
+    cat $tmp_error_log
+    return 1
+  fi
+
   git add mod
   git commit -m "chore(release): bumped version to ${new_version}"
   git tag ${new_version} -f
@@ -77,9 +86,7 @@ core() {
     return 1
   fi
 
-  local current_branch=$(git::branch)
   log::info "[$(timestamp)] pushing version to branch: ${current_branch} ..."
-  git push origin $current_branch
   git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
   if [ "$?" != "0" ]; then
     log::error "[$(timestamp)] failed to release ${new_version}: push master error"
