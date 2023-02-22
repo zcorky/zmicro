@@ -88,7 +88,7 @@ core() {
   fi
 
   log::info "[$(timestamp)] repository: $(git::repo_url)"
-  log::success "[$(timestamp)] succeed to release($(color::green ${plugin_name})): $(color::green ${new_version})"
+  log::success "[$(timestamp)] succeed to release($(color::green zmicro)): $(color::green ${new_version})"
 }
 
 run() {
