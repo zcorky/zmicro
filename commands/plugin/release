@@ -23,6 +23,8 @@ core() {
   local plugin_type=plugin
   local plugin_name=$1
   local plugin_child_name=$2
+  local current_branch=$(git::branch)
+
   if [ "$plugin_name" = "" ]; then
     log::error "plugin name is required"
     exit 1
@@ -117,12 +119,12 @@ core() {
 
   local is_first_release=false
   local tmp_error_log=$(os::tmp_file)
-  log::info "[$(timestamp)] checking with remote master ..."
-  if [ "$(git::has_branch master)" = "true" ]; then
-    log::info "[$(timestamp)] merging remote master ..."
-    git pull origin master >>/dev/null 2>$tmp_error_log
+  log::info "[$(timestamp)] checking with remote ${current_branch} ..."
+  if [ "$(git::has_branch ${current_branch})" = "true" ]; then
+    log::info "[$(timestamp)] merging remote ${current_branch} ..."
+    git pull origin ${current_branch} >>/dev/null 2>$tmp_error_log
     if [ "$?" != "0" ]; then
-      log::error "[$(timestamp)] failed to merge remote master"
+      log::error "[$(timestamp)] failed to merge remote ${current_branch}"
       cat $tmp_error_log
       return 1
     fi
@@ -136,10 +138,10 @@ core() {
   git commit -m "chore(release): bumped version to ${new_version}" >>/dev/null
 
   if [ "$is_first_release" = "true" ]; then
-    log::info "[$(timestamp)] pushing version to master ..."
-    git push origin master >>/dev/null 2>$tmp_error_log
+    log::info "[$(timestamp)] pushing version to branch: ${current_branch} ..."
+    git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
     if [ "$?" != "0" ]; then
-      log::error "[$(timestamp)] failed to release ${new_version}: push master error"
+      log::error "[$(timestamp)] failed to release ${new_version}: push ${current_branch} error"
       cat $tmp_error_log
       return 1
     fi
@@ -154,7 +156,7 @@ core() {
     if [ "$action" = "Override" ]; then
       git tag ${new_version} -f
 
-      log::info "[$(timestamp)] pushing version to tag ..."
+      log::info "[$(timestamp)] pushing version to tag: ${new_version} ..."
       git push origin ${new_version} -f >>/dev/null 2>$tmp_error_log
       if [ "$?" != "0" ]; then
         log::error "[$(timestamp)] failed to release ${new_version}: push tag error"
@@ -163,10 +165,10 @@ core() {
       fi
 
       if [ "$is_first_release" != "true" ]; then
-        log::info "[$(timestamp)] pushing version to master ..."
-        git push origin master >>/dev/null 2>$tmp_error_log
+        log::info "[$(timestamp)] pushing version to branch: ${current_branch} ..."
+        git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
         if [ "$?" != "0" ]; then
-          log::error "[$(timestamp)] failed to release ${new_version}: push master error"
+          log::error "[$(timestamp)] failed to release ${new_version}: push ${current_branch} error"
           cat $tmp_error_log
           return 1
         fi
@@ -174,13 +176,13 @@ core() {
 
       log::success "[plugin][release] ${plugin_name} ${new_version}"
     else
-      git push origin master >>/dev/null
+      git push origin ${current_branch} >>/dev/null
       log::success "[plugin][release] cancel publish version (${new_version})"
     fi
   else
     git tag ${new_version} -f
 
-    log::info "[$(timestamp)] pushing version to tag ..."
+    log::info "[$(timestamp)] pushing version to tag: ${new_version} ..."
     git push origin ${new_version} -f >>/dev/null 2>$tmp_error_log
     if [ "$?" != "0" ]; then
       log::error "[$(timestamp)] failed to release ${new_version}: push tag error"
@@ -189,10 +191,10 @@ core() {
     fi
 
     if [ "$is_first_release" != "true" ]; then
-      log::info "[$(timestamp)] pushing version to master ..."
-      git push origin master >>/dev/null 2>$tmp_error_log
+      log::info "[$(timestamp)] pushing version to branch: ${current_branch} ..."
+      git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
       if [ "$?" != "0" ]; then
-        log::error "[$(timestamp)] failed to release ${new_version}: push master error"
+        log::error "[$(timestamp)] failed to release ${new_version}: push ${current_branch} error"
         cat $tmp_error_log
         return 1
       fi
