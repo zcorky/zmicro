@@ -11,7 +11,24 @@ core() {
     exit 0
   fi
 
-  login::git $@
+  local registry=$1
+  local username=$2
+  local password=$3
+
+  if [ -z "$registry" ]; then
+    log::error "[$(timestamp)] registry is required"
+    return 1
+  fi
+
+  if [ -z "$username" ]; then
+    os::inquirer username "text" "git username"
+  fi
+
+  if [ -z "$password" ]; then
+    os::inquirer password "text" "git password"
+  fi
+
+  login::git $registry $username $password
   if [ "$?" != "0" ]; then
     log::error "failed to login git"
   else
