@@ -25,7 +25,16 @@ export PATH=$ZMICRO_HOME/bin:$PATH
 # fi
 
 # common
-export PATH=$PATH:/usr/local/bin:/usr/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/sbin:/bin:/sbin
+
+# add home brew path
+command -v brew >>/dev/null 2>&1
+if [ $? -ne 0 ]; then
+  HOMEBREW_HOME=$(brew --prefix)
+  export PATH=$PATH:$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin
+fi
+
+# fallback
+export PATH=$PATH:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin
 
 # @TODO fix sudo in docker
 command -v sudo >>/dev/null 2>&1
