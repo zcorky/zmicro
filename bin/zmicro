@@ -28,7 +28,7 @@ export PATH=$ZMICRO_HOME/bin:$PATH
 
 # add home brew path
 command -v brew >>/dev/null 2>&1
-if [ $? -ne 0 ]; then
+if [ "$?" = "0" ]; then
   HOMEBREW_HOME=$(brew --prefix)
   export PATH=$PATH:$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin
 fi
