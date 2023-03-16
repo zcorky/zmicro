@@ -23,3 +23,5 @@ RUN   curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | 
 RUN   zmicro config timezone
 
 RUN   zmicro config locale
+
+RUN   zmicro package install gzterminal
