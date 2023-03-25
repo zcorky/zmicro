@@ -10,6 +10,8 @@ RUN   apt update \
   && apt install -y curl wget git sudo systemd make gcc g++ \
   && rm -rf /var/lib/apt/lists/*
 
+ENV TZ="Asia/Shanghai"
+
 ARG   VERSION
 
 ENV   ZMICRO_VERSION=${VERSION}
@@ -23,6 +25,10 @@ RUN   curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | 
 RUN   zmicro config timezone
 
 RUN   zmicro config locale
+
+RUN   zmicro package install gzfly
+
+RUN   zmicro package install gzssh
 
 RUN   zmicro package install gzterminal
 
