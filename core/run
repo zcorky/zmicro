@@ -123,7 +123,7 @@ run::js() {
   fi
 
   if [ "$(os::is_nodejs_installed)" = "false" ]; then
-    log::info "[$(timestamps)] nodejs is not installed, installing ..."
+    log::info "[$(timestamp)] nodejs is not installed, installing ..."
     zpackage install nodejs
   fi
 
@@ -162,7 +162,7 @@ run::deno() {
   }
 
   if [ "$(is_deno_installed)" = "false" ]; then
-    log::info "[$(timestamps)] deno is not installed, installing ..."
+    log::info "[$(timestamp)] deno is not installed, installing ..."
     zpackage install deno
   fi
 
@@ -200,7 +200,7 @@ run::go() {
   }
 
   if [ "$(is_go_installed)" = "false" ]; then
-    log::info "[$(timestamps)] go is not installed, installing ..."
+    log::info "[$(timestamp)] go is not installed, installing ..."
     zpackage install go
   fi
 
@@ -230,7 +230,7 @@ run::zx() {
   fi
 
   if [ "$(os::is_nodejs_installed)" = "false" ]; then
-    log::info "[$(timestamps)] nodejs is not installed, installing ..."
+    log::info "[$(timestamp)] nodejs is not installed, installing ..."
     zpackage install nodejs
   fi
 
@@ -240,7 +240,7 @@ run::zx() {
   fi
 
   if [ "$(os::is_zx_installed)" = "false" ]; then
-    log::info "[$(timestamps)] zx is not installed, installing ..."
+    log::info "[$(timestamp)] zx is not installed, installing ..."
     pm::npm i -g zx
   fi
 

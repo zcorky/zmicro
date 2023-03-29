@@ -283,8 +283,8 @@ log::version() {
 }
 
 log::plugin_update_lock() {
-  # format: plugin_name#timestamps
-  # example: daemon#timestamps
+  # format: plugin_name#timestamp
+  # example: daemon#timestamp
   if [ -z "$plugin_name" ]; then
     log::error "[log::plugin_update_lock] plugin_name is required"
     exit 1
@@ -350,10 +350,10 @@ log::clean() {
   fi
 
   local LOG_CLEAN_BACKUP_FILE=${LOG_CLEAN_DIR}/backup.$(date +%Y-%m-%d_%H_%M_%S).gz
-  log::debug "[timestamps][log::clean] clean logs dir: ${ZMICRO_LOG_DIR}"
+  log::debug "[$(timestamp)][log::clean] clean logs dir: ${ZMICRO_LOG_DIR}"
 
   # backup
-  log::debug "[timestamps][log::clean] backup ${LOG_CLEAN_BACKUP_FILE}"
+  log::debug "[$(timestamp)][log::clean] backup ${LOG_CLEAN_BACKUP_FILE}"
   tar -zcvf ${LOG_CLEAN_BACKUP_FILE} --exclude '*.gz' ${LOG_CLEAN_DIR} >>/dev/null 2>&1
   if [ -f "$LOG_CLEAN_BACKUP_FILE" ]; then
     # fix permissions
