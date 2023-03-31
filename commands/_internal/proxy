@@ -2,7 +2,7 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro proxy <ip>"
+  echo "  zmicro proxy <args...>"
   echo ""
   echo "Action:"
   echo "  set           Set proxy config"
@@ -15,7 +15,9 @@ help() {
   echo "  activate      Activate proxy, same as apply"
   echo "  deactivate    Unset proxy, same as exit"
   echo ""
-  echo "  status         Get status of proxy"
+  echo "  status        Get status of proxy"
+  echo ""
+  echo "  exec          Run command with proxy"
   echo ""
   echo "Example:"
   echo "    zmicro proxy get"
@@ -23,6 +25,8 @@ help() {
   echo "    zmicro proxy activate"
   echo "    zmicro proxy deactivate"
   echo "    zmicro proxy set 127.0.0.1 17890"
+  echo "    zmicro proxy exec curl -I https://www.google.com"
+  echo "    zmicro proxy curl -I https://www.google.com"
 }
 
 core() {
@@ -122,40 +126,48 @@ core() {
       echo "not in proxy"
     fi
     ;;
+  exec)
+    shift
+    run_command_with_proxy "$@"
+    ;;
   *)
-    # proxy command
-    local command=$1
-    local args=${@:2}
-    if [ -z "$command" ]; then
-      log::error "[$(timestamp)] command is required"
-      exit 1
-    fi
+    run_command_with_proxy "$@"
+    ;;
+  esac
+}
 
-    which $command >>/dev/null 2>/dev/null
-    if [ "$?" != "0" ]; then
-      log::error "[$(timestamp)] command($command) not found"
-      exit 1
-    fi
+run_command_with_proxy() {
+  # proxy command
+  local command=$1
+  local args=${@:2}
+  if [ -z "$command" ]; then
+    log::error "[$(timestamp)] command is required"
+    exit 1
+  fi
 
-    # use smart proxy
-    net::using_smart_proxy
+  which $command >>/dev/null 2>/dev/null
+  if [ "$?" != "0" ]; then
+    log::error "[$(timestamp)] command($command) not found"
+    exit 1
+  fi
 
-    # log
-    log::debug "Run command with Proxy($PROXY_IP:$PROXY_PORT) ..."
+  # use smart proxy
+  net::using_smart_proxy
 
-    # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
-    export LC_CTYPE=en_US.UTF-8
-    export LC_ALL=en_US.UTF-8
-    export LANG=en_US.UTF-8
+  # log
+  log::debug "Run command with Proxy($PROXY_IP:$PROXY_PORT) ..."
 
-    case $command in
-    ssh)
-      os::ssh $args
-      ;;
-    *)
-      exec $command $args
-      ;;
-    esac
+  # fix manpath: can't set the locale; make sure $LC_* and $LANG are correct
+  export LC_CTYPE=en_US.UTF-8
+  export LC_ALL=en_US.UTF-8
+  export LANG=en_US.UTF-8
+
+  case $command in
+  ssh)
+    os::ssh $args
+    ;;
+  *)
+    exec $command $args
     ;;
   esac
 }
