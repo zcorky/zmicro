@@ -51,8 +51,15 @@ core() {
 
     local plugin_path=$ZMICRO_HOME/plugins/$name
     if [ ! -d $plugin_path ]; then
-      log::error "plugin (${name}) not found"
-      exit 1
+      # log::error "plugin (${name}) not found"
+      # exit 1
+
+      log::info "plugin (${name}) not found, downloading ..."
+      zmicro plugin download $name
+      if [ "$?" != "0" ]; then
+        log::error "plugin (${name}) download failed"
+        exit 1
+      fi
     fi
 
     cd $plugin_path
@@ -69,8 +76,14 @@ core() {
       path=$path/${where}s/$name
     fi
     if [ ! -d $path ]; then
-      log::error "${where}(${name}) not found"
-      exit 1
+      # log::error "${where}(${name}) not found"
+      # exit 1
+      log::info "${where}(${name}) not found, downloading ..."
+      zmicro service download $name
+      if [ "$?" != "0" ]; then
+        log::error "service (${name}) download failed"
+        exit 1
+      fi
     fi
 
     cd $path
@@ -87,8 +100,15 @@ core() {
       path=$path/${where}s/$name
     fi
     if [ ! -d $path ]; then
-      log::error "${where}(${name}) not found"
-      exit 1
+      # log::error "${where}(${name}) not found"
+      # exit 1
+
+      log::info "${where}(${name}) not found, downloading ..."
+      zmicro package download $name
+      if [ "$?" != "0" ]; then
+        log::error "package (${name}) download failed"
+        exit 1
+      fi
     fi
 
     cd $path
@@ -105,8 +125,15 @@ core() {
       path=$path/${where}s/$name
     fi
     if [ ! -d $path ]; then
-      log::error "${where}(${name}) not found"
-      exit 1
+      # log::error "${where}(${name}) not found"
+      # exit 1
+
+      log::info "${where}(${name}) not found, downloading ..."
+      zmicro template download $name
+      if [ "$?" != "0" ]; then
+        log::error "template (${name}) download failed"
+        exit 1
+      fi
     fi
 
     cd $path
@@ -123,8 +150,15 @@ core() {
       path=$path/${where}s/$name
     fi
     if [ ! -d $path ]; then
-      log::error "${where}(${name}) not found"
-      exit 1
+      # log::error "${where}(${name}) not found"
+      # exit 1
+
+      log::info "${where}(${name}) not found, downloading ..."
+      zmicro action download $name
+      if [ "$?" != "0" ]; then
+        log::error "action (${name}) download failed"
+        exit 1
+      fi
     fi
 
     cd $path
@@ -141,8 +175,15 @@ core() {
       path=$path/${where}s/$name
     fi
     if [ ! -d $path ]; then
-      log::error "${where}(${name}) not found"
-      exit 1
+      # log::error "${where}(${name}) not found"
+      # exit 1
+
+      log::info "${where}(${name}) not found, downloading ..."
+      zmicro desktop download $name
+      if [ "$?" != "0" ]; then
+        log::error "desktop (${name}) download failed"
+        exit 1
+      fi
     fi
 
     cd $path
@@ -159,8 +200,15 @@ core() {
 
     local plugin_path=$ZMICRO_HOME/plugins/$name
     if [ ! -d $plugin_path ]; then
-      log::error "plugin (${name}) not found (3)"
-      exit 1
+      # log::error "plugin (${name}) not found (3)"
+      # exit 1
+
+      log::info "plugin (${name}) not found, downloading ..."
+      zmicro plugin download $name
+      if [ "$?" != "0" ]; then
+        log::error "plugin (${name}) download failed"
+        exit 1
+      fi
     fi
 
     cd $plugin_path
