@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Forever run command"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro forever <command ...>"
+}
+
+core() {
+  os::forever "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
