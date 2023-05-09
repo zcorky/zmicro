@@ -75,9 +75,6 @@ update_zmicro() {
   # @TODO Ensure Global RC Created
   config::ensure_global_rc
 
-  # login notify check
-  notify::login_register_check >/dev/null 2>&1 &
-
   # @TODO add auto update
   if [ "$CI" != "true" ]; then
     zmicro auto update >/dev/null 2>&1 &
