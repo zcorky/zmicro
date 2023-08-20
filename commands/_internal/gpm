@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Smart GPM with Proxy"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro gpm <args ...>"
+}
+
+core() {
+  os::gpm "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
