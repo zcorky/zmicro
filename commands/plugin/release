@@ -133,7 +133,7 @@ core() {
   log::info "[$(timestamp)] checking with remote ${current_branch} ..."
   if [ "$(git::has_branch ${current_branch})" = "true" ]; then
     log::info "[$(timestamp)] merging remote ${current_branch} ..."
-    git pull origin ${current_branch} >>/dev/null 2>$tmp_error_log
+    os::git pull origin ${current_branch} >>/dev/null 2>$tmp_error_log
     if [ "$?" != "0" ]; then
       log::error "[$(timestamp)] failed to merge remote ${current_branch}"
       cat $tmp_error_log
@@ -150,7 +150,7 @@ core() {
 
   if [ "$is_first_release" = "true" ]; then
     log::info "[$(timestamp)] pushing version to branch: ${current_branch} ..."
-    git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
+    os::git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
     if [ "$?" != "0" ]; then
       log::error "[$(timestamp)] failed to release ${new_version}: push ${current_branch} error"
       cat $tmp_error_log
@@ -168,7 +168,7 @@ core() {
       git tag ${new_version} -f
 
       log::info "[$(timestamp)] pushing version to tag: ${new_version} ..."
-      git push origin ${new_version} -f >>/dev/null 2>$tmp_error_log
+      os::git push origin ${new_version} -f >>/dev/null 2>$tmp_error_log
       if [ "$?" != "0" ]; then
         log::error "[$(timestamp)] failed to release ${new_version}: push tag error"
         cat $tmp_error_log
@@ -177,7 +177,7 @@ core() {
 
       if [ "$is_first_release" != "true" ]; then
         log::info "[$(timestamp)] pushing version to branch: ${current_branch} ..."
-        git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
+        os::git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
         if [ "$?" != "0" ]; then
           log::error "[$(timestamp)] failed to release ${new_version}: push ${current_branch} error"
           cat $tmp_error_log
@@ -187,14 +187,14 @@ core() {
 
       log::success "[plugin][release] ${plugin_name} ${new_version}"
     else
-      git push origin ${current_branch} >>/dev/null
+      os::git push origin ${current_branch} >>/dev/null
       log::success "[plugin][release] cancel publish version (${new_version})"
     fi
   else
     git tag ${new_version} -f
 
     log::info "[$(timestamp)] pushing version to tag: ${new_version} ..."
-    git push origin ${new_version} -f >>/dev/null 2>$tmp_error_log
+    os::git push origin ${new_version} -f >>/dev/null 2>$tmp_error_log
     if [ "$?" != "0" ]; then
       log::error "[$(timestamp)] failed to release ${new_version}: push tag error"
       cat $tmp_error_log
@@ -203,7 +203,7 @@ core() {
 
     if [ "$is_first_release" != "true" ]; then
       log::info "[$(timestamp)] pushing version to branch: ${current_branch} ..."
-      git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
+      os::git push origin ${current_branch} >>/dev/null 2>$tmp_error_log
       if [ "$?" != "0" ]; then
         log::error "[$(timestamp)] failed to release ${new_version}: push ${current_branch} error"
         cat $tmp_error_log
