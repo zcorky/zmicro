@@ -80,7 +80,18 @@ core() {
   local project_name="plugin.${plugin_name}"
   if [ -n "$plugin_child_name" ]; then
     project_name="${plugin_name}.${plugin_child_name}"
-    project_path=$project_path/${plugin_name}s/$plugin_child_name
+    local project_plugin_path=$project_path/${plugin_name}s/$plugin_child_name
+
+    if [ ! -d "$project_plugin_path" ]; then
+      project_plugin_path=$project_path/plugins/$plugin_child_name
+
+      if [ ! -d "$project_plugin_path" ]; then
+        log::error "[$(timestamp)][service::release] plugin($plugin_child_name, path: $project_path) for $plugin_name not found"
+        exit 1
+      fi
+    fi
+
+    project_path=$project_plugin_path
   fi
 
   # cd to project path
