@@ -20,6 +20,7 @@ if [ $? -ne 0 ]; then
   export -f tput
 fi
 
+IS_PM_SOURCE_UPDATED=false
 CHOWN_USER=$CHOWN_USER
 
 # fix env CHOWN_USER not found
@@ -67,6 +68,11 @@ depends() {
 
     # ubuntu
     if [ "$(has_command apt)" = "true" ]; then
+      if [ "$IS_PM_SOURCE_UPDATED" = "false" ]; then
+        IS_PM_SOURCE_UPDATED=true
+        sudo apt update -y
+      fi
+
       sudo apt install -y $cli
       if [ "$?" != "0" ]; then
         exit 1
@@ -76,6 +82,11 @@ depends() {
 
     # debian
     if [ "$(has_command apt-get)" = "true" ]; then
+      if [ "$IS_PM_SOURCE_UPDATED" = "false" ]; then
+        IS_PM_SOURCE_UPDATED=true
+        sudo apt-get update -y
+      fi
+
       sudo apt-get install -y $cli
       if [ "$?" != "0" ]; then
         exit 1
@@ -85,6 +96,11 @@ depends() {
 
     # centos
     if [ "$(has_command yum)" = "true" ]; then
+      if [ "$IS_PM_SOURCE_UPDATED" = "false" ]; then
+        IS_PM_SOURCE_UPDATED=true
+        sudo yum update -y
+      fi
+
       sudo yum install -y $cli
       if [ "$?" != "0" ]; then
         exit 1
@@ -94,6 +110,11 @@ depends() {
 
     # alpine
     if [ "$(has_command apk)" = "true" ]; then
+      if [ "$IS_PM_SOURCE_UPDATED" = "false" ]; then
+        IS_PM_SOURCE_UPDATED=true
+        sudo apk update
+      fi
+
       sudo apk add $cli
       if [ "$?" != "0" ]; then
         exit 1
