@@ -5,6 +5,9 @@
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell/76171
 # http://www.ruanyifeng.com/blog/2017/11/bash-set.html
 
+# @TODO fix HOME is empty
+export HOME=${HOME:-"/root"}
+
 export ZMICRO_HOME=${ZMICRO_HOME:-"/usr/local/lib/zmicro"}
 
 # @FIX cron command not found
