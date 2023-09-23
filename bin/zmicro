@@ -105,6 +105,12 @@ log::clean_check # & >> /dev/null 2>&1
 #   $ZMICRO_COMMANDS_PATH/_internal/init | tee -a $ZMICRO_LOG_COMMON_PATH
 # fi
 
+if [ "$1" = "-c" ]; then
+  # bash -c "${@:2}"
+  eval "${@:2}"
+  exit $?
+fi
+
 # @TODO
 #  1. AS A Executor: #!/usr/bin/env zmicro
 #  2. Execute Local Script: zmicro ./xxx.sh
