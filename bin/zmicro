@@ -119,5 +119,5 @@ echo $@ | grep "^/" >/dev/null
 if [ "$?" = "0" ]; then
   bash $@
 else
-  run $ZMICRO_COMMANDS_PATH $ZMICRO_PLUGINS_PATH $@
+  run $ZMICRO_COMMANDS_PATH "$@"
 fi

@@ -21,12 +21,12 @@ core() {
     exit 1
   fi
 
-  plugin::run $plugin_name $plugin_command
+  plugin::run $plugin_name "$plugin_command"
 }
 
 # @TODO donot override core/run
 ::run() {
-  core $@
+  core "$@"
 }
 
-::run $@
+::run "$@"

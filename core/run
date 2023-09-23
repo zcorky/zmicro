@@ -2,104 +2,51 @@
 
 run() {
   local base_command_path=$1
-  local base_plugin_get_path=$2
-  local command=$3
-  local sub_command=$4
+  local command=$2
+  local sub_command=$3
 
   # register plugins commands
-  # plugin::register_all $base_plugin_get_path
+  # plugin::register_all
 
   log::debug ""
   log::debug "[$(timestamp)][command] base command path: $base_command_path"
-  log::debug "[$(timestamp)][command] run: ${@:3}"
+  log::debug "[$(timestamp)][command] run: ${@:2}"
   log::debug "[$(timestamp)][command]"
 
-  # Use Help Command
-  #   if command is sub command, handle help by sub command
-  if [ ! -f "$ZMICRO_HOME/bin/sub/$command" ] && [ "$sub_command" = "help" ]; then
-    help $base_command_path $command ${@:4} # $sub_command
+  if [ -z "$2" ] || [ "$2" = "help" ] || [ "$2" = "--help" ]; then
+    run::help "$1" "" ""
     exit 0
-  fi
-
-  # @TODO help new
-  local command_path_for_help=$(array::join / ${@:3})
-  if [ -d "$ZMICRO_USER_BIN_PATH/$command_path_for_help" ]; then
-    help::list $ZMICRO_USER_BIN_PATH/$command_path_for_help ${@:3}
-    exit 1
-  elif [ -d "$ZMICRO_SUB_BIN_PATH/$command_path_for_help" ]; then
-    help::list $ZMICRO_SUB_BIN_PATH/$command_path_for_help ${@:3}
-    exit 1
-  fi
-
-  # command_path=$(commander::get_command_path $@)
-  # if [ "$?" != "0" ]; then
-  if ! commander::has_command_path "$@"; then
-    local commands=${@:3}
-    # DEBUG
-    log::debug "[$(timestamp)][command]"
-    log::debug "[$(timestamp)][command] command: $command - $commands"
-
-    # zmicro -v
-    if [ "$command" = "-v" ]; then
-      zmicro version
-      exit 0
-    fi
-
-    local last_arg=$(array::last_element $commands)
-    if [ "$last_arg" = "-h" ] || [ "$last_arg" = "--help" ]; then
-      help $base_command_path $command ${@:4} # $sub_command
-      exit 0
-    fi
-
-    # Help
-    if [ "$command" != "" ]; then
-      if [ "$commands" != "-h" ] && [ "$commands" != "--help" ]; then
-        local package_name=$(echo $commands | awk -F ' ' '{print $1}')
-
-        # is directory, run help
-        local command_full_path=$base_command_path
-        for command in $commands; do
-          command_full_path=$command_full_path/$command
-        done
-        if [ -d $command_full_path ]; then
-          help $base_command_path $command ${@:4} # $sub_command
-          exit 1
-        fi
-
-        # avoid dead loop
-        if [ -z "$INSTALL_PACKAGE_FROM" ]; then
-          if $(zmicro metadata has package $package_name); then
-            log::info "[$(timestamp)][command] find package: $package_name, installing ..."
-            zmicro package install $package_name
-            log::success "[$(timestamp)][command] successfully install: $package_name, please try again."
-
-            export INSTALL_PACKAGE_FROM=NO_SUCH_COMMAND
-            run "$@"
-            return
-          fi
-        fi
-
-        # compitable pplugin
-        if [ "$(pplugin::has $command)" = "true" ]; then
-          pplugin::help $command
-          exit 1
-        fi
-
-        echo -e "No such command: $(color::red $commands). use --help for help" | tee -a $ZMICRO_LOG_ERROR_PATH
-        exit 1
-      fi
-    fi
-
-    help $base_command_path $commands
-    exit 1
   fi
 
   # Get Command
   log::debug "[$(timestamp)][command]"
-  log::debug "[$(timestamp)][command] get command path start ..."
-  command_path=$(commander::get_command_path "$@")
+  log::debug "[$(timestamp)][command] get command path start: $@ ..."
+  local command_path_with_pos=$(commander::get_command_path "$@")
+  if [ -z "$command_path_with_pos" ]; then
+    echo -e "No such command(1): $(color::red ${@:2}). use --help for help"
+    exit 1
+  fi
 
-  log::command "$command_path"
+  local command_dir=$(echo $command_path_with_pos | awk -F ':' '{print $1}')
+  local command_name=$(echo $command_path_with_pos | awk -F ':' '{print $2}')
+  local command_pos=$(echo $command_path_with_pos | awk -F ':' '{print $3}')
+
+  local command_raw=${@:2:$command_pos}
+  local command_args=${@:$command_pos}
+
+  log::debug "command_path_with_pos: $command_path_with_pos"
+  log::debug "command_dir: => $command_dir"
+  log::debug "command_name: => $command_name"
+  log::debug "command_args: => $command_args (pos: $command_pos)"
+
+  if [ -z "$command_name" ]; then
+    run::help "$command_dir" "$command_name" "$command_raw"
+    exit 1
+  fi
+
+  $command_dir/$command_name "$command_args"
+
+  # log::command "$command_path"
 }
 
 run::js() {
@@ -255,7 +202,42 @@ run::nodejs() {
   run::js "$@"
 }
 
+run::help() {
+  local command_dir=$1
+  local command_name=$2
+  local command_raw=$3
+
+  if [ -f "$command_dir/_help" ]; then
+    $command_dir/_help
+    exit 0
+  fi
+
+  if [ -f "$command_dir/help" ]; then
+    $command_dir/help
+    exit 0
+  fi
+
+  echo -e "No such command(2): $(color::red ${command_raw})\n"
+  echo "Usage:"
+  echo "  ${command_raw} [arguments...]"
+  echo ""
+
+  local help_commands=$(ls $command_dir)
+  local help_command=""
+  echo "Commands:"
+  for help_command in $help_commands; do
+    if [[ $help_command = _* ]]; then
+      continue
+    fi
+
+    echo "    $help_command"
+  done
+}
+
 export -f run
+
+export -f run::help
+
 export -f run::js
 export -f run::deno
 export -f run::go
