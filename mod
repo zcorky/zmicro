@@ -7,6 +7,8 @@ DEPENDENCIES=(
   "core-utils@latest"
   "metadata@latest"
   "package@latest"
+  "service@latest"
+  "desktop@latest"
   "machine@latest"
   "daemon@latest"
   "cron@latest"
