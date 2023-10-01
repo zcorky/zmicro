@@ -349,6 +349,15 @@ log::clean() {
     LOG_CLEAN_DIR=/var/log/zmicro
   fi
 
+  local size=$(du -sk $LOG_CLEAN_DIR | cut -f1)
+  # if size > 500m, then remove log dir
+  if [ "$size" -gt "512000" ]; then
+    log::debug "[$(timestamp)][log::clean] clean logs dir: ${ZMICRO_LOG_DIR}"
+    rm -rf $LOG_CLEAN_DIR >>/dev/null 2>&1
+    mkdir -p $LOG_CLEAN_DIR >>/dev/null 2>&1
+    return
+  fi
+
   local LOG_CLEAN_BACKUP_FILE=${LOG_CLEAN_DIR}/backup.$(date +%Y-%m-%d_%H_%M_%S).gz
   log::debug "[$(timestamp)][log::clean] clean logs dir: ${ZMICRO_LOG_DIR}"
 
