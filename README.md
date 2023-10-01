@@ -34,8 +34,10 @@ wget -qO- https://t.zcorky.com/3D4MFa | bash
 - [x] Rockylinux
   - 9.0
 - [x] MacOS
+  - 13
   - 12
   - 11
+  - 10
 - [x] Alpine
   - 3.16
 - [x] Fedora
