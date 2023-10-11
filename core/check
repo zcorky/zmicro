@@ -15,6 +15,11 @@ check::upgrade() {
   fi
 
   # lock
+  # @Fix maybe /tmp not exist
+  if [ ! -d "/tmp" ]; then
+    mkdir /tmp
+  fi
+  #
   export ZMICRO_IS_UPGRADING_CHECKING=true
   echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP_LOCK
 
