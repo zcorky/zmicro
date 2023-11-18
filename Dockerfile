@@ -1,39 +1,37 @@
 FROM ubuntu:22.04
 
-LABEL Author=Zero<tobewhatwewant@gmail.com>
+ARG VERSION
 
-ARG  DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
+
+LABEL org.opencontainers.image.ref.name="zmicro"
+
+LABEL org.opencontainers.image.version=$VERSION
+
+LABEL org.opencontainers.image.author="Zero<tobewhatwewant@gmail.com>"
 
 # RUN   sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-RUN   apt update \
-  && apt install -y curl wget git sudo systemd make gcc g++ \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install -y curl wget git sudo systemd make gcc g++ && rm -rf /var/lib/apt/lists/*
 
 ENV TZ="Asia/Shanghai"
 
-ARG   VERSION
+ENV USER=root
 
-ENV   ZMICRO_VERSION=${VERSION}
+RUN curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | CI=true bash
 
-RUN   echo "ZMICRO_VERSION => ${VERSION}"
+RUN zmicro config timezone
 
-ENV   USER=root
+RUN zmicro config locale
 
-RUN   curl -o- https://raw.githubusercontent.com/zcorky/zmicro/master/install | CI=true bash
+RUN zmicro package install gzfly
 
-RUN   zmicro config timezone
+RUN zmicro package install gzssh
 
-RUN   zmicro config locale
+RUN zmicro package install gzterminal
 
-RUN   zmicro package install gzfly
+RUN zmicro package install docker
 
-RUN   zmicro package install gzssh
+RUN zmicro package install docker-compose
 
-RUN   zmicro package install gzterminal
-
-RUN   zmicro package install docker
-
-RUN   zmicro package install docker-compose
-
-RUN   zmicro package install docker-buildx
+RUN zmicro package install docker-buildx
