@@ -16,11 +16,14 @@ wget -qO- https://raw.githubusercontent.com/zcorky/zmicro/master/install | bash
 ### Short URL
 
 ```bash
+# SHORT URL:
+#  1. https://zmicro.zcorky.com/
+#  2. https://t.zcorky.com/3D4MFa
 # CURL
-curl -L -o- https://t.zcorky.com/3D4MFa | bash
+curl -fSL https://zmicro.zcorky.com/ | bash
 
 # WGET
-wget -qO- https://t.zcorky.com/3D4MFa | bash
+wget -qO- https://zmicro.zcorky.com/ | bash
 ```
 
 ## Support
