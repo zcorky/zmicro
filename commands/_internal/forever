@@ -4,7 +4,16 @@ help() {
   echp "Forever run command"
   echo ""
   echo "Usage:"
-  echo "  zmicro forever <command ...>"
+  echo "  zmicro forever [options ...] -- <command...>"
+  echo ""
+  echo "Options:"
+  echo "  -d, --delay <seconds>  delay seconds"
+  echo "  -i, --interval <seconds>  interval seconds"
+  echo ""
+  echo "Example:"
+  echo "  zmicro forever -- npm run prod"
+  echo "  zmicro forever --delay 1 -- npm run prod"
+  exit 1
 }
 
 core() {
