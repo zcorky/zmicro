@@ -6,6 +6,24 @@ help() {
 }
 
 core() {
+  while [ "$1" != "" ]; do
+    case $1 in
+    -h | --help)
+      help
+      exit
+      ;;
+    -d | --deep)
+      export CLEAN_DOCKER_DEEP=true
+      shift
+      ;;
+    *)
+      help
+      exit 1
+      ;;
+    esac
+    shift
+  done
+
   clean::docker
 }
 
