@@ -3,6 +3,10 @@
 help() {
   echo "Usage:"
   echo "  zmicro clean docker"
+  echo ""
+  echo "Options:"
+  echo "  -h, --help    Display this message"
+  echo "  -d, --deep    Clean docker unused images and volumes and stopped containers"
 }
 
 core() {
