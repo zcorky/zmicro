@@ -12,7 +12,7 @@ LABEL org.opencontainers.image.author="Zero<tobewhatwewant@gmail.com>"
 
 # RUN   sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-RUN apt update && apt install -y curl wget git sudo systemd make gcc g++ && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install -y curl wget git sudo systemd make gcc g++ iputils-ping dnsutils && rm -rf /var/lib/apt/lists/*
 
 ENV TZ="Asia/Shanghai"
 
