@@ -372,6 +372,14 @@ log::clean() {
     rm -rf ${LOG_CLEAN_DIR}/*.log >>/dev/null 2>&1
   fi
 
+  # only backup the latest 10 versions
+  for file in $(find ${LOG_CLEAN_DIR} -name "backup.*" -type f | sort -r | tail -n +5); do
+    if [ -f "$file" ]; then
+      # log::info "[$(timestamp)] clean old backup file: $file ..."
+      rm -rf $file >>/dev/null 2>&1
+    fi
+  done
+
   # retimestamp
   local log_last_check=$ZMICRO_LOG_DIR/.last_clean
   echo "$(timestamp)" | tee $log_last_check >>/dev/null 2>&1
