@@ -187,7 +187,7 @@ export ZMICRO_CHECK_UPGRADE_MAX_DAYS=15552000
 #    debug
 #    error
 #    fatal
-export LOG_LEVEL=${LOG_LEVEL:-error}
+export LOG_LEVEL=${LOG_LEVEL:-info}
 
 # # fix env USER not found
 # if [ -z "$USER" ]; then

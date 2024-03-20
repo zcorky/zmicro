@@ -35,3 +35,5 @@ RUN zmicro package install docker
 RUN zmicro package install docker-compose
 
 RUN zmicro package install docker-buildx
+
+ENV LOG_LEVEL=error
