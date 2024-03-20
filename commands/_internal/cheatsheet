@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Check Shell Syntax"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro cheatsheet [<cheatsheet>]"
+}
+
+core() {
+  os::cheatsheet "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
