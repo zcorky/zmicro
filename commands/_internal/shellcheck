@@ -1,0 +1,18 @@
+#!/bin/bash
+
+help() {
+  echp "Check Shell Syntax"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro shellcheck </path/to/script>"
+}
+
+core() {
+  os::shellcheck "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
