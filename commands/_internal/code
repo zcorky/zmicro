@@ -2,10 +2,51 @@
 
 help() {
   echo "Usage:"
-  echo "  zmicro code <where>"
+  echo "  zmicro code [options...] <where> [name]"
+  echo ""
+  echo "options:"
+  echo "  -h, --help      help for code"
+  echo "  --version       version for code"
+  echo "  --apply-proxy   apply proxy for code"
+  echo "  --apply-vpn     apply vpn for code"
+  echo ""
+  echo "where:"
+  echo "  home      open zmicro home in vscode"
+  echo "  plugin    open plugin in vscode"
+  echo "  service   open service in vscode"
+  echo "  package   open package in vscode"
+  echo "  template  open template in vscode"
+  echo "  action    open action in vscode"
+  echo "  desktop   open desktop in vscode"
+  echo "  project   open project in vscode"
 }
 
 core() {
+  while [[ "$#" -gt 0 ]]; do
+    case $1 in
+    -h | --help)
+      help
+      exit 0
+      ;;
+    --version)
+      log::info "v0.0.1"
+      exit 0
+      ;;
+    --apply-proxy)
+      log::info "apply proxy for code"
+      net::using_smart_proxy
+      ;;
+    --apply-vpn)
+      log::info "apply vpn for code"
+      net::using_smart_proxy
+      ;;
+    *)
+      break
+      ;;
+    esac
+    shift
+  done
+
   which code >>/dev/null 2>&1
   if [ "$?" != "0" ]; then
     log::error "you should install vscode and install 'code' command in PATH"
