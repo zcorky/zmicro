@@ -238,7 +238,7 @@ core() {
       exit 1
     fi
 
-    # if name is not a string contains one '/'        => throw error
+    # if name is not a string contains one '/'        => search in $path
     # if name = zcorky/zmicro                         => path=$HOME/code/github.com/zcorky/zmicro
     # if name = github.com/zcorky/zmicro              => path=$HOME/code/github.com/zcorky/zmicro
     # if name = https://github.com/zcorky/zmicro      => path=$HOME/code/github.com/zcorky/zmicro
@@ -258,6 +258,26 @@ core() {
     # if name contains one '/' => add github.com
     if [[ $name == *"/"* ]]; then
       name=github.com/$name
+    else
+      # list the directory of the path recursively deep 4, if the directory is the name, then use it
+      # if not only one directory, select with os::inqure
+      log::info "[$(timestamp)] searching project(${name}) in $path ..."
+      local found=($(find $path -maxdepth 4 -type d -name $name))
+      # check found length
+      local length=${#found[@]}
+      if ! [ $length -eq 0 ]; then
+        # if only one dir, use it the name
+        if [ $length -eq 1 ]; then
+          # name is the path sub $path
+          log::info "[$(timestamp)] project(${name}) found in $found ..."
+          name=${found#$path/}
+        else
+          log::info "[$(timestamp)] found multiple projects (count: $length) for name($name) in $path ..."
+          # if not only one dir, select with os::inqure
+          os::inquirer name select found "Select a project" "true"
+          name=${name#$path/}
+        fi
+      fi
     fi
 
     # check if name contains two '/'
@@ -268,7 +288,7 @@ core() {
 
     path=$path/$name
 
-    if [ ! -d $path ]; then
+    if [ ! -d "$path" ]; then
       # log::error "${where}(${name}) not found"
       # exit 1
 
@@ -280,7 +300,7 @@ core() {
       fi
     fi
 
-    if [ ! -d $path ]; then
+    if [ ! -d "$path" ]; then
       log::error "project(${where}) not found (2)"
       exit 1
     fi
@@ -317,7 +337,7 @@ core() {
 }
 
 run() {
-  core $@
+  core "$@"
 }
 
-run $@
+run "$@"
