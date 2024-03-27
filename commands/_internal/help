@@ -4,18 +4,52 @@ Usage:  zmicro [options] COMMAND
 
 List of Main Commands:
 
+  apply         Apply a transaction, like proxy, vpn, etc
+  bin           List/register zmicro bins to system path, path gets the zmicro bin path
+  cheatsheet    Show the cheatsheet of linux commands
+  code          Open code in vscode
   config        Config rc | data | log | git
+  curl          Curl with smart proxy
+  delay         Delay to run a command
+  docs          Show the docs of zmicro methods or modules in core-utils
+  dotenv        Load .env file, then run a command
+  exec          Run a shell script with zmicro core-utils
+  fn            Run a function in zmicro core-utils
+  forever       Run a command forever, like supervisor in front-end
+  git           Git with smart proxy
+  go            Change the current directory to the plugin directory, or {service/package/...} directory
+  gpm           Use Git Package Manager to manage git repositories
   help          Show a helpful usage message
   history       Show the transation history
+  info          Show the information of zmicro, like version, etc
   install       Install an plugin
+  ip            Show the ip address of public network or private network
   list          List all available versions
   log           Show transaction / debug logs
-  package       Install | update | remove a package
+  pm            Use Package Manager to manage packages, compatible with Linux Distribution Package Manager, include apt, yum, pacman, brew, etc
   plugin        Run a plugin
-  service       Run a service
+  register      Register zmicro to system
+  release       Release a new version
+  repl          Run a repl in zmicro shell core-utils
+  run           Run a command with zmicro core-utils
+  shell         Run a shell in zmicro shell core-utils
+  shellcheck    Run shellcheck to check shell script
+  ssh           Ssh with smart proxy
+  support       Check is the method/function supported in zmicro core-utils
+  test          Run test cases, can test any function in zmicro
+  top           Show the top of the system
   update        Update version
-  use           Use version
-  version       Show version info
+  use <version> Switch to a different version
+  version       Show version information
+  wget          Wget with smart proxy
+
+Built-in Commands with plugin:
+  package       Install | update | remove a package
+  service       Install | update | remove a service
+  desktop       Install | update | remove a desktop
+  action        Install | update | remove an action
+  template      Install | update | remove a template
+  project       Install | update | remove a project
 "
 }
 
