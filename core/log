@@ -249,8 +249,21 @@ log::update() {
   local origin_version=$4
   local current_version=$5
 
-  if [ -f "$ZMICRO_LOG_UPDATE_PATH" ] && [ ! -w "$ZMICRO_LOG_UPDATE_PATH" ]; then
-    sudo chmod a+w $ZMICRO_LOG_UPDATE_PATH
+  if [ -f "$ZMICRO_LOG_UPDATE_PATH" ]; then
+    # ensure log file permissions
+    if [ ! -w "$ZMICRO_LOG_UPDATE_PATH" ]; then
+      sudo chmod a+w $ZMICRO_LOG_UPDATE_PATH
+    fi
+
+    # only keep the last 10000 lines
+    local line_count=$(cat $ZMICRO_LOG_UPDATE_PATH | wc -l | awk '{print $1}')
+    local keep_the_last_lines=10000
+    if [ "$line_count" -gt "$keep_the_last_lines" ]; then
+      local tmp_file=$(os::tmp_file)
+      tail -n $keep_the_last_lines $ZMICRO_LOG_UPDATE_PATH >$tmp_file
+      cat $tmp_file >$ZMICRO_LOG_UPDATE_PATH
+      rm -f $tmp_file
+    fi
   fi
 
   if [ "$stage" = "START" ]; then
