@@ -30,6 +30,23 @@ env() {
   # Load Base Config
   . $ZMICRO_CONFIG_PATH/config
 
+  # @TODO fix log only keep 10 versions
+  # echo "ZMICRO_LOG_COMMON_PATH: $ZMICRO_LOG_COMMON_PATH"
+  # echo "ZMICRO_LOG_PATH: $ZMICRO_LOG_PATH"
+  if [ ! -f "$ZMICRO_LOG_COMMON_PATH" ]; then
+    # only keep the latest 10 versions
+    for file in $(find ${ZMICRO_LOG_PATH} -name "common.*" -type f | sort -r | tail -n +10); do
+      if [ -f "$file" ]; then
+        # log::info "[$(timestamp)] clean old common log file: $file ..."
+        rm -f $file >/dev/null 2>&1
+        # quiet mode
+        # if [ "$?" != "0" ]; then
+        #   log::error "[log] failed to clean old common log file: $file"
+        # fi
+      fi
+    done
+  fi
+
   # echo "======== load env start ====================" >>$ZMICRO_LOG_COMMON_PATH
 
   # Load Doreamon Fns
