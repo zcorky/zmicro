@@ -29,6 +29,7 @@ wget -qO- https://zmicro.zcorky.com/ | bash
 ## Support
 
 - [x] Ubuntu
+  - 24.04
   - 22.04
   - 20.04
 - [x] CentOS
