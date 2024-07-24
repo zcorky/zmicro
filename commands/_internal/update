@@ -3,6 +3,9 @@
 update_zmicro() {
   # @TODO clean dead git process
   # sudo killall git git-remote-https >>/dev/null 2>&1
+  if [ "$(os::has_command killall)" = "true" ]; then
+    sudo killall git-remote-https >>/dev/null 2>&1
+  fi
 
   export ZMICRO_IS_UPGRADING=true
 
