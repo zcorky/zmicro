@@ -1,0 +1,21 @@
+name: test linux
+
+stages:
+  - name: test
+    jobs:
+      - name: test
+        steps:
+          - name: Install in ubuntu
+            command: docker build -t zmicro:ubuntu -f config/docker/Dockerfile.ubuntu .
+
+          - name: Install in alpine
+            command: docker build -t zmicro:alpine -f config/docker/Dockerfile.alpine .
+
+          - name: Install in centos
+            command: docker build -t zmicro:centos -f config/docker/Dockerfile.centos .
+
+          - name: Install in archlinux
+            command: docker build -t zmicro:archlinux -f config/docker/Dockerfile.archlinux .
+
+          - name: Install in debian
+            command: docker build -t zmicro:debian -f config/docker/Dockerfile.debian .
