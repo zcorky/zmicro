@@ -82,7 +82,8 @@ jobs:
         run: zmicro package install docker-buildx
 
       - name: Run Pipeline
-        run: pipeline run
+        # run: pipeline run
+        uses: zmicro-design/action-pipeline@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
