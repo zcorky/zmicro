@@ -1,0 +1,21 @@
+#!/bin/bash
+
+help() {
+  echo "Usage:"
+  echo "  zmicro plugin download <plugin_name>@<plugin_version> [plugin_url]"
+}
+
+core() {
+  if [[ $# -eq 0 ]]; then
+    help
+    exit 0
+  fi
+
+  zmicro plugin install "$@"
+}
+
+run() {
+  core "$@"
+}
+
+run "$@"
