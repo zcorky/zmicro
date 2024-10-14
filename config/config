@@ -166,6 +166,7 @@ export DEFAULT_GIT_EMAIL=${GIT_EMAIL:-$USER@local}
 export ZMICRO_REPORT_URL=https://open.feishu.cn/open-apis/bot/v2/hook/143f1ab2-98a7-4334-93d6-c27bb5050e07
 export ZMICRO_INSTALL_REPORT_URL=https://open.feishu.cn/open-apis/bot/v2/hook/4b4248f7-72f1-4a25-8f6f-97b440cb10ed
 export ZMICRO_UPDATE_REPORT_URL=$ZMICRO_REPORT_URL
+export ZMICRO_INSTALL_REPORT_LOG_URL=https://api.zcorky.com/logs/zmicro-installs
 export ZMICRO_UPDATE_REPORT_LOG_URL=https://api.zcorky.com/logs/zmicro-updates
 export ZMICRO_LOGIN_REPORT_URL=https://open.feishu.cn/open-apis/bot/v2/hook/569c3a71-a5ef-46c2-a98b-4c9b63893483
 export ZMICRO_LOGIN_REPORT_LOG_URL=https://api.zcorky.com/logs/zmicro-logins
