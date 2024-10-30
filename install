@@ -6,6 +6,10 @@
 command -v sudo >>/dev/null 2>&1
 if [ $? -ne 0 ]; then
   sudo() {
+    if [ "$1" = "-E" ]; then
+      shift
+    fi
+
     eval "$@"
   }
   chown() {
@@ -56,7 +60,7 @@ depends() {
           export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
         fi
 
-        sudo curl -o- https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+        sudo -E curl -o- https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
       fi
 
       brew install -f $cli
@@ -182,7 +186,7 @@ depends git
 
 # Create
 if [ ! -d "$ZMICRO_HOME" ]; then
-  sudo git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
+  sudo -E git clone https://github.com/zcorky/zmicro.git $ZMICRO_HOME
   if [ "$?" != "0" ]; then
     echo "error: failed to install zmicro (1)"
     exit 1
