@@ -6,7 +6,7 @@ help() {
 }
 
 core() {
-  local cron=$(sudo crontab -l | grep zmicro_auto_update | tail -n 1)
+  local cron=$(sudo crontab -l 2>>/dev/null | grep zmicro_auto_update | tail -n 1)
   if [ "$?" != "0" ]; then
     log::error "failed to get info."
     return 1
