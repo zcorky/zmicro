@@ -1,4 +1,4 @@
-VERSION=v1.25.1
+VERSION=v1.25.2
 
 DESCRIPTION="Zero's Service Manager"
 
