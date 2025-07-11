@@ -1,0 +1,180 @@
+#!/bin/bash
+
+upgrade_zmicro() {
+  # @TODO clean dead git process
+  # sudo killall git git-remote-https >>/dev/null 2>&1
+  if [ "$(os::has_command killall)" = "true" ]; then
+    sudo killall git-remote-https >>/dev/null 2>&1
+  fi
+
+  export ZMICRO_IS_UPGRADING=true
+
+  local origin_version=$(version::zmicro)
+  # log::update PREV
+
+  # Fix Permissions
+  os::fix_permissions >>/dev/null 2>&1
+
+  # record update timestamp
+  if [ ! -f "$ZMICRO_LOG_UPDATE_TIMESTAMP" ]; then
+    sudo touch $ZMICRO_LOG_UPDATE_TIMESTAMP
+  fi
+  if [ ! -w "$ZMICRO_LOG_UPDATE_TIMESTAMP" ] || [ ! -r "$ZMICRO_LOG_UPDATE_TIMESTAMP" ]; then
+    sudo chmod a+rw $ZMICRO_LOG_UPDATE_TIMESTAMP
+  fi
+  echo $(date +%s) >$ZMICRO_LOG_UPDATE_TIMESTAMP 2>/dev/null
+
+  # @FIX core-utils plugin update missin path cause failed to update
+  # @TODO will remove
+  if [ -d "$ZMICRO_HOME/plugins/core-utils" ]; then
+    log::info "[$(timestamp)][env] update core-utils ..."
+    cd $ZMICRO_HOME/plugins/core-utils
+    git pull origin master >>/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "error: failed to update core-utils"
+      exit 1
+    fi
+
+    # reload core-utils
+    log::info "[$(timestamp)][env] reload core-utils ..."
+    config::load_dir $ZMICRO_HOME/plugins/core-utils/core
+  fi
+
+  # fix git safe.directory
+  os::fix_git_safe_directory >>/dev/null 2>&1
+
+  log::update CORE zmicro START
+
+  cd $ZMICRO_HOME
+
+  local tmp_update_log=$(os::tmp_file) # $ZMICRO_LOG_ERROR_PATH
+  git pull origin master >>$tmp_update_log 2>&1
+  if [ "$?" != "0" ]; then
+    # echo "Update ZMicro Error, see $ZMICRO_LOG_UPDATE_PATH"
+    # tail -n 50 $tmp_update_log
+    cat $tmp_update_log
+
+    cat $tmp_update_log >>$ZMICRO_LOG_ERROR_PATH
+    exit -1
+  else
+    cat $tmp_update_log >>$ZMICRO_LOG_UPDATE_PATH
+  fi
+
+  # ensure load core-utils
+  env::load_core_utils
+
+  # log::update LATEST
+  local new_version=$(version::zmicro)
+
+  log::version $origin_version $new_version
+
+  # log::timestamp "[LATEST_VERSION] ${ZMICRO_VERSION}"
+
+  # update depdendencies
+  require::core_mod -u
+
+  # Auto Register After Update
+  plugin::register_all $ZMICRO_PLUGINS_PATH
+
+  log::update CORE zmicro END $origin_version $new_version
+
+  # @TODO Ensure Global RC Created
+  config::ensure_global_rc
+
+  # @TODO add auto update
+  if [ "$CI" != "true" ]; then
+    zmicro auto update >/dev/null 2>&1 &
+  fi
+
+  # update notify check
+  notify::update_check $origin_version $new_version >/dev/null 2>&1 &
+
+  # @TODO fix timezone
+  # zmicro config timezone >/dev/null 2>&1 &
+}
+
+help() {
+  echo "upgrade zmicro"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro upgrade [self | plugin_name] [...options]"
+  # echo "    -p, --plugin <plugin_name | all>    upgrade all or one plugin"
+  echo "    -a, --all   Upgrade core and all plugins"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  local plugin_name=""
+  while [[ $# -gt 0 ]]; do
+    local key=$1
+    local value=$2
+    case $key in
+    -h | --help)
+      help
+      exit 0
+      ;;
+    # -p | --plugin)
+    #   if [ -z "$value" ]; then
+    #     log::error "plugin name is required"
+    #     exit 1
+    #   fi
+
+    #   os::set_var plugin_name $value
+    #   shift
+    #   shift
+    #   ;;
+    -a | --all)
+      os::set_var update_all true
+      shift
+      ;;
+    -f | --force)
+      # @TODO
+      sudo rm -rf /tmp/zmicro.*.lock.*
+      shift
+      ;;
+    *)
+      if [ "$(string::match $key ^-)" = "true" ]; then
+        echo "ERROR: unknown parameter \"$key\""
+        help
+        exit 1
+      fi
+
+      if [ -z $plugin_name ]; then
+        plugin_name=$key
+      fi
+      shift
+      ;;
+    esac
+  done
+
+  # @TODO avoid permission error
+  if [ ! -w "$ZMICRO_HOME" ]; then
+    os::fix_permissions
+  fi
+
+  # using smart proxy
+  net::using_smart_proxy 2>&1
+
+  if [ -n "$plugin_name" ]; then
+    if [ "$plugin_name" = "self" ]; then
+      upgrade_zmicro
+    else
+      zmicro plugin update $plugin_name
+    fi
+  elif [ "$update_all" = "true" ]; then
+    upgrade_zmicro
+    zmicro plugin update
+  else
+    upgrade_zmicro
+  fi
+}
+
+run() {
+  core $@
+}
+
+run $@
