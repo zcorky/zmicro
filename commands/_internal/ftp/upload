@@ -74,7 +74,8 @@ core() {
   # Build exclude arguments for mirror command
   # lftp mirror --exclude-glob pattern matches files/directories
   # For directories, we need both the directory name and its contents pattern
-  local mirror_cmd="mirror --reverse --delete --verbose"
+  # Note: --delete is removed to prevent deleting other files on remote server
+  local mirror_cmd="mirror --reverse --verbose"
   if [ -n "$IGNORE_DIR_OR_FILES" ]; then
     for pattern in $IGNORE_DIR_OR_FILES; do
       mirror_cmd="$mirror_cmd --exclude-glob $pattern"
