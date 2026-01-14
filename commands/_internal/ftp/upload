@@ -1,0 +1,152 @@
+#!/bin/bash
+
+help() {
+  echo "FTP Upload"
+  echo ""
+  echo "Usage:"
+  echo "  zmicro ftp upload"
+  echo ""
+  echo "Environment Variables:"
+  echo "  FTP_HOST - FTP 主机地址"
+  echo "  FTP_PORT - FTP 端口"
+  echo "  FTP_USER - FTP 用户名"
+  echo "  FTP_PASS - FTP 密码"
+  echo "  REMOTE_DIR - 远程目标目录"
+  echo "  LOCAL_DIR - 本地当前目录"
+  echo "  IGNORE_DIR_OR_FILES - 忽略的文件和目录"
+}
+
+core() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    help
+    exit 0
+  fi
+
+  # check and install lftp
+  if [ "$(os::has_command lftp)" = "false" ]; then
+    pm install -y lftp
+  fi
+
+  local FTP_HOST=${FTP_HOST} # FTP 主机地址
+  local FTP_PORT=${FTP_PORT:-21} # FTP 端口
+  local FTP_USER=${FTP_USER} # FTP 用户名
+  local FTP_PASS=${FTP_PASS} # FTP 密码
+  local REMOTE_DIR=${REMOTE_DIR:-/}  # 远程目标目录
+  local LOCAL_DIR=${LOCAL_DIR:-./}                   # 本地当前目录
+  local IGNORE_DIR_OR_FILES=${IGNORE_DIR_OR_FILES:-".git .env .settings .vendor .buildpath .project"} # 忽略的文件和目录
+
+  if [ -z "$FTP_HOST" ]; then
+    log::error "[$(timestamp)][ftp] FTP_HOST is not set."
+    exit 1
+  fi
+
+  if [ -z "$FTP_USER" ]; then
+    log::error "[$(timestamp)][ftp] FTP_USER is not set."
+    exit 1
+  fi
+
+  if [ -z "$FTP_PASS" ]; then
+    log::error "[$(timestamp)][ftp] FTP_PASS is not set."
+    exit 1
+  fi
+
+  if [ -z "$REMOTE_DIR" ]; then
+    log::error "[$(timestamp)][ftp] REMOTE_DIR is not set."
+    exit 1
+  fi
+
+  if [ -z "$LOCAL_DIR" ]; then
+    log::error "[$(timestamp)][ftp] LOCAL_DIR is not set."
+    exit 1
+  fi
+
+  if [ -z "$IGNORE_DIR_OR_FILES" ]; then
+    log::error "[$(timestamp)][ftp] IGNORE_DIR_OR_FILES is not set."
+    exit 1
+  fi
+
+  log::info "[$(timestamp)][ftp] start upload"
+
+  log::info "[$(timestamp)][ftp] LOCAL_DIR: $LOCAL_DIR"
+  log::info "[$(timestamp)][ftp] REMOTE_DIR: $REMOTE_DIR"
+  log::info "[$(timestamp)][ftp] IGNORE_DIR_OR_FILES: $IGNORE_DIR_OR_FILES"
+
+  # Build exclude arguments for mirror command
+  # lftp mirror --exclude-glob pattern matches files/directories
+  # For directories, we need both the directory name and its contents pattern
+  local mirror_cmd="mirror --reverse --delete --verbose"
+  if [ -n "$IGNORE_DIR_OR_FILES" ]; then
+    for pattern in $IGNORE_DIR_OR_FILES; do
+      mirror_cmd="$mirror_cmd --exclude-glob $pattern"
+      mirror_cmd="$mirror_cmd --exclude-glob $pattern/**"
+    done
+  fi
+  mirror_cmd="$mirror_cmd $LOCAL_DIR ."
+
+  # Build lftp command with port
+  # Use full path to lftp to avoid command not found issues
+  local lftp_bin=$(command -v lftp)
+  if [ -z "$lftp_bin" ]; then
+    log::error "[$(timestamp)][ftp] lftp command not found in PATH."
+    exit 1
+  fi
+  local lftp_cmd="$lftp_bin -u $FTP_USER,$FTP_PASS -p $FTP_PORT $FTP_HOST"
+  
+  # Build directory creation commands for REMOTE_DIR and its parents
+  # Strategy: create directories level by level, but suppress error output
+  # Since lftp doesn't support conditional execution, we create all levels
+  # but errors are suppressed by redirecting stderr
+  local dir_commands=""
+  if [ "$REMOTE_DIR" != "/" ]; then
+    # Split the path and handle each level
+    IFS='/' read -ra ADDR <<< "$REMOTE_DIR"
+    local current_path=""
+    for part in "${ADDR[@]}"; do
+      if [ -n "$part" ]; then
+        if [ -z "$current_path" ]; then
+          # Handle absolute path starting with /
+          if [[ "$REMOTE_DIR" == /* ]]; then
+            current_path="/$part"
+          else
+            current_path="$part"
+          fi
+        else
+          current_path="$current_path/$part"
+        fi
+        # Create directory - errors will be suppressed by cmd:fail-exit false
+        # and we'll redirect output in the lftp session
+        dir_commands="${dir_commands}mkdir \"$current_path\""$'\n'
+      fi
+    done
+  fi
+  
+  # Execute lftp upload using heredoc (lftp doesn't support -f option)
+  # Redirect stderr to suppress mkdir errors for existing directories
+  $lftp_cmd 2>/dev/null <<EOF
+set ftp:list-options -a
+set ssl:verify-certificate no
+set cmd:fail-exit false
+# Create parent directories if needed (errors suppressed for existing dirs)
+${dir_commands}
+# Change to the remote directory
+cd "$REMOTE_DIR"
+# Execute mirror command
+$mirror_cmd
+quit
+EOF
+
+  local lftp_exit_code=$?
+  
+  if [ "$lftp_exit_code" != "0" ]; then
+    log::error "[$(timestamp)][ftp] failed to upload."
+    exit 1
+  fi
+
+  log::success "[$(timestamp)][ftp] succeed to upload."
+}
+
+run() {
+  core $@
+}
+
+run $@
