@@ -75,7 +75,10 @@ core() {
   # lftp mirror --exclude-glob pattern matches files/directories
   # For directories, we need both the directory name and its contents pattern
   # Note: --delete is removed to prevent deleting other files on remote server
-  local mirror_cmd="mirror --reverse --verbose"
+  # --only-newer: only upload files that are newer than remote (faster upload)
+  # --continue: resume interrupted transfers
+  # --parallel=N: upload N files in parallel (default 1, increase for speed)
+  local mirror_cmd="mirror --reverse --only-newer --continue --parallel=3 --verbose"
   if [ -n "$IGNORE_DIR_OR_FILES" ]; then
     for pattern in $IGNORE_DIR_OR_FILES; do
       mirror_cmd="$mirror_cmd --exclude-glob $pattern"
