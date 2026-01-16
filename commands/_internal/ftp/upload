@@ -14,8 +14,6 @@ help() {
   echo "  REMOTE_DIR - 远程目标目录"
   echo "  LOCAL_DIR - 本地当前目录"
   echo "  IGNORE_DIR_OR_FILES - 忽略的文件和目录"
-  echo "  FTP_USE_HASH - 是否使用本地哈希缓存比较文件 (true/false, 默认 false, 更准确)"
-  echo "  FTP_CACHE_DIR - 哈希缓存目录 (默认 ~/.zmicro/ftp-cache, Docker 中建议挂载卷)"
   echo "  LOG_LEVEL - 日志级别 (INFO/DEBUG, 默认 INFO, DEBUG 会显示详细的文件对比信息)"
 }
 
@@ -37,74 +35,12 @@ core() {
   local REMOTE_DIR=${REMOTE_DIR:-/}  # 远程目标目录
   local LOCAL_DIR=${LOCAL_DIR:-./}                   # 本地当前目录
   local IGNORE_DIR_OR_FILES=${IGNORE_DIR_OR_FILES:-".git .env .settings .vendor .buildpath .project"} # 忽略的文件和目录
-  local FTP_USE_HASH=${FTP_USE_HASH:-false} # 是否使用本地哈希缓存来比较文件（默认 false）
-  local FTP_CACHE_DIR=${FTP_CACHE_DIR:-${HOME}/.zmicro/ftp-cache} # 哈希缓存目录（支持 Docker 挂载卷）
   local LOG_LEVEL=${LOG_LEVEL:-INFO} # 日志级别 (INFO/DEBUG)
   
   # Debug log function
   debug_log() {
     if [ "$LOG_LEVEL" = "DEBUG" ]; then
       log::info "[$(timestamp)][ftp][DEBUG] $@"
-    fi
-  }
-  
-  # Detect hash command based on OS (Mac uses md5, Linux uses md5sum)
-  local hash_cmd=""
-  local hash_cmd_type=""
-  if command -v md5sum >/dev/null 2>&1; then
-    hash_cmd="md5sum"
-    hash_cmd_type="md5sum"  # Output: hash  filename
-  elif command -v md5 >/dev/null 2>&1; then
-    hash_cmd="md5"
-    hash_cmd_type="md5"     # Output: MD5 (filename) = hash
-  fi
-  
-  # Function to calculate file hash (works on both Mac and Linux)
-  calc_file_hash() {
-    local file="$1"
-    if [ -z "$hash_cmd" ] || [ ! -f "$file" ]; then
-      echo ""
-      return
-    fi
-    
-    if [ "$hash_cmd_type" = "md5sum" ]; then
-      # Linux: md5sum outputs "hash  filename"
-      $hash_cmd "$file" 2>/dev/null | cut -d' ' -f1
-    elif [ "$hash_cmd_type" = "md5" ]; then
-      # Mac: md5 outputs "MD5 (filename) = hash", use -q for quiet mode (hash only)
-      $hash_cmd -q "$file" 2>/dev/null
-    else
-      echo ""
-    fi
-  }
-  
-  # Check if hash command is available
-  if [ "$FTP_USE_HASH" = "true" ]; then
-    if [ -z "$hash_cmd" ]; then
-      log::info "[$(timestamp)][ftp] md5sum/md5 command not found, disabling hash-based comparison"
-      log::info "[$(timestamp)][ftp] Please install md5sum (Linux) or md5 (Mac) or set FTP_USE_HASH=false"
-      FTP_USE_HASH=false
-    else
-      debug_log "Hash command found: $hash_cmd (type: $hash_cmd_type)"
-    fi
-  fi
-  
-  # Function to calculate file hash (works on both Mac and Linux)
-  calc_file_hash() {
-    local file="$1"
-    if [ -z "$hash_cmd" ] || [ ! -f "$file" ]; then
-      echo ""
-      return
-    fi
-    
-    if [ "$hash_cmd_type" = "md5sum" ]; then
-      # Linux: md5sum outputs "hash  filename"
-      $hash_cmd "$file" 2>/dev/null | cut -d' ' -f1
-    elif [ "$hash_cmd_type" = "md5" ]; then
-      # Mac: md5 outputs "MD5 (filename) = hash"
-      $hash_cmd -q "$file" 2>/dev/null
-    else
-      echo ""
     fi
   }
 
@@ -143,105 +79,26 @@ core() {
   log::info "[$(timestamp)][ftp] LOCAL_DIR: $LOCAL_DIR"
   log::info "[$(timestamp)][ftp] REMOTE_DIR: $REMOTE_DIR"
   log::info "[$(timestamp)][ftp] IGNORE_DIR_OR_FILES: $IGNORE_DIR_OR_FILES"
-  log::info "[$(timestamp)][ftp] FTP_USE_HASH: $FTP_USE_HASH"
   log::info "[$(timestamp)][ftp] LOG_LEVEL: $LOG_LEVEL"
-
-  # Local hash cache for file comparison
-  # This uses local file hash (MD5) to track which files have been uploaded
-  # More accurate than size+time comparison, and doesn't require downloading remote files
-  local hash_cache_file=""
-  if [ "$FTP_USE_HASH" = "true" ]; then
-    if [ -z "$hash_cmd" ]; then
-      log::info "[$(timestamp)][ftp] Hash command not found, cannot use hash cache"
-      log::info "[$(timestamp)][ftp] Disabling hash-based comparison, will use size+time comparison"
-      FTP_USE_HASH=false
-    else
-      # Create cache file path based on FTP host and remote dir
-      # Use FTP_CACHE_DIR if set (useful for Docker volume mounts)
-      local cache_dir="$FTP_CACHE_DIR"
-      mkdir -p "$cache_dir" 2>/dev/null
-      if [ ! -w "$cache_dir" ]; then
-        log::info "[$(timestamp)][ftp] Cache directory not writable: $cache_dir"
-        log::info "[$(timestamp)][ftp] Disabling hash cache, will use size+time comparison"
-        FTP_USE_HASH=false
-      else
-        # Generate cache key using available hash command
-        local cache_key=""
-        if [ "$hash_cmd_type" = "md5sum" ]; then
-          cache_key=$(echo "${FTP_HOST}:${FTP_PORT}:${REMOTE_DIR}" | $hash_cmd 2>/dev/null | cut -d' ' -f1)
-        elif [ "$hash_cmd_type" = "md5" ]; then
-          cache_key=$(echo "${FTP_HOST}:${FTP_PORT}:${REMOTE_DIR}" | $hash_cmd -q 2>/dev/null)
-        fi
-        if [ -z "$cache_key" ]; then
-          log::info "[$(timestamp)][ftp] Failed to generate cache key, disabling hash cache"
-          FTP_USE_HASH=false
-        else
-          hash_cache_file="${cache_dir}/${cache_key}.hash"
-          log::info "[$(timestamp)][ftp] Using hash cache: $hash_cache_file"
-          debug_log "Cache directory: $cache_dir (can be set via FTP_CACHE_DIR for Docker volumes)"
-        fi
-      fi
-    fi
-  fi
 
   # Build exclude arguments for mirror command
   # lftp mirror --exclude-glob pattern matches files/directories
   # For directories, we need both the directory name and its contents pattern
   # Note: --delete is removed to prevent deleting other files on remote server
+  #
+  # How lftp mirror does incremental update:
+  # 1. lftp uses FTP protocol to get remote file size and modification time (MDTM command)
+  # 2. Compares with local file size and modification time
+  # 3. Only uploads if size OR time is different
+  # 4. This works even in new containers because it queries the remote server each time
+  # 5. No local cache needed - all comparisons are done via FTP protocol in real-time
+  #
   # Default behavior: compare both file size AND modification time
   # Only upload if size OR time is different (more accurate comparison)
   # --parallel=N: upload N files in parallel (default 1, increase for speed)
-  # --use-cache: use cache to speed up directory listings
+  # --use-cache: use cache to speed up directory listings (lftp's internal cache)
   # Without --ignore-time or --ignore-size, mirror compares both size and time
   local mirror_cmd="mirror -R --parallel=3 --use-cache --verbose"
-  
-  # Add hash-based exclusions if hash cache is enabled
-  if [ "$FTP_USE_HASH" = "true" ] && [ -n "$hash_cache_file" ] && [ -f "$hash_cache_file" ]; then
-    log::info "[$(timestamp)][ftp] Checking hash cache to skip unchanged files..."
-    debug_log "Hash cache file: $hash_cache_file"
-    local skipped_count=0
-    local checked_count=0
-    local changed_count=0
-    # Read cache and check each file
-    while IFS='|' read -r rel_path cached_hash; do
-      if [ -n "$rel_path" ] && [ -n "$cached_hash" ]; then
-        local file_path="${LOCAL_DIR}/${rel_path}"
-        checked_count=$((checked_count + 1))
-        if [ -f "$file_path" ]; then
-          # Calculate current file hash using the detected hash command
-          local current_hash=""
-          current_hash=$(calc_file_hash "$file_path")
-          debug_log "Checking file: $rel_path"
-          debug_log "  Cached hash: $cached_hash"
-          debug_log "  Current hash: $current_hash"
-          # If hash matches, exclude from upload
-          if [ -n "$current_hash" ] && [ "$current_hash" = "$cached_hash" ]; then
-            # Exclude this file from upload
-            mirror_cmd="$mirror_cmd --exclude-glob $rel_path"
-            skipped_count=$((skipped_count + 1))
-            debug_log "  -> SKIP (hash matches, file unchanged)"
-          else
-            changed_count=$((changed_count + 1))
-            if [ -n "$current_hash" ]; then
-              debug_log "  -> UPLOAD (hash differs, file changed)"
-            else
-              debug_log "  -> UPLOAD (cannot calculate hash)"
-            fi
-          fi
-        else
-          debug_log "  -> SKIP (file not found locally)"
-        fi
-      fi
-    done < "$hash_cache_file"
-    if [ "$skipped_count" -gt 0 ]; then
-      log::info "[$(timestamp)][ftp] Skipping $skipped_count unchanged files based on hash cache"
-    fi
-    debug_log "Hash cache check summary: checked=$checked_count, skipped=$skipped_count, changed=$changed_count"
-  else
-    if [ "$FTP_USE_HASH" = "true" ]; then
-      debug_log "Hash cache not found or disabled, will use size+time comparison"
-    fi
-  fi
   
   # Add user-specified ignore patterns
   if [ -n "$IGNORE_DIR_OR_FILES" ]; then
@@ -303,11 +160,15 @@ set cache:enable true
 set xfer:clobber false
 set xfer:use-temp-file false
 # Ensure file comparison by size and time
-# mirror -n compares file size and modification time
+# lftp mirror compares file size and modification time via FTP protocol
+# - ftp:use-mdtm: use MDTM command to get remote file modification time
+# - ftp:use-feat: use FEAT command to check server capabilities
+# - lftp queries remote server for each file's size and time, then compares with local
+# - This is a real-time comparison via FTP protocol, no local cache needed
 set ftp:use-mdtm true
 set ftp:use-feat true
 # Compare file size strictly (default behavior)
-# mirror -n will skip if file size and time match
+# mirror will skip if file size and time match
 # Create parent directories if needed (errors suppressed for existing dirs)
 ${dir_commands}
 # Change to the remote directory
@@ -322,54 +183,6 @@ EOF
   if [ "$lftp_exit_code" != "0" ]; then
     log::error "[$(timestamp)][ftp] failed to upload."
     exit 1
-  fi
-
-  # Update hash cache after successful upload
-  # This records which files have been uploaded for future comparison
-  if [ "$FTP_USE_HASH" = "true" ] && [ -n "$hash_cache_file" ]; then
-    if [ -z "$hash_cmd" ]; then
-      log::info "[$(timestamp)][ftp] Hash command not available, skipping hash cache update"
-      log::info "[$(timestamp)][ftp] Please install md5sum (Linux) or md5 (Mac) to enable hash-based comparison"
-    else
-      log::info "[$(timestamp)][ftp] Updating hash cache..."
-      debug_log "Calculating hashes for all files in: $LOCAL_DIR"
-      # Calculate MD5 for all uploaded files and store in cache
-      # This will be used in future uploads to skip unchanged files
-      # Create temporary cache file
-      local temp_cache=$(mktemp)
-      local file_count=0
-      find "$LOCAL_DIR" -type f | while read -r file; do
-        # Skip ignored files
-        local skip=false
-        for pattern in $IGNORE_DIR_OR_FILES; do
-          if [[ "$file" == *"$pattern"* ]]; then
-            skip=true
-            break
-          fi
-        done
-        if [ "$skip" = "false" ]; then
-          local rel_path="${file#$LOCAL_DIR/}"
-          # Remove leading ./ if present
-          rel_path="${rel_path#./}"
-          local file_hash=$(calc_file_hash "$file")
-          if [ -n "$file_hash" ] && [ -n "$rel_path" ]; then
-            echo "$rel_path|$file_hash" >> "$temp_cache"
-            file_count=$((file_count + 1))
-            debug_log "Cached hash for: $rel_path -> $file_hash"
-          fi
-        else
-          debug_log "Skipped ignored file: $file"
-        fi
-      done
-      # Remove duplicates, sort, and replace cache file
-      if [ -f "$temp_cache" ]; then
-        sort -u "$temp_cache" -o "$temp_cache"
-        mv "$temp_cache" "$hash_cache_file" 2>/dev/null || cp "$temp_cache" "$hash_cache_file"
-        rm -f "$temp_cache"
-        log::info "[$(timestamp)][ftp] Hash cache updated with $file_count files"
-        debug_log "Hash cache saved to: $hash_cache_file"
-      fi
-    fi
   fi
 
   log::success "[$(timestamp)][ftp] succeed to upload."
