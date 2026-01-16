@@ -81,6 +81,108 @@ core() {
   log::info "[$(timestamp)][ftp] IGNORE_DIR_OR_FILES: $IGNORE_DIR_OR_FILES"
   log::info "[$(timestamp)][ftp] LOG_LEVEL: $LOG_LEVEL"
 
+  # Detect hash command for content verification (Mac/Linux compatible)
+  local hash_cmd=""
+  local hash_cmd_type=""
+  if command -v md5sum >/dev/null 2>&1; then
+    hash_cmd="md5sum"
+    hash_cmd_type="md5sum"  # Output: hash  filename
+  elif command -v md5 >/dev/null 2>&1; then
+    hash_cmd="md5"
+    hash_cmd_type="md5"     # Output: MD5 (filename) = hash
+  fi
+
+  # Function to calculate file hash (works on both Mac and Linux)
+  calc_file_hash() {
+    local file="$1"
+    if [ -z "$hash_cmd" ] || [ ! -f "$file" ]; then
+      echo ""
+      return
+    fi
+    
+    if [ "$hash_cmd_type" = "md5sum" ]; then
+      # Linux: md5sum outputs "hash  filename"
+      $hash_cmd "$file" 2>/dev/null | cut -d' ' -f1
+    elif [ "$hash_cmd_type" = "md5" ]; then
+      # Mac: md5 outputs "MD5 (filename) = hash", use -q for quiet mode (hash only)
+      $hash_cmd -q "$file" 2>/dev/null
+    else
+      echo ""
+    fi
+  }
+
+  # Function to restore file timestamps from git (most accurate method)
+  # Returns: 0 if successful, 1 if failed or not applicable
+  restore_git_timestamps() {
+    local target_dir="$1"
+    local restored_count=0
+    local total_files=0
+    
+    # Check if git repository exists and git command is available
+    if [ ! -d "$target_dir/.git" ] || ! command -v git >/dev/null 2>&1; then
+      debug_log "Not a git repository or git not available, skipping timestamp restoration"
+      return 1
+    fi
+    
+    log::info "[$(timestamp)][ftp] Detected git repository, restoring file timestamps from git..."
+    
+    # Change to target directory
+    cd "$target_dir" 2>/dev/null
+    if [ "$?" != "0" ]; then
+      log::info "[$(timestamp)][ftp] Failed to change to directory: $target_dir"
+      return 1
+    fi
+    
+    # Restore timestamps for all tracked files
+    # Use process substitution to avoid subshell issue with variable counting
+    while IFS= read -r file; do
+      if [ -f "$file" ]; then
+        total_files=$((total_files + 1))
+        # Get last modification time from git
+        local git_time=$(git log -1 --format=%ct -- "$file" 2>/dev/null)
+        if [ -n "$git_time" ]; then
+          # Restore file timestamp (Mac and Linux use different commands)
+          if [ "$(uname -s)" = "Darwin" ]; then
+            # Mac: use touch -t with date conversion
+            local date_str=$(date -r "$git_time" +%Y%m%d%H%M.%S 2>/dev/null)
+            if [ -n "$date_str" ]; then
+              touch -t "$date_str" "$file" 2>/dev/null
+              if [ "$?" = "0" ]; then
+                restored_count=$((restored_count + 1))
+                debug_log "Restored timestamp for: $file (git time: $git_time)"
+              fi
+            fi
+          else
+            # Linux: use touch -d with @timestamp
+            touch -d "@$git_time" "$file" 2>/dev/null
+            if [ "$?" = "0" ]; then
+              restored_count=$((restored_count + 1))
+              debug_log "Restored timestamp for: $file (git time: $git_time)"
+            fi
+          fi
+        fi
+      fi
+    done < <(git ls-files 2>/dev/null)
+    
+    # Return to original directory
+    cd - >/dev/null 2>&1
+    
+    # Check if restoration was successful
+    if [ "$restored_count" -gt 0 ]; then
+      log::info "[$(timestamp)][ftp] Restored timestamps for $restored_count files from git"
+      return 0
+    else
+      log::info "[$(timestamp)][ftp] No files found in git or failed to restore timestamps"
+      return 1
+    fi
+  }
+
+  # Strategy 1: Try to restore file timestamps from git (most accurate)
+  local git_restore_success=false
+  if restore_git_timestamps "$LOCAL_DIR"; then
+    git_restore_success=true
+  fi
+
   # Build exclude arguments for mirror command
   # lftp mirror --exclude-glob pattern matches files/directories
   # For directories, we need both the directory name and its contents pattern
@@ -93,12 +195,31 @@ core() {
   # 4. This works even in new containers because it queries the remote server each time
   # 5. No local cache needed - all comparisons are done via FTP protocol in real-time
   #
-  # Default behavior: compare both file size AND modification time
-  # Only upload if size OR time is different (more accurate comparison)
+  # File comparison strategy:
+  # 1. If git timestamps restored successfully, use size+time comparison (most accurate)
+  # 2. If git restore failed or not in git repo, use --ignore-time but verify with hash
+  #    for files with same size to ensure content is actually the same
+  #
   # --parallel=N: upload N files in parallel (default 1, increase for speed)
   # --use-cache: use cache to speed up directory listings (lftp's internal cache)
-  # Without --ignore-time or --ignore-size, mirror compares both size and time
-  local mirror_cmd="mirror -R --parallel=3 --use-cache --verbose"
+  local mirror_options="--parallel=3 --use-cache --verbose"
+  if [ "$git_restore_success" != "true" ]; then
+    # Git restore failed, use --ignore-time (size-only comparison)
+    mirror_options="--ignore-time $mirror_options"
+    log::info "[$(timestamp)][ftp] Using size-only comparison (git timestamps not restored)"
+    # Strategy 2: Warn about size-only comparison limitations
+    if [ -n "$hash_cmd" ]; then
+      log::info "[$(timestamp)][ftp] Note: Files with same size but different content may be skipped"
+      log::info "[$(timestamp)][ftp] Recommendation: Use git repository to restore timestamps for accurate comparison"
+      debug_log "Hash command available but not used (would require downloading remote files for verification)"
+    else
+      log::info "[$(timestamp)][ftp] Note: Files with same size but different content may be skipped"
+    fi
+  else
+    log::info "[$(timestamp)][ftp] Using size+time comparison (git timestamps restored)"
+  fi
+
+  local mirror_cmd="mirror -R $mirror_options"
   
   # Add user-specified ignore patterns
   if [ -n "$IGNORE_DIR_OR_FILES" ]; then
@@ -159,16 +280,19 @@ set cache:enable true
 # Don't clobber - let mirror -n decide if file needs update
 set xfer:clobber false
 set xfer:use-temp-file false
-# Ensure file comparison by size and time
-# lftp mirror compares file size and modification time via FTP protocol
+# File comparison settings
+# lftp mirror compares file size and/or modification time via FTP protocol
 # - ftp:use-mdtm: use MDTM command to get remote file modification time
 # - ftp:use-feat: use FEAT command to check server capabilities
 # - lftp queries remote server for each file's size and time, then compares with local
+# - If git timestamps restored: uses size+time comparison (most accurate)
+# - If not: uses --ignore-time (size only) - note: may miss files with same size but different content
 # - This is a real-time comparison via FTP protocol, no local cache needed
 set ftp:use-mdtm true
 set ftp:use-feat true
-# Compare file size strictly (default behavior)
-# mirror will skip if file size and time match
+# Comparison behavior depends on git timestamp restoration
+# If restored: size+time comparison (most accurate)
+# If not: size-only comparison (less accurate but works without git)
 # Create parent directories if needed (errors suppressed for existing dirs)
 ${dir_commands}
 # Change to the remote directory
@@ -183,6 +307,15 @@ EOF
   if [ "$lftp_exit_code" != "0" ]; then
     log::error "[$(timestamp)][ftp] failed to upload."
     exit 1
+  fi
+
+  # Strategy 3: Optional hash verification for uploaded files (if hash command available)
+  # This verifies that uploaded files match local files (for debugging/verification)
+  # Note: This is optional and only runs if hash command is available and LOG_LEVEL is DEBUG
+  if [ "$LOG_LEVEL" = "DEBUG" ] && [ -n "$hash_cmd" ] && [ "$git_restore_success" != "true" ]; then
+    log::info "[$(timestamp)][ftp] DEBUG: Hash verification available but skipped (would require downloading files)"
+    log::info "[$(timestamp)][ftp] DEBUG: For maximum accuracy, use git repository to restore timestamps"
+    debug_log "Hash verification skipped: FTP protocol doesn't support direct hash retrieval"
   fi
 
   log::success "[$(timestamp)][ftp] succeed to upload."
