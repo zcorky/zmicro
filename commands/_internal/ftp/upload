@@ -14,7 +14,8 @@ help() {
   echo "  REMOTE_DIR - 远程目标目录"
   echo "  LOCAL_DIR - 本地当前目录"
   echo "  IGNORE_DIR_OR_FILES - 忽略的文件和目录"
-  echo "  FTP_USE_HASH - 是否使用本地哈希缓存比较文件 (true/false, 默认 true, 更准确)"
+  echo "  FTP_USE_HASH - 是否使用本地哈希缓存比较文件 (true/false, 默认 false, 更准确)"
+  echo "  FTP_CACHE_DIR - 哈希缓存目录 (默认 ~/.zmicro/ftp-cache, Docker 中建议挂载卷)"
   echo "  LOG_LEVEL - 日志级别 (INFO/DEBUG, 默认 INFO, DEBUG 会显示详细的文件对比信息)"
 }
 
@@ -37,6 +38,7 @@ core() {
   local LOCAL_DIR=${LOCAL_DIR:-./}                   # 本地当前目录
   local IGNORE_DIR_OR_FILES=${IGNORE_DIR_OR_FILES:-".git .env .settings .vendor .buildpath .project"} # 忽略的文件和目录
   local FTP_USE_HASH=${FTP_USE_HASH:-false} # 是否使用本地哈希缓存来比较文件（默认 false）
+  local FTP_CACHE_DIR=${FTP_CACHE_DIR:-${HOME}/.zmicro/ftp-cache} # 哈希缓存目录（支持 Docker 挂载卷）
   local LOG_LEVEL=${LOG_LEVEL:-INFO} # 日志级别 (INFO/DEBUG)
   
   # Debug log function
@@ -155,21 +157,29 @@ core() {
       FTP_USE_HASH=false
     else
       # Create cache file path based on FTP host and remote dir
-      local cache_dir="${HOME}/.zmicro/ftp-cache"
+      # Use FTP_CACHE_DIR if set (useful for Docker volume mounts)
+      local cache_dir="$FTP_CACHE_DIR"
       mkdir -p "$cache_dir" 2>/dev/null
-      # Generate cache key using available hash command
-      local cache_key=""
-      if [ "$hash_cmd_type" = "md5sum" ]; then
-        cache_key=$(echo "${FTP_HOST}:${FTP_PORT}:${REMOTE_DIR}" | $hash_cmd 2>/dev/null | cut -d' ' -f1)
-      elif [ "$hash_cmd_type" = "md5" ]; then
-        cache_key=$(echo "${FTP_HOST}:${FTP_PORT}:${REMOTE_DIR}" | $hash_cmd -q 2>/dev/null)
-      fi
-      if [ -z "$cache_key" ]; then
-        log::info "[$(timestamp)][ftp] Failed to generate cache key, disabling hash cache"
+      if [ ! -w "$cache_dir" ]; then
+        log::info "[$(timestamp)][ftp] Cache directory not writable: $cache_dir"
+        log::info "[$(timestamp)][ftp] Disabling hash cache, will use size+time comparison"
         FTP_USE_HASH=false
       else
-        hash_cache_file="${cache_dir}/${cache_key}.hash"
-        log::info "[$(timestamp)][ftp] Using hash cache: $hash_cache_file"
+        # Generate cache key using available hash command
+        local cache_key=""
+        if [ "$hash_cmd_type" = "md5sum" ]; then
+          cache_key=$(echo "${FTP_HOST}:${FTP_PORT}:${REMOTE_DIR}" | $hash_cmd 2>/dev/null | cut -d' ' -f1)
+        elif [ "$hash_cmd_type" = "md5" ]; then
+          cache_key=$(echo "${FTP_HOST}:${FTP_PORT}:${REMOTE_DIR}" | $hash_cmd -q 2>/dev/null)
+        fi
+        if [ -z "$cache_key" ]; then
+          log::info "[$(timestamp)][ftp] Failed to generate cache key, disabling hash cache"
+          FTP_USE_HASH=false
+        else
+          hash_cache_file="${cache_dir}/${cache_key}.hash"
+          log::info "[$(timestamp)][ftp] Using hash cache: $hash_cache_file"
+          debug_log "Cache directory: $cache_dir (can be set via FTP_CACHE_DIR for Docker volumes)"
+        fi
       fi
     fi
   fi
