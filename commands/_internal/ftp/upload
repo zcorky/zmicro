@@ -15,6 +15,7 @@ help() {
   echo "  LOCAL_DIR - 本地当前目录"
   echo "  IGNORE_DIR_OR_FILES - 忽略的文件和目录"
   echo "  LOG_LEVEL - 日志级别 (INFO/DEBUG, 默认 INFO, DEBUG 会显示详细的文件对比信息)"
+  echo "  DELETE_REMOTE_FILES - 是否删除远程文件 (true/false, 默认 false)"
 }
 
 core() {
@@ -36,6 +37,7 @@ core() {
   local LOCAL_DIR=${LOCAL_DIR:-./}                   # 本地当前目录
   local IGNORE_DIR_OR_FILES=${IGNORE_DIR_OR_FILES:-".git .env .settings .vendor .buildpath .project"} # 忽略的文件和目录
   local LOG_LEVEL=${LOG_LEVEL:-INFO} # 日志级别 (INFO/DEBUG)
+  local DELETE_REMOTE_FILES=${DELETE_REMOTE_FILES:-false} # 是否删除远程文件 (true/false)
   
   # Debug log function
   debug_log() {
@@ -203,6 +205,10 @@ core() {
   # --parallel=N: upload N files in parallel (default 1, increase for speed)
   # --use-cache: use cache to speed up directory listings (lftp's internal cache)
   local mirror_options="--parallel=3 --use-cache --verbose"
+  if [ "$DELETE_REMOTE_FILES" = "true" ]; then
+    mirror_options="--delete $mirror_options"
+  fi
+
   if [ "$git_restore_success" != "true" ]; then
     # Git restore failed, use --ignore-time (size-only comparison)
     mirror_options="--ignore-time $mirror_options"
