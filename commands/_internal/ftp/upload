@@ -180,9 +180,14 @@ core() {
   }
 
   # Strategy 1: Try to restore file timestamps from git (most accurate)
+  # Skip git restore if DELETE_REMOTE_FILES is true (use lftp's default diff)
   local git_restore_success=false
-  if restore_git_timestamps "$LOCAL_DIR"; then
-    git_restore_success=true
+  if [ "$DELETE_REMOTE_FILES" != "true" ]; then
+    if restore_git_timestamps "$LOCAL_DIR"; then
+      git_restore_success=true
+    fi
+  else
+    log::info "[$(timestamp)][ftp] DELETE_REMOTE_FILES is true, using lftp's default diff (size+time comparison)"
   fi
 
   # Build exclude arguments for mirror command
@@ -198,8 +203,9 @@ core() {
   # 5. No local cache needed - all comparisons are done via FTP protocol in real-time
   #
   # File comparison strategy:
-  # 1. If git timestamps restored successfully, use size+time comparison (most accurate)
-  # 2. If git restore failed or not in git repo, use --ignore-time but verify with hash
+  # 1. If DELETE_REMOTE_FILES is true, use lftp's default diff (size+time comparison)
+  # 2. If git timestamps restored successfully, use size+time comparison (most accurate)
+  # 3. If git restore failed or not in git repo, use --ignore-time but verify with hash
   #    for files with same size to ensure content is actually the same
   #
   # --parallel=N: upload N files in parallel (default 1, increase for speed)
@@ -207,9 +213,10 @@ core() {
   local mirror_options="--parallel=3 --use-cache --verbose"
   if [ "$DELETE_REMOTE_FILES" = "true" ]; then
     mirror_options="--delete $mirror_options"
-  fi
-
-  if [ "$git_restore_success" != "true" ]; then
+    # When DELETE_REMOTE_FILES is true, use lftp's default diff (size+time)
+    # No need for --ignore-time or git restore
+    log::info "[$(timestamp)][ftp] Using lftp's default diff (size+time comparison)"
+  elif [ "$git_restore_success" != "true" ]; then
     # Git restore failed, use --ignore-time (size-only comparison)
     mirror_options="--ignore-time $mirror_options"
     log::info "[$(timestamp)][ftp] Using size-only comparison (git timestamps not restored)"
