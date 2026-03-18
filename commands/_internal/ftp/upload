@@ -39,7 +39,7 @@ core() {
   local IGNORE_DIR_OR_FILES=${IGNORE_DIR_OR_FILES:-".git .env .settings .vendor .buildpath .project"} # 忽略的文件和目录
   local LOG_LEVEL=${LOG_LEVEL:-INFO} # 日志级别 (INFO/DEBUG)
   local DELETE_REMOTE_FILES=${DELETE_REMOTE_FILES:-false} # 是否删除远程文件 (true/false)
-  local FORCE_OVERWRITE_FILES=${FORCE_OVERWRITE_FILES:-} # 强制覆盖的文件（空格分隔）
+  local FORCE_OVERWRITE_FILES=${FORCE_OVERWRITE_FILES:-"index.html *.html"} # 强制覆盖的文件（空格分隔）
   
   # Debug log function
   debug_log() {
